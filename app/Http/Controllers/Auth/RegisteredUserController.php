@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use Faker\Factory as Faker;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+
+class RegisteredUserController extends Controller
+{
+    public function store(): Response
+    {
+        $faker = Faker::create();
+
+        $user = User::create([
+            'first_name' => $faker->firstName,
+            'last_name' => $faker->lastName,
+            'email' => $faker->email,
+            'password' => Hash::make($faker->iban),
+        ]);
+
+        Auth::login($user);
+
+        return response()->noContent();
+    }
+}
