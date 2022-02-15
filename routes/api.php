@@ -10,7 +10,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
             'users.id',
             'first_name',
             'last_name',
-            'image'
+            'profile_image',
+            'background_image'
         ]);
     }]);;
 });

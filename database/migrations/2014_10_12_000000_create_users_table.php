@@ -20,7 +20,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->default(now());
             $table->string('password');
-            $table->string('image');
+            $table->string('profile_image');
+            $table->string('background_image');
             $table->timestamps();
         });
     }

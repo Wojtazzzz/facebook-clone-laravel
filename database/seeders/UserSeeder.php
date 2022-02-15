@@ -25,7 +25,8 @@ class UserSeeder extends Seeder
             'last_name' => 'Witas',
             'email' => 'admin@gmail.com',
             'password' => Hash::make('admin'),
-            'image' => $faker->imageUrl(64, 64)
+            'profile_image' => $faker->imageUrl(168, 168),
+            'background_image' => $faker->imageUrl(850, 350)
         ]);
     }
 }
