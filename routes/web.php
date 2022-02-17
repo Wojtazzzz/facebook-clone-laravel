@@ -1,12 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Models\User;
 
-Route::get('/', function () {
-    $user = User::where('last_name', 'Witas')->first();
-    $user->friends;
-    dd($user);
-});
+Route::get('/', [UserController::class, 'suggests']);
 
 require __DIR__.'/auth.php';

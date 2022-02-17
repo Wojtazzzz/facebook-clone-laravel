@@ -35,7 +35,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime'
     ];
 
-    public function requests()
+    public function invites()
     {
         return $this->hasMany(Friendship::class, 'second_user')
             ->where('status', 'pending');
