@@ -46,5 +46,54 @@ class FriendshipSeeder extends Seeder
             'acted_user' => $user->id,
             'status' => 'confirmed'
         ]);
+
+        Friendship::create([
+            'first_user' => $user->id,
+            'second_user' => 6,
+            'acted_user' => $user->id,
+            'status' => 'confirmed'
+        ]);
+
+        Friendship::create([
+            'first_user' => $user->id,
+            'second_user' => 7,
+            'acted_user' => $user->id,
+            'status' => 'confirmed'
+        ]);
+
+        Friendship::create([
+            'first_user' => $user->id,
+            'second_user' => 8,
+            'acted_user' => $user->id,
+            'status' => 'confirmed'
+        ]);
+
+        Friendship::create([
+            'first_user' => $user->id,
+            'second_user' => 9,
+            'acted_user' => $user->id,
+            'status' => 'confirmed'
+        ]);
+
+        Friendship::create([
+            'first_user' => $user->id,
+            'second_user' => 10,
+            'acted_user' => $user->id,
+            'status' => 'confirmed'
+        ]);
+
+        Friendship::create([
+            'first_user' => $user->id,
+            'second_user' => 11,
+            'acted_user' => $user->id,
+            'status' => 'confirmed'
+        ]);
+
+        Friendship::create([
+            'first_user' => $user->id,
+            'second_user' => 12,
+            'acted_user' => $user->id,
+            'status' => 'confirmed'
+        ]);
     }
 }

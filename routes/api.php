@@ -10,6 +10,7 @@ Route::middleware('auth:sanctum')
         Route::get('/user', [UserController::class, 'user']);
         Route::get('/invites', [UserController::class, 'invites']);
         Route::get('/suggests', [UserController::class, 'suggests']);
+        Route::get('/friends', [UserController::class, 'friends']);
     });
 
 

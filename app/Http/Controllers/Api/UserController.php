@@ -19,7 +19,7 @@ class UserController extends Controller
     public function invites(Request $request): JsonResponse
     {
         return response()->json([
-            'invites' => $request->user()->invites
+            'paginator' => $request->user()->invites()->paginate(10)
         ]);
     }
 
@@ -27,16 +27,29 @@ class UserController extends Controller
     {
         $user = $request->user();
 
-        $suggests = User::whereNotIn('id', [$user->id, ...$user->friends->pluck('id')])
-            ->paginate(10, [
-                'id',
-                'first_name', 
-                'last_name', 
-                'profile_image'
-            ]);
+        return response()->json([
+            'paginator' => $user->whereNotIn('id', [$user->id, ...$user->friends->pluck('id')])
+                ->paginate(10, [
+                    'id',
+                    'first_name', 
+                    'last_name', 
+                    'profile_image'
+                ])
+        ]);
+    }
+
+    public function friends(Request $request): JsonResponse
+    {
+        $user = $request->user();
 
         return response()->json([
-            'paginator' => $suggests
+            'paginator' => $user->whereIn('id', $user->friends->pluck('id'))
+                ->paginate(10, [
+                    'id',
+                    'first_name', 
+                    'last_name', 
+                    'profile_image'
+                ])
         ]);
     }
     
