@@ -11,8 +11,6 @@ class UserController extends Controller
 {
     public function user(Request $request): User
     {
-        $request->user()->friends;
-        
         return $request->user();
     }
 
