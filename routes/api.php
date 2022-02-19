@@ -16,6 +16,7 @@ Route::middleware('auth:sanctum')
         Route::post('/invite', [FriendshipController::class, 'invite']);
         Route::post('/accept', [FriendshipController::class, 'accept']);
         Route::post('/reject', [FriendshipController::class, 'reject']);
+        Route::post('/destroy', [FriendshipController::class, 'destroy']);
     });
 
 Route::get('/users', [UserController::class, 'index']);

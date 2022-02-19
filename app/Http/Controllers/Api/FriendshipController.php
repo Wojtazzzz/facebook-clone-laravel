@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Friendship\AcceptRequest;
+use App\Http\Requests\Friendship\DestroyRequest;
 use App\Http\Requests\Friendship\InviteRequest;
 use App\Http\Requests\Friendship\RejectRequest;
 use App\Models\Friendship;
@@ -52,6 +53,21 @@ class FriendshipController extends Controller
             'status' => 'blocked'
         ]);
 
+        return response(status: 200);
+    }
+
+    public function destroy(DestroyRequest $request): Response | ResponseFactory
+    {
+        $data = $request->validated();
+
+        Friendship::where([
+            ['first_user', $data['user_id']],
+            ['second_user', $request->user()->id]
+        ])->orWhere([
+            ['first_user', $request->user()->id],
+            ['second_user', $data['user_id']]
+        ])->delete();
+        
         return response(status: 200);
     }
 }
