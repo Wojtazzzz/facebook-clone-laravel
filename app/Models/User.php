@@ -41,6 +41,12 @@ class User extends Authenticatable
             ->where('status', 'pending');
     }
 
+    public function invitesOf()
+    {
+        return $this->hasMany(Friendship::class, 'acted_user')
+            ->where('status', 'pending');
+    }
+
     protected function friendsOfThisUser()
 	{
 		return $this->belongsToMany(User::class, 'friendships', 'first_user', 'second_user')

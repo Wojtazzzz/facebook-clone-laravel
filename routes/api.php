@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\FriendshipController;
 use App\Http\Controllers\Api\UserController;
 use Database\Seeders\TestsSeeder;
 use Illuminate\Support\Facades\Route;
@@ -11,6 +12,8 @@ Route::middleware('auth:sanctum')
         Route::get('/invites', [UserController::class, 'invites']);
         Route::get('/suggests', [UserController::class, 'suggests']);
         Route::get('/friends', [UserController::class, 'friends']);
+
+        Route::post('/invite', [FriendshipController::class, 'invite']);
     });
 
 

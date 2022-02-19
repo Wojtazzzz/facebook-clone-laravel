@@ -3,6 +3,6 @@
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [UserController::class, 'friends']);
+Route::get('/', [UserController::class, 'invites']);
 
 require __DIR__.'/auth.php';

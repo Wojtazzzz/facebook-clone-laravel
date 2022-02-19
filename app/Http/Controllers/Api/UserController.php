@@ -26,7 +26,7 @@ class UserController extends Controller
         $user = $request->user();
 
         return response()->json([
-            'paginator' => $user->whereNotIn('id', [$user->id, ...$user->friends->pluck('id')])
+            'paginator' => $user->whereNotIn('id', [$user->id, ...$user->friends->pluck('id'), ...$request->user()->invitesOf->pluck('second_user')])
                 ->paginate(10, [
                     'id',
                     'first_name', 

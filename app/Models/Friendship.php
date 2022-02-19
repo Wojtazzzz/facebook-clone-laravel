@@ -10,8 +10,10 @@ class Friendship extends Model
 {
     use HasFactory;
 
-    protected $hidden = [
-        'updated_at',
+    protected $fillable = [
+        'first_user',
+        'second_user',
+        'acted_user',
         'status'
     ];
 
