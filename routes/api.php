@@ -14,8 +14,9 @@ Route::middleware('auth:sanctum')
         Route::get('/friends', [UserController::class, 'friends']);
 
         Route::post('/invite', [FriendshipController::class, 'invite']);
+        Route::post('/accept', [FriendshipController::class, 'accept']);
+        Route::post('/reject', [FriendshipController::class, 'reject']);
     });
-
 
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/{user}', [UserController::class, 'show']);

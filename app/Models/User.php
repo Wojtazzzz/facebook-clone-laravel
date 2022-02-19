@@ -47,6 +47,12 @@ class User extends Authenticatable
             ->where('status', 'pending');
     }
 
+    public function blocks()
+    {
+        return $this->hasMany(Friendship::class, 'second_user')
+            ->where('status', 'blocked');
+    }
+
     protected function friendsOfThisUser()
 	{
 		return $this->belongsToMany(User::class, 'friendships', 'first_user', 'second_user')
