@@ -12,6 +12,8 @@ class FriendshipController extends Controller
     public function invite(Request $request): JsonResponse
     {
         
-        return response()->json();
+        return response()->json([
+            
+        ]);
     }
 }
