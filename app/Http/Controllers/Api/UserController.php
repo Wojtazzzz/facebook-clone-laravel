@@ -17,7 +17,7 @@ class UserController extends Controller
     public function invites(Request $request): JsonResponse
     {
         return response()->json([
-            'paginator' => $request->user()->invites()->paginate(10)
+            'paginator' => User::whereIn('id', $request->user()->invites->pluck('acted_user'))->paginate(10)
         ]);
     }
 
