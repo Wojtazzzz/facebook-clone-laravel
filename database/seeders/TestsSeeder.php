@@ -51,35 +51,19 @@ class TestsSeeder extends Seeder
             'background_image' => $faker->imageUrl(850, 350)
         ]);
 
-        $userToAccept = User::create([
-            'first_name' => 'UserTo',
-            'last_name' => 'Accept',
-            'email' => 'accept@test.com',
+        $userInvitator = User::create([
+            'first_name' => 'User',
+            'last_name' => 'Invitator',
+            'email' => 'invitator@test.com',
             'password' => Hash::make('test'),
             'profile_image' => $faker->imageUrl(168, 168),
             'background_image' => $faker->imageUrl(850, 350)
         ]);
 
         Friendship::create([
-            'first_user' => $userToAccept->id,
+            'first_user' => $userInvitator->id,
             'second_user' => $testUser->id,
-            'acted_user' => $userToAccept->id,
-            'status' => 'pending'
-        ]);
-
-        $userToReject = User::create([
-            'first_name' => 'UserTo',
-            'last_name' => 'Reject',
-            'email' => 'reject@test.com',
-            'password' => Hash::make('test'),
-            'profile_image' => $faker->imageUrl(168, 168),
-            'background_image' => $faker->imageUrl(850, 350)
-        ]);
-
-        Friendship::create([
-            'first_user' => $userToReject->id,
-            'second_user' => $testUser->id,
-            'acted_user' => $userToReject->id,
+            'acted_user' => $userInvitator->id,
             'status' => 'pending'
         ]);
     }
