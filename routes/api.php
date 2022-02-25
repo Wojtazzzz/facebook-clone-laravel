@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\FriendshipController;
+use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\UserController;
 use Database\Seeders\TestsSeeder;
 use Illuminate\Support\Facades\Route;
@@ -17,6 +18,8 @@ Route::middleware('auth:sanctum')
         Route::post('/accept', [FriendshipController::class, 'accept']);
         Route::post('/reject', [FriendshipController::class, 'reject']);
         Route::post('/destroy', [FriendshipController::class, 'destroy']);
+
+        Route::get('/messages/{receiverId}', [MessageController::class, 'index'])->whereNumber('receiverId');
     });
 
 Route::get('/users', [UserController::class, 'index']);
