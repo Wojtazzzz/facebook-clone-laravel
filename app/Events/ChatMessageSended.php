@@ -2,15 +2,14 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
+use App\Models\Message;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class MessageSended
+class ChatMessageSended implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -19,8 +18,9 @@ class MessageSended
      *
      * @return void
      */
-    public function __construct()
-    {
+    public function __construct(
+        public Message $message
+    ) {
         //
     }
 
@@ -31,6 +31,6 @@ class MessageSended
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('channel-name');
+        return new PrivateChannel('messages.'. $this->message->text .'.'. $this->message->receiver_id);
     }
 }
