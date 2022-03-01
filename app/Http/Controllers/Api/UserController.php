@@ -41,10 +41,8 @@ class UserController extends Controller
         ]);
     }
 
-    public function friends(Request $request): JsonResponse
+    public function friends(User $user): JsonResponse
     {
-        $user = $request->user();
-
         return response()->json([
             'paginator' => $user->whereIn('id', $user->friends->pluck('id'))
                 ->paginate(10, [
