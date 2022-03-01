@@ -2,7 +2,6 @@
 
 namespace App\Broadcasting;
 
-use App\Models\Message;
 use App\Models\User;
 
 class ChatMessageChannel
@@ -23,12 +22,8 @@ class ChatMessageChannel
      * @param  \App\Models\User  $user
      * @return array|bool
      */
-    public function join(User $user, string $text, int $receiverId)
+    public function join(User $user, int $senderId, int $receiverId)
     {
-        return $user->id === $receiverId
-            || $user->id === Message::where([
-                ['text', $text],
-                ['sender_id', $user->id]
-            ])->value('sender_id');
+        return $user->id === $receiverId || $user->id === $senderId;
     }
 }

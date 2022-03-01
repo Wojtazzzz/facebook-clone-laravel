@@ -3,4 +3,4 @@
 use App\Broadcasting\ChatMessageChannel;
 use Illuminate\Support\Facades\Broadcast;
 
-Broadcast::channel('messages.{text}.{receiverId}', ChatMessageChannel::class);
+Broadcast::channel('messages.{senderId}.{receiverId}', ChatMessageChannel::class);
