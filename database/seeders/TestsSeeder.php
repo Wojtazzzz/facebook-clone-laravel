@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Friendship;
+use App\Models\Message;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -16,6 +17,7 @@ class TestsSeeder extends Seeder
 
         User::truncate();
         Friendship::truncate();
+        Message::truncate();
 
         $testUser = User::create([
             'first_name' => 'Jane',
