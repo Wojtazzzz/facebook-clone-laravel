@@ -23,12 +23,12 @@ class User extends Authenticatable
     ];
 
     protected $hidden = [
+        'email',
         'password',
         'remember_token',
-        'email_verified_at',
         'created_at',
         'updated_at',
-        'pivot'
+        'email_verified_at',
     ];
 
     protected $casts = [
