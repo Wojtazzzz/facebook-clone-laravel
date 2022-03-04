@@ -22,6 +22,7 @@ Route::middleware('auth:sanctum')
 
         Route::get('/messages/{receiverId}', [MessageController::class, 'index'])->whereNumber('receiverId');
         Route::post('/messages', [MessageController::class, 'store']);
+        Route::get('/messenger', [MessageController::class, 'messenger']);
     });
 
 Route::get('/users', [UserController::class, 'index']);

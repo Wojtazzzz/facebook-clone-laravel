@@ -11,12 +11,10 @@ class MessageFactory extends Factory
 {
     public function definition()
     {
-        $senderId = $this->faker->randomElement([51, 1]);
-
         return [
             'text' => $this->faker->text(50),
-            'sender_id' => $senderId,
-            'receiver_id' => ($senderId === 51) ? 1 : 51,
+            'sender_id' => 51,
+            'receiver_id' => $this->faker->numberBetween(1, 50),
             'created_at' => $this->faker->date()
         ];
     }

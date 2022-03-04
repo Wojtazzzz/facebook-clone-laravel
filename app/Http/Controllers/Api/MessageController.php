@@ -9,9 +9,14 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\ResponseFactory;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class MessageController extends Controller
 {
+    private array $messengerColumns = ['users.id', 'first_name', 'last_name', 'profile_image', 'background_image', 'messages.created_at', 'messages.text as message']; 
+
     public function index(Request $request, int $receiverId): JsonResponse
     {
         $messages = Message::where([
@@ -37,5 +42,51 @@ class MessageController extends Controller
         ]);
 
         return response(status: 201);
+    }
+
+    public function messenger(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        $user->load([
+            'messages' => function ($query) use ($user) {
+                $query
+                    ->with(['messages' => function ($subQuery) use ($user) {
+                        $subQuery
+                            ->where('receiver_id', $user->id)
+                            ->latest('messages.created_at')
+                            ->limit(1)
+                            ->select($this->messengerColumns);
+                    }])
+                    ->latest('messages.created_at')
+                    ->select($this->messengerColumns);
+            }
+        ]);
+
+        $messages = $user->messages->unique()->map(function ($item) {
+            $userMessage = $item;
+            $friendMessage = $item->messages[0] ?? null;
+
+            if (!$friendMessage || $userMessage->created_at > $friendMessage->created_at) {
+                unset($userMessage->messages);
+
+                $model = $userMessage;
+            }
+            
+            $model = $model ?? $friendMessage;
+
+            return $model->makeVisible('created_at');
+        });
+
+        return response()->json([
+            'paginator' => $this->paginate($messages, 10)
+        ]);
+    }
+
+    private function paginate($items, $perPage = 15, $page = null, $options = [])
+    {
+        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof Collection ? $items : Collection::make($items);
+        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
 }

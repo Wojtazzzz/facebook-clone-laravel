@@ -29,11 +29,23 @@ class User extends Authenticatable
         'created_at',
         'updated_at',
         'email_verified_at',
+        'pivot'
     ];
 
     protected $casts = [
-        'email_verified_at' => 'datetime'
+        'email_verified_at' => 'datetime',
+        'created_at' => 'datetime:Y-m-d H:i:s'
     ];
+
+    public function messages()
+    {
+        return $this->belongsToMany(
+            User::class, 
+            'messages',
+            'sender_id',
+            'receiver_id'
+        );
+    }
 
     public function invites()
     {
