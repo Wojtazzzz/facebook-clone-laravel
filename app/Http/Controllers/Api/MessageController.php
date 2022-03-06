@@ -5,16 +5,16 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Message\StoreRequest;
 use App\Models\Message;
+use App\Traits\CollectionPaginate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\ResponseFactory;
-use Illuminate\Support\Collection;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class MessageController extends Controller
 {
+    use CollectionPaginate;
+
     private array $messengerColumns = ['users.id', 'first_name', 'last_name', 'profile_image', 'background_image', 'messages.created_at', 'messages.text as message']; 
 
     public function index(Request $request, int $receiverId): JsonResponse
@@ -81,12 +81,5 @@ class MessageController extends Controller
         return response()->json([
             'paginator' => $this->paginate($messages, 10)
         ]);
-    }
-
-    private function paginate($items, $perPage = 15, $page = null, $options = [])
-    {
-        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
-        $items = $items instanceof Collection ? $items : Collection::make($items);
-        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
 }

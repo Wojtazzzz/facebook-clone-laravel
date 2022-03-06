@@ -5,16 +5,16 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Poke\UpdateRequest;
 use App\Models\Poke;
+use App\Traits\CollectionPaginate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Collection;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Routing\ResponseFactory;
 
 class PokeController extends Controller
 {
+    use CollectionPaginate;
+
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -46,12 +46,5 @@ class PokeController extends Controller
         ]);
 
         return response(status: 201);
-    }
-
-    private function paginate($items, $perPage = 15, $page = null, $options = [])
-    {
-        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
-        $items = $items instanceof Collection ? $items : Collection::make($items);
-        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
 }
