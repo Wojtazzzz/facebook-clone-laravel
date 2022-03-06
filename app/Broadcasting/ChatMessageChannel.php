@@ -24,6 +24,6 @@ class ChatMessageChannel
      */
     public function join(User $user, int $senderId, int $receiverId)
     {
-        return $user->id === $receiverId || $user->id === $senderId;
+        return (bool) $user->id === $receiverId || $user->id === $senderId;
     }
 }
