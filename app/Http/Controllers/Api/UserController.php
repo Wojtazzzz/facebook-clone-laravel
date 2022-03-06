@@ -41,6 +41,16 @@ class UserController extends Controller
         ]);
     }
 
+    public function pokes(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        
+        
+        return response()->json([
+        ]);
+    }
+
     public function friends(User $user): JsonResponse
     {
         return response()->json([

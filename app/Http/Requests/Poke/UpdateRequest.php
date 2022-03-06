@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Message;
+namespace App\Http\Requests\Poke;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-class StoreRequest extends FormRequest
+class UpdateRequest extends FormRequest
 {
     public function authorize()
     {
@@ -16,13 +16,7 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'text' => [
-                'required',
-                'string',
-                'max:200'
-            ],
-            
-            'receiver_id' => [
+            'user_id' => [
                 'required',
                 'integer',
                 'exists:users,id',

@@ -37,15 +37,27 @@ class User extends Authenticatable
         'created_at' => 'datetime:Y-m-d H:i:s'
     ];
 
-    public function messages()
+    public function pokedBy()
     {
         return $this->belongsToMany(
-            User::class, 
-            'messages',
-            'sender_id',
-            'receiver_id'
-        );
+            User::class,
+            'pokes',
+            'poked_id',
+            'poked_by_id'
+        )
+        ->as('pokeInfo')
+        ->withPivot('count', 'created_at');
     }
+
+    // public function messages()
+    // {
+    //     return $this->belongsToMany(
+    //         User::class, 
+    //         'messages',
+    //         'sender_id',
+    //         'receiver_id'
+    //     );
+    // }
 
     public function invites()
     {
