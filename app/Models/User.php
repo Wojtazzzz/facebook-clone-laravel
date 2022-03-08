@@ -46,18 +46,8 @@ class User extends Authenticatable
             'poked_by_id'
         )
         ->as('pokeInfo')
-        ->withPivot('count', 'created_at');
+        ->withPivot('count', 'updated_at');
     }
-
-    // public function messages()
-    // {
-    //     return $this->belongsToMany(
-    //         User::class, 
-    //         'messages',
-    //         'sender_id',
-    //         'receiver_id'
-    //     );
-    // }
 
     public function invites()
     {
