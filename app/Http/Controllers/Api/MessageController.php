@@ -54,11 +54,11 @@ class MessageController extends Controller
                     ->with(['messages' => function ($subQuery) use ($user) {
                         $subQuery
                             ->where('receiver_id', $user->id)
-                            ->latest('messages.created_at')
+                            ->latest('created_at')
                             ->limit(1)
                             ->select($this->messengerColumns);
                     }])
-                    ->latest('messages.created_at')
+                    ->latest('created_at')
                     ->select($this->messengerColumns);
             }
         ]);

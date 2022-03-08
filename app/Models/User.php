@@ -49,6 +49,16 @@ class User extends Authenticatable
         ->withPivot('count', 'updated_at');
     }
 
+    public function messages()
+    {
+        return $this->belongsToMany(
+            User::class, 
+            'messages',
+            'sender_id',
+            'receiver_id'
+        );
+    }
+
     public function invites()
     {
         return $this->hasMany(Friendship::class, 'second_user')
