@@ -7,14 +7,14 @@ use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
-class FriendshipInvitationSended extends Notification
+class FriendshipInvitationAccepted extends Notification
 {
     use Queueable;
 
     public function __construct(
         private User $initiator
     ) {
-        // 
+        //
     }
 
     public function via($notifiable)
@@ -24,8 +24,10 @@ class FriendshipInvitationSended extends Notification
 
     public function toArray($notifiable)
     {
+        info('Notifiable: '. $notifiable);
+        
         return [
-            'type' => NotificationType::FRIENDSHIP_INVITATION_SENDED,
+            'type' => NotificationType::FRIENDSHIP_INVITATION_ACCEPTED,
             'initiator' => $this->initiator
         ];
     }

@@ -10,6 +10,7 @@ use App\Http\Requests\Friendship\RejectRequest;
 use App\Models\Friendship;
 use App\Models\User;
 use App\Notifications\FriendshipInvitationSended;
+use App\Notifications\FriendshipInvitationAccepted;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 
@@ -43,6 +44,9 @@ class FriendshipController extends Controller
         ])->update([
             'status' => 'confirmed'
         ]);
+
+        User::find($data['user_id'])
+            ->notify(new FriendshipInvitationAccepted($request->user()));
 
         return response(status: 200);
     }
