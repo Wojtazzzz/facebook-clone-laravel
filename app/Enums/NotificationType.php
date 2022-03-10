@@ -1,0 +1,9 @@
+<?php
+
+namespace App\Enums;
+
+enum NotificationType: string
+{
+    case FRIENDSHIP_INVITATION_SENDED = 'FRIENDSHIP_INVITATION_SENDED';
+    case FRIENDSHIP_INVITATION_ACCEPTED = 'FRIENDSHIP_INVITATION_ACCEPTED';
+}

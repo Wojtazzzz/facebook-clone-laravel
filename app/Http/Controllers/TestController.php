@@ -8,12 +8,10 @@ class TestController extends Controller
 {
     public function __invoke()
     {
-        $user = User::with('pokedBy')->findOrFail(51);
-        
-        $i = 0;
-        foreach ($user->pokedBy as $pokedBy) {
-            echo '<br/>';
-            echo ++$i .'. '. $pokedBy->pokeInfo->count;
-        }
+        $user = User::findOrFail(21);
+
+        $notifications = $user->notifications;
+
+        return $notifications;
     }
 }

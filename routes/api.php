@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\FriendshipController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\PokeController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\NotificationController;
 use Database\Seeders\TestsSeeder;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
@@ -15,6 +16,9 @@ Route::middleware('auth:sanctum')
         Route::get('/invites', [UserController::class, 'invites']);
         Route::get('/suggests', [UserController::class, 'suggests']);
         Route::get('/friends/{user}', [UserController::class, 'friends']);
+
+        Route::get('/notifications', [NotificationController::class, 'index']);
+        Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead']);
         
         Route::get('/pokes', [PokeController::class, 'index']);
         Route::post('/pokes', [PokeController::class, 'store']);
@@ -34,13 +38,6 @@ Route::middleware('auth:sanctum')
 
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/{user}', [UserController::class, 'show']);
-
-// https://pusher.com/docs/channels/server_api/authenticating-users/#using-jsonp-in-pusher-js
-// Route::post('/broadcast', function (Request $request) {
-//     $pusher = new Pusher\Pusher(env('PUSHER_APP_KEY'), env('PUSHER_APP_SECRET'), env('PUSHER_APP_ID'));
-
-//     return $pusher->socket_auth($request->request->get('channel_name'), $request->request->get('socket_id'));
-// });
 
 
 Route::get('/tests', function () {

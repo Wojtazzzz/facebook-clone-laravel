@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Traits\CollectionPaginate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -38,16 +39,6 @@ class UserController extends Controller
                 'last_name', 
                 'profile_image'
             ])
-        ]);
-    }
-
-    public function pokes(Request $request): JsonResponse
-    {
-        $user = $request->user();
-
-        
-        
-        return response()->json([
         ]);
     }
 

@@ -8,6 +8,8 @@ use App\Http\Requests\Friendship\DestroyRequest;
 use App\Http\Requests\Friendship\InviteRequest;
 use App\Http\Requests\Friendship\RejectRequest;
 use App\Models\Friendship;
+use App\Models\User;
+use App\Notifications\FriendshipInvitationSended;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 
@@ -24,6 +26,9 @@ class FriendshipController extends Controller
             'acted_user' => $inviter_id,
             'status' => 'pending'
         ]);
+
+        User::find($data['user_id'])
+            ->notify(new FriendshipInvitationSended($request->user()));
 
         return response(status: 201);
     }

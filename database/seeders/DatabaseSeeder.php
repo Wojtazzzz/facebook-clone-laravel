@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
             FriendshipSeeder::class,
             MessageSeeder::class,
             PokeSeeder::class,
+            NotificationSeeder::class,
         ]);
     }
 }
