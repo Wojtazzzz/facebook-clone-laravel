@@ -34,10 +34,14 @@ Route::middleware('auth:sanctum')
         Route::get('/notifications', [NotificationController::class, 'index']);
         Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead']);
 
-        Route::post('/invite', [FriendshipController::class, 'invite']);
-        Route::post('/accept', [FriendshipController::class, 'accept']);
-        Route::post('/reject', [FriendshipController::class, 'reject']);
-        Route::post('/destroy', [FriendshipController::class, 'destroy']);
+        Route::controller(FriendshipController::class)
+            ->prefix('/friendship')
+            ->group(function () {
+                Route::post('/invite', 'invite');
+                Route::post('/accept', 'accept');
+                Route::post('/reject', 'reject');
+                Route::post('/destroy', 'destroy');
+            });
 
         Route::get('/messages/{receiverId}', [MessageController::class, 'index'])->whereNumber('receiverId');
         Route::post('/messages', [MessageController::class, 'store']);
