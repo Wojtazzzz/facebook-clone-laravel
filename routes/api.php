@@ -18,10 +18,16 @@ Route::middleware('auth:sanctum')
             });
 
         Route::controller(FriendshipController::class)
+            ->prefix('/friendship')
             ->group(function () {
                 Route::get('/friends/{user}', 'friends');
                 Route::get('/suggests', 'suggests');
                 Route::get('/invites', 'invites');
+                
+                Route::post('/invite', 'invite');
+                Route::post('/accept', 'accept');
+                Route::post('/reject', 'reject');
+                Route::post('/destroy', 'destroy');
             });
 
         Route::controller(PokeController::class)
@@ -35,15 +41,6 @@ Route::middleware('auth:sanctum')
             ->group(function () {
                 Route::get('/notifications', 'index');
                 Route::post('/notifications/mark-as-read', 'markAsRead');
-            });
-
-        Route::controller(FriendshipController::class)
-            ->prefix('/friendship')
-            ->group(function () {
-                Route::post('/invite', 'invite');
-                Route::post('/accept', 'accept');
-                Route::post('/reject', 'reject');
-                Route::post('/destroy', 'destroy');
             });
 
         Route::get('/messages/{receiverId}', [MessageController::class, 'index'])->whereNumber('receiverId');
