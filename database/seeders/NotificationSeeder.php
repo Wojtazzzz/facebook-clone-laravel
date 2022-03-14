@@ -15,10 +15,9 @@ class NotificationSeeder extends Seeder
         $initiator = User::findOrFail(1);
 
         Friendship::create([
-            'first_user' => $initiator->id,
-            'second_user' => $invited->id,
-            'acted_user' => $initiator->id,
-            'status' => 'pending'
+            'user_id' => $initiator->id,
+            'friend_id' => $invited->id,
+            'status' => 'PENDING'
         ]);
 
         $invited->notify(new FriendshipInvitationSended($initiator));

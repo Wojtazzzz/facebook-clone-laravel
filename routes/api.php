@@ -31,8 +31,11 @@ Route::middleware('auth:sanctum')
                 Route::post('/pokes/{poke}', 'update');
             });
 
-        Route::get('/notifications', [NotificationController::class, 'index']);
-        Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead']);
+        Route::controller(NotificationController::class)
+            ->group(function () {
+                Route::get('/notifications', 'index');
+                Route::post('/notifications/mark-as-read', 'markAsRead');
+            });
 
         Route::controller(FriendshipController::class)
             ->prefix('/friendship')
