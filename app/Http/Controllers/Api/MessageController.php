@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Message\StoreRequest;
 use App\Models\Message;
-use App\Traits\CollectionPaginate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -13,8 +12,6 @@ use Illuminate\Routing\ResponseFactory;
 
 class MessageController extends Controller
 {
-    use CollectionPaginate;
-
     private array $messengerColumns = ['users.id', 'first_name', 'last_name', 'profile_image', 'background_image', 'messages.created_at', 'messages.text as message']; 
 
     public function index(Request $request, int $receiverId): JsonResponse
@@ -22,13 +19,18 @@ class MessageController extends Controller
         $messages = Message::where([
             ['sender_id', $request->user()->id],
             ['receiver_id', $receiverId]
-        ])
-        ->orWhere([
+        ])->orWhere([
             ['sender_id', $receiverId],
             ['receiver_id', $request->user()->id],
         ])
         ->latest()
-        ->paginate(15, ['id', 'text', 'sender_id', 'receiver_id', 'created_at']);
+        ->paginate(15, [
+            'id', 
+            'text', 
+            'sender_id', 
+            'receiver_id', 
+            'created_at'
+        ]);
         
         return response()->json([
             'paginator' => $messages
