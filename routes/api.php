@@ -9,25 +9,39 @@ use Database\Seeders\TestsSeeder;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
-
 Route::middleware('auth:sanctum')
     ->group(function () {
-        Route::get('/user', [UserController::class, 'user']);
-        Route::get('/invites', [UserController::class, 'invites']);
-        Route::get('/suggests', [UserController::class, 'suggests']);
-        Route::get('/friends/{user}', [UserController::class, 'friends']);
+
+        Route::controller(UserController::class)
+            ->group(function () {
+                Route::get('/user', 'user');
+            });
+
+        Route::controller(FriendshipController::class)
+            ->group(function () {
+                Route::get('/friends/{user}', 'friends');
+                Route::get('/suggests', 'suggests');
+                Route::get('/invites', 'invites');
+            });
+
+        Route::controller(PokeController::class)
+            ->group(function () {
+                Route::get('/pokes', 'index');
+                Route::post('/pokes', 'store');
+                Route::post('/pokes/{poke}', 'update');
+            });
 
         Route::get('/notifications', [NotificationController::class, 'index']);
         Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead']);
-        
-        Route::get('/pokes', [PokeController::class, 'index']);
-        Route::post('/pokes', [PokeController::class, 'store']);
-        Route::post('/pokes/{poke}', [PokeController::class, 'update']);
 
-        Route::post('/invite', [FriendshipController::class, 'invite']);
-        Route::post('/accept', [FriendshipController::class, 'accept']);
-        Route::post('/reject', [FriendshipController::class, 'reject']);
-        Route::post('/destroy', [FriendshipController::class, 'destroy']);
+        Route::controller(FriendshipController::class)
+            ->prefix('/friendship')
+            ->group(function () {
+                Route::post('/invite', 'invite');
+                Route::post('/accept', 'accept');
+                Route::post('/reject', 'reject');
+                Route::post('/destroy', 'destroy');
+            });
 
         Route::get('/messages/{receiverId}', [MessageController::class, 'index'])->whereNumber('receiverId');
         Route::post('/messages', [MessageController::class, 'store']);

@@ -3,56 +3,17 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
-use App\Traits\CollectionPaginate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserController extends Controller
 {
-    public function user(Request $request): User
+    public function user(Request $request): JsonResource
     {
-        return $request->user();
-    }
-
-    public function invites(Request $request): JsonResponse
-    {
-        return response()->json([
-            'paginator' => User::whereIn('id', $request->user()->invites->pluck('acted_user'))->paginate(10)
-        ]);
-    }
-
-    public function suggests(Request $request): JsonResponse
-    {
-        $user = $request->user();
-
-        return response()->json([
-            'paginator' => $user->whereNotIn('id', [
-                $user->id,
-                ...$user->friends->pluck('id'),
-                ...$request->user()->invitesOf->pluck('second_user'),
-                ...$request->user()->invites->pluck('first_user'),
-                ...$request->user()->blocks->pluck('first_user')
-            ])->paginate(10, [
-                'id',
-                'first_name', 
-                'last_name', 
-                'profile_image'
-            ])
-        ]);
-    }
-
-    public function friends(User $user): JsonResponse
-    {
-        return response()->json([
-            'paginator' => $user->whereIn('id', $user->friends->pluck('id'))
-                ->paginate(10, [
-                    'id',
-                    'first_name', 
-                    'last_name', 
-                    'profile_image'
-                ])
-        ]);
+        return new UserResource($request->user());
     }
     
     public function index(): JsonResponse

@@ -9,13 +9,12 @@ class FriendshipFactory extends Factory
 {
     public function definition()
     {
-        $user_id = User::where('last_name', 'Witas')->value('id');
+        $user_id = User::findOrFail(51)->value('id');
 
         return [
-            'first_user' => $user_id,
-            'second_user' => $this->faker->unique->numberBetween(1, 20),
-            'acted_user' => $user_id,
-            'status' => 'confirmed'
+            'user_id' => $user_id,
+            'friend_id' => $this->faker->unique->numberBetween(1, 20),
+            'status' => 'CONFIRMED'
         ];
     }
 }

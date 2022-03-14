@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,10 +16,9 @@ return new class extends Migration
     {
         Schema::create('friendships', function (Blueprint $table) {
             $table->id();
-            $table->integer('first_user')->index();
-            $table->integer('second_user')->index();
-            $table->integer('acted_user')->index();
-            $table->enum('status', ['pending', 'confirmed', 'blocked']);
+            $table->foreignIdFor(User::class);
+            $table->foreignIdFor(User::class, 'friend_id');
+            $table->enum('status', ['PENDING', 'CONFIRMED', 'BLOCKED']);
             $table->timestamps();
         });
     }

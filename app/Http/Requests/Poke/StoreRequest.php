@@ -2,11 +2,12 @@
 
 namespace App\Http\Requests\Poke;
 
+use App\Rules\IsFriend;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-class UpdateRequest extends FormRequest
+class StoreRequest extends FormRequest
 {
     public function authorize()
     {
@@ -20,8 +21,10 @@ class UpdateRequest extends FormRequest
                 'required',
                 'integer',
                 'exists:users,id',
-                'exists:pokes,initiator_id',
-                Rule::notIn($this->user()->id)
+                // Cannot poke self
+                Rule::notIn([$this->user()->id]),
+                // Check user is your friend
+                new IsFriend()
             ]
         ];
     }
