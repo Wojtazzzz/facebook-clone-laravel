@@ -11,15 +11,16 @@ class UserSeeder extends Seeder
 {
     public function run()
     {
-        User::factory(50)->create();
-
         $faker = Faker::create();
 
+        User::factory(50)->create();
+
+        // Root user
         User::create([
             'first_name' => 'Marcin',
             'last_name' => 'Witas',
             'email' => 'admin@gmail.com',
-            'password' => Hash::make('admin'),
+            'password' => Hash::make('password'),
             'profile_image' => $faker->imageUrl(168, 168),
             'background_image' => $faker->imageUrl(850, 350)
         ]);

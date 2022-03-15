@@ -60,7 +60,7 @@ class FriendshipController extends Controller
     }
 
     // Send invitation to user
-    public function invite(InviteRequest $request): Response | ResponseFactory
+    public function invite(InviteRequest $request)
     {
         $data = $request->validated();
         $inviter_id = $request->user()->id;
@@ -73,12 +73,10 @@ class FriendshipController extends Controller
 
         User::find($data['user_id'])
             ->notify(new FriendshipInvitationSended($request->user()));
-
-        return response(status: 201);
     }
 
     // Accept invitation from another user
-    public function accept(AcceptRequest $request): Response | ResponseFactory
+    public function accept(AcceptRequest $request)
     {
         $data = $request->validated();
 
@@ -91,12 +89,10 @@ class FriendshipController extends Controller
 
         User::find($data['user_id'])
             ->notify(new FriendshipInvitationAccepted($request->user()));
-
-        return response();
     }
 
     // Reject invitation from another user
-    public function reject(RejectRequest $request): Response | ResponseFactory
+    public function reject(RejectRequest $request)
     {
         $data = $request->validated();
 
@@ -106,12 +102,10 @@ class FriendshipController extends Controller
         ])->update([
             'status' => 'blocked'
         ]);
-
-        return response();
     }
 
     // Remove user from friends list
-    public function destroy(DestroyRequest $request): Response | ResponseFactory
+    public function destroy(DestroyRequest $request)
     {
         $data = $request->validated();
 
@@ -122,7 +116,5 @@ class FriendshipController extends Controller
             ['user_id', $request->user()->id],
             ['friend_id', $data['user_id']]
         ])->delete();
-        
-        return response();
     }
 }

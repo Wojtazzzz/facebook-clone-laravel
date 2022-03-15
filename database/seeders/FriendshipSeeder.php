@@ -9,6 +9,7 @@ class FriendshipSeeder extends Seeder
 {
     public function run()
     {
-        Friendship::factory(20)->create();
+        // Friendships only for root user
+        Friendship::factory(30)->create();
     }
 }
