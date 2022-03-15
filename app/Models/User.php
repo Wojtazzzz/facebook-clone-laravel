@@ -73,15 +73,16 @@ class User extends Authenticatable
             ->wherePivot('status', 'BLOCKED');
     }
 
-    public function messages()
-    {
-        return $this->belongsToMany(
-            User::class, 
-            'messages',
-            'sender_id',
-            'receiver_id'
-        );
-    }
+    // SENDED MESSAGES
+    // public function messages()
+    // {
+    //     return $this->belongsToMany(
+    //         User::class, 
+    //         'messages',
+    //         'sender_id',
+    //         'receiver_id'
+    //     );
+    // }
 
     public function prunable(): Builder
     {
