@@ -43,9 +43,13 @@ Route::middleware('auth:sanctum')
                 Route::post('/notifications/mark-as-read', 'markAsRead');
             });
 
-        Route::get('/messages/{receiverId}', [MessageController::class, 'index'])->whereNumber('receiverId');
-        Route::post('/messages', [MessageController::class, 'store']);
-        Route::get('/messenger', [MessageController::class, 'messenger']);
+        Route::controller(MessageController::class)
+            ->prefix('/messages')
+            ->group(function () {
+                Route::get('/{receiverId}', 'index')->whereNumber('receiverId');
+                Route::post('/', 'store');
+                Route::get('/messenger', 'messenger');
+            });
 
         Broadcast::routes();
     });

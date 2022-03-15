@@ -4,15 +4,17 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Message\StoreRequest;
+use App\Http\Resources\MessageResource;
 use App\Models\Message;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
 use Illuminate\Routing\ResponseFactory;
 
 class MessageController extends Controller
 {
-    public function index(Request $request, int $receiverId): JsonResponse
+    public function index(Request $request, int $receiverId): JsonResource
     {
         $messages = Message::where([
             ['sender_id', $request->user()->id],
@@ -23,25 +25,20 @@ class MessageController extends Controller
         ])
         ->latest()
         ->paginate(15, [
-            'id', 
-            'text', 
-            'sender_id', 
-            'receiver_id', 
+            'id',
+            'text',
+            'sender_id',
             'created_at'
         ]);
         
-        return response()->json([
-            'paginator' => $messages
-        ]);
+        return MessageResource::collection($messages);
     }
 
-    public function store(StoreRequest $request): Response | ResponseFactory
+    public function store(StoreRequest $request)
     {
         Message::create($request->validated() + [
             'sender_id' => $request->user()->id
         ]);
-
-        return response(status: 201);
     }
 
     public function messenger(Request $request)

@@ -2,13 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\FriendshipResource;
-use App\Http\Resources\NotificationResource;
-use App\Http\Resources\PokeResource;
-use App\Http\Resources\UserResource;
-use App\Models\Friendship;
+use App\Http\Resources\MessageResource;
 use App\Models\Message;
-use App\Models\Poke;
 use App\Models\User;
 
 class TestController extends Controller
@@ -16,21 +11,24 @@ class TestController extends Controller
     public function __invoke()
     {
         $user = User::findOrFail(51);
-
-        $messages = Message::select(['receiver_id', 'sender_id', 'text', 'created_at'])
-            ->distinct(['receiver_id', 'sender_id'])
-            // ->latest()
-            ->orderBy('receiver_id')
-            ->get();
-
-        return $messages;
-
-        $messages = Message::distinct('receiver_id')
-            ->where('sender_id', $user->id)
-            ->orWhere('receiver_id', $user->id)
-            ->orderBy('receiver_id')
-            ->get();
+        $receiverId = 1;
+        
+        $messages = Message::where([
+            ['sender_id', $user->id],
+            ['receiver_id', $receiverId]
+        ])->orWhere([
+            ['sender_id', $receiverId],
+            ['receiver_id', $user->id],
+        ])
+        ->latest()
+        ->paginate(15, [
+            'id', 
+            'text', 
+            'sender_id', 
+            'receiver_id', 
+            'created_at'
+        ]);
     
-        return $messages;
+        return MessageResource::collection($messages);
     }
 }
