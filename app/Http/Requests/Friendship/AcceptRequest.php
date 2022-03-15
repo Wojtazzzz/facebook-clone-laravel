@@ -20,8 +20,8 @@ class AcceptRequest extends FormRequest
                 'required',
                 'integer',
                 'exists:users,id',
-                Rule::exists('friendships', 'acted_user')->where(function ($query) {
-                    return $query->where('second_user', $this->user()->id);
+                Rule::exists('friendships', 'user_id')->where(function ($query) {
+                    return $query->where('friend_id', $this->user()->id);
                 })
             ]
         ];

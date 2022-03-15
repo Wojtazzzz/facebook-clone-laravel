@@ -66,9 +66,8 @@ class FriendshipController extends Controller
         $inviter_id = $request->user()->id;
 
         Friendship::create([
-            'first_user' => $inviter_id,
-            'second_user' => $data['user_id'],
-            'acted_user' => $inviter_id,
+            'user_id' => $inviter_id,
+            'friend_id' => $data['user_id'],
             'status' => 'pending'
         ]);
 
