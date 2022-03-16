@@ -73,7 +73,7 @@ class FriendshipController extends Controller
 
         return response()->json([
             'data' => new UserResource($friend),
-            'message' => 'Request sended successfully' 
+            'message' => 'Request sent successfully' 
         ], 201);
     }
 
