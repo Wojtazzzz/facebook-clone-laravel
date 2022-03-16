@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
@@ -34,7 +35,6 @@ class User extends Authenticatable
         'updated_at' => 'datetime:Y-m-d h:i:s'
     ];
 
-    // friends relationships
     public function invitedFriends(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'friendships', 'user_id', 'friend_id')

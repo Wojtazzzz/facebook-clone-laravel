@@ -37,12 +37,17 @@ class MessageController extends Controller
             'sender_id' => $request->user()->id
         ]);
         
-        return response()->json(New MessageResource($message), 201);
+        return response()->json(new MessageResource($message), 201);
     }
 
-    public function messenger(): JsonResponse
+    public function messenger(Request $request): JsonResponse
     {
-        $messages = [];
+        $user = $request->user();
+
+        $messages = Message::where('sender_id', $user->id)
+            ->orWhere('receiver_id', $user->id)
+            ->groupBy('sender_id')
+            ->get();
     
         return response()->json(MessageResource::collection($messages));
     }
