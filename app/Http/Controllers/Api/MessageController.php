@@ -6,12 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Message\StoreRequest;
 use App\Http\Resources\MessageResource;
 use App\Models\Message;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 
 class MessageController extends Controller
 {
-    public function index(Request $request, int $receiverId): JsonResource
+    public function index(Request $request, int $receiverId): JsonResponse
     {
         $messages = Message::where([
             ['sender_id', $request->user()->id],
@@ -28,22 +28,22 @@ class MessageController extends Controller
             'created_at'
         ]);
         
-        return MessageResource::collection($messages);
+        return response()->json(MessageResource::collection($messages));
     }
-
-    public function store(StoreRequest $request)
+    
+    public function store(StoreRequest $request): JsonResponse
     {
-        Message::create($request->validated() + [
+        $message = Message::create($request->validated() + [
             'sender_id' => $request->user()->id
         ]);
+        
+        return response()->json(New MessageResource($message), 201);
     }
 
-    public function messenger(Request $request)
+    public function messenger(): JsonResponse
     {
-        $user = $request->user();
-
-        $user->load('messages');
+        $messages = [];
     
-        return $user;
+        return response()->json(MessageResource::collection($messages));
     }
 }

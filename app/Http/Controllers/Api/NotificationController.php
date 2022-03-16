@@ -5,27 +5,31 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Notification\MarkAsReadRequest;
 use App\Http\Resources\NotificationResource;
-use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Http\Response;
 
 class NotificationController extends Controller
 {
-    public function index(Request $request): JsonResource
+    public function index(Request $request): JsonResponse
     {
-        return NotificationResource::collection($request->user()->notifications->paginate(10));
+        $notifications = $request->user()->notifications->paginate(10);
+
+        return response()->json(NotificationResource::collection($notifications));
     }
 
-    public function markAsRead(MarkAsReadRequest $request): Response | ResponseFactory
+    public function markAsRead(MarkAsReadRequest $request): JsonResponse
     {
         $data = $request->validated();
 
-        $request->user()
+        $notifications = $request->user()
             ->notifications
-            ->whereIn('id', $data['notifications'])
-            ->markAsRead();
+            ->whereIn('id', $data['notifications']);
+        
+        $notifications->markAsRead();
 
-        return response(status: 201);
+        return response()->json([
+            'data' => NotificationResource::collection($notifications),
+            'message' => 'All notifications marked as read'
+        ]);
     }
 }

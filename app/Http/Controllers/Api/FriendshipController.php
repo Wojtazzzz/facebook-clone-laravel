@@ -12,15 +12,13 @@ use App\Models\Friendship;
 use App\Models\User;
 use App\Notifications\FriendshipInvitationSended;
 use App\Notifications\FriendshipInvitationAccepted;
-use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Http\Response;
 
 class FriendshipController extends Controller
 {
     // Load friends list
-    public function friends(User $user): JsonResource
+    public function friends(User $user): JsonResponse
     {
         $user->load(['invitedFriends', 'invitedByFriends']);
 
@@ -29,11 +27,11 @@ class FriendshipController extends Controller
             ...$user->invitedByFriends
         ])->paginate(10);
 
-        return UserResource::collection($friends);
+        return response()->json(UserResource::collection($friends));
     }
 
     // Load users which are suggests for send invitation
-    public function suggests(Request $request): JsonResource
+    public function suggests(Request $request): JsonResponse
     {
         $user = $request->user();
         
@@ -47,74 +45,95 @@ class FriendshipController extends Controller
             ...$user->sendedBlocks->pluck('id'),
         ])->paginate(10);
             
-        return UserResource::collection($users);
+        return response()->json(UserResource::collection($users));
     }
         
     // Load users which send invitations to logged user
-    public function invites(Request $request): JsonResource
+    public function invites(Request $request): JsonResponse
     {
         $user = $request->user()->load('receivedInvites');
         $users = $user->receivedInvites; 
 
-        return UserResource::collection($users->paginate(10));
+        return response()->json(UserResource::collection($users->paginate(10)));
     }
 
     // Send invitation to user
-    public function invite(InviteRequest $request)
+    public function invite(InviteRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $inviter_id = $request->user()->id;
+        $friend = User::findOrFail($data['user_id']);
 
         Friendship::create([
-            'user_id' => $inviter_id,
-            'friend_id' => $data['user_id'],
+            'user_id' => $request->user()->id,
+            'friend_id' => $friend->id,
             'status' => 'pending'
         ]);
 
-        User::find($data['user_id'])
-            ->notify(new FriendshipInvitationSended($request->user()));
+        $friend->notify(new FriendshipInvitationSended($request->user()));
+
+        return response()->json([
+            'data' => new UserResource($friend),
+            'message' => 'Request sended successfully' 
+        ], 201);
     }
 
     // Accept invitation from another user
-    public function accept(AcceptRequest $request)
+    public function accept(AcceptRequest $request): JsonResponse
     {
         $data = $request->validated();
+        $friend = User::findOrFail($data['user_id']);
 
         Friendship::where([
-            ['user_id', $data['user_id']],
+            ['user_id', $friend->id],
             ['friend_id', $request->user()->id]
         ])->update([
             'status' => 'confirmed'
         ]);
 
-        User::find($data['user_id'])
-            ->notify(new FriendshipInvitationAccepted($request->user()));
+        $friend->notify(new FriendshipInvitationAccepted($request->user()));
+
+        return response()->json([
+            'data' => new UserResource($friend),
+            'message' => 'Request accepted successfully' 
+        ], 201);
     }
 
     // Reject invitation from another user
-    public function reject(RejectRequest $request)
+    public function reject(RejectRequest $request): JsonResponse
     {
         $data = $request->validated();
+        $friend = User::findOrFail($data['user_id']);
 
         Friendship::where([
-            ['user_id', $data['user_id']],
+            ['user_id', $friend->id],
             ['friend_id', $request->user()->id]
         ])->update([
             'status' => 'blocked'
         ]);
+
+        return response()->json([
+            'data' => new UserResource($friend),
+            'message' => 'Request rejected successfully' 
+        ], 201);
     }
 
     // Remove user from friends list
-    public function destroy(DestroyRequest $request)
+    public function destroy(DestroyRequest $request): JsonResponse
     {
         $data = $request->validated();
+        $friend = User::findOrFail($data['user_id']);
 
         Friendship::where([
-            ['user_id', $data['user_id']],
+            ['user_id', $friend->id],
             ['friend_id', $request->user()->id]
         ])->orWhere([
             ['user_id', $request->user()->id],
-            ['friend_id', $data['user_id']]
+            ['friend_id', $friend->id]
         ])->delete();
+
+        return response()->json([
+            'data' => new UserResource($friend),
+            'message' => 'Friendship destroyed'
+        ], 201);
     }
 }
