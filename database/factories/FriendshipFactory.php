@@ -12,8 +12,8 @@ class FriendshipFactory extends Factory
         $rootUserId = User::where('last_name', 'Witas')->value('id');
 
         return [
-            'user_id' => $rootUserId,
-            'friend_id' => $this->faker->unique->numberBetween(1, 30),
+            'user_id' => $this->faker->unique->numberBetween(1, 100),
+            'friend_id' => $rootUserId,
             'status' => $this->faker->randomElement(['CONFIRMED', 'PENDING', 'BLOCKED'])
         ];
     }

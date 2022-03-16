@@ -13,7 +13,7 @@ class UserSeeder extends Seeder
     {
         $faker = Faker::create();
 
-        User::factory(50)->create();
+        User::factory(150)->create();
 
         // Root user
         User::create([

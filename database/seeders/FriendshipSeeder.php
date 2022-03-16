@@ -10,6 +10,6 @@ class FriendshipSeeder extends Seeder
     public function run()
     {
         // Friendships only for root user
-        Friendship::factory(30)->create();
+        Friendship::factory(100)->create();
     }
 }
