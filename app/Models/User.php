@@ -2,18 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Prunable, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
         'first_name',
@@ -71,15 +69,5 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(User::class, 'friendships', 'user_id', 'friend_id')
             ->wherePivot('status', 'BLOCKED');
-    }
-
-    public function prunable(): Builder
-    {
-        return static::where('created_at', '<=', now()->subDays(10));
-    }
-
-    protected function pruning()
-    {
-        // delete data which user created...
     }
 }
