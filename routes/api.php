@@ -5,7 +5,6 @@ use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\PokeController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\NotificationController;
-use Database\Seeders\TestsSeeder;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
@@ -56,11 +55,3 @@ Route::middleware('auth:sanctum')
 
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/{user}', [UserController::class, 'show']);
-
-
-Route::get('/tests', function () {
-    $seeder = new TestsSeeder();
-    $seeder->run();
-
-    return response()->json('Success');
-});
