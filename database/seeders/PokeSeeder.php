@@ -9,6 +9,6 @@ class PokeSeeder extends Seeder
 {
     public function run()
     {
-        Poke::factory(5)->create();
+        Poke::factory(30)->create();
     }
 }
