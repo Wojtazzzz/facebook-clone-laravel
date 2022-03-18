@@ -12,7 +12,7 @@ class MessageFactory extends Factory
         $rootUserId = User::where('last_name', 'Witas')->value('id');
 
         return [
-            'text' => $this->faker->text(50),
+            'text' => $this->faker->text(20),
             'sender_id' => $rootUserId,
             'receiver_id' => $this->faker->numberBetween(1, 50),
         ];

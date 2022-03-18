@@ -11,12 +11,8 @@ class TestController extends Controller
     {
         $user = User::findOrFail(51);
 
-        $messages = Message::where('sender_id', $user->id)
-            ->orWhere('receiver_id', $user->id)
-            ->orderBy('receiver_id')
-            ->get();
-
-        $messages->unique(['receiver_id', 'sender_id']);
+        $messages = Message::where('sender_id', 94)
+            ->orWhere('receiver_id', 94)->count();
 
         return $messages;
     }

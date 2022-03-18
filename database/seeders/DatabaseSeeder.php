@@ -16,15 +16,15 @@ class DatabaseSeeder extends Seeder
         User::truncate();
         Friendship::truncate();
         Poke::truncate();
-        Message::truncate();
         DB::table('notifications')->truncate();
+        Message::truncate();
 
         $this->call([
             UserSeeder::class,
             FriendshipSeeder::class,
             PokeSeeder::class,
-            MessageSeeder::class,
             NotificationSeeder::class,
+            MessageSeeder::class,
         ]);
     }
 }
