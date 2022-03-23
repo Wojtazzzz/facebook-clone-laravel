@@ -2,10 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
@@ -34,6 +33,29 @@ class User extends Authenticatable
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d h:i:s'
     ];
+
+    protected function lastConversationMessage(): Attribute
+    {
+        return new Attribute(function () {
+            if ($this->messages[0]->pivot->created_at > $this->theMessages[0]->pivot->created_at) {
+                return $this->messages[0];
+            } else  {
+                return $this->theMessages[0];
+            }
+        });
+    }
+    
+    public function sendedMessages(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'messages', 'sender_id', 'receiver_id')
+            ->withPivot(['id', 'text', 'created_at']);
+    }
+
+    public function receivedMessages(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'messages', 'receiver_id', 'sender_id')
+            ->withPivot(['id', 'text', 'created_at']);
+    }
 
     public function invitedFriends(): BelongsToMany
     {

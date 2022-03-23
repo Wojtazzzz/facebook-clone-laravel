@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Message\StoreRequest;
 use App\Http\Resources\MessageResource;
+use App\Http\Resources\MessengerNotificationResource;
 use App\Models\Message;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -44,11 +46,47 @@ class MessageController extends Controller
     {
         $user = $request->user();
 
-        $messages = Message::where('sender_id', $user->id)
-            ->orWhere('receiver_id', $user->id)
-            ->groupBy('sender_id')
-            ->get();
+        $users = User::with(['sendedMessages', 'receivedMessages'])
+        // ->with([
+        //     'sendedMessages' => fn($query) => $query
+        //         ->where('messages.sender_id', $user->id)
+        //         ->orWhere('messages.receiver_id', $user->id)
+        //         ->select(['users.id', 'first_name', 'last_name', 'profile_image'])
+        //         ->latest('messages.created_at'),
+
+        //     'receivedMessages' => fn($query) => $query
+        //         ->where('messages.sender_id', $user->id)
+        //         ->orWhere('messages.receiver_id', $user->id)
+        //         ->select(['users.id', 'first_name', 'last_name', 'profile_image'])
+        //         ->latest('messages.created_at')
+        // ])
+        ->whereNotId(fn ($query) => $query->where('users.id', $user->id))
+        ->whereHas('sendedMessages', fn($query) => $query
+            ->where('messages.receiver_id', $user->id)
+            ->orWhere('messages.sender_id', $user->id)
+        )
+        ->orWhereHas('receivedMessages', fn ($query) => $query
+            ->where('messages.receiver_id', $user->id)
+            ->orWhere('messages.sender_id', $user->id)
+        )
+
+        ->join('messages', fn ($join) => $join
+            ->on('users.id', 'messages.sender_id')
+            ->orOn('users.id', 'messages.receiver_id')
+        )
+        ->latest('messages.created_at')
+        ->paginate(10, [
+            'messages.id',
+            'messages.text',
+            'messages.created_at',
+            'users.id as friend_id',
+            'users.first_name',
+            'users.last_name',
+            'users.profile_image',
+        ]);
+
+        $users->unique('friend_id');
     
-        return response()->json(MessageResource::collection($messages));
+        return response()->json(MessengerNotificationResource::collection($users));
     }
 }
