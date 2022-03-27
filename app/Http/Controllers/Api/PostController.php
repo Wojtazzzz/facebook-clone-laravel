@@ -1,17 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
-use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
-class TestController extends Controller
+class PostController extends Controller
 {
-    public function __invoke()
+    public function index(Request $request): JsonResponse
     {
-        $user = User::firstWhere('last_name', 'Witas');
-        
+        $user = $request->user();
+
         $friendsId = collect([
             ...$user->invitedFriends->pluck('id'),
             ...$user->invitedByFriends->pluck('id')

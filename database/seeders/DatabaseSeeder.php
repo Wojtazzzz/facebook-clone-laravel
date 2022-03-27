@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             PokeSeeder::class,
             NotificationSeeder::class,
             MessageSeeder::class,
+            PostSeeder::class,
         ]);
     }
 }

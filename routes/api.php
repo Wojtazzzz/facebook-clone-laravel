@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\PokeController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\PostController;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
@@ -48,6 +49,12 @@ Route::middleware('auth:sanctum')
                 Route::get('/{receiverId}', 'index')->whereNumber('receiverId');
                 Route::post('/', 'store');
                 Route::get('/messenger', 'messenger');
+            });
+
+        Route::controller(PostController::class)
+            ->prefix('/posts')
+            ->group(function () {
+                Route::get('/', 'index');
             });
 
         Broadcast::routes();
