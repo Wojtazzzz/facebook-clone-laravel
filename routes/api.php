@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\FriendshipController;
+use App\Http\Controllers\Api\LikeController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\PokeController;
 use App\Http\Controllers\Api\UserController;
@@ -55,6 +56,13 @@ Route::middleware('auth:sanctum')
             ->prefix('/posts')
             ->group(function () {
                 Route::get('/', 'index');
+            });
+
+        Route::controller(LikeController::class)
+            ->prefix('/likes')
+            ->group(function () {
+                Route::post('/', 'store');
+                Route::delete('/{post}', 'destroy');
             });
 
         Broadcast::routes();

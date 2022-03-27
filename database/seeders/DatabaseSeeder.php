@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Friendship;
+use App\Models\Like;
 use App\Models\Message;
 use App\Models\Poke;
 use App\Models\Post;
@@ -20,6 +21,7 @@ class DatabaseSeeder extends Seeder
         DB::table('notifications')->truncate();
         Message::truncate();
         Post::truncate();
+        Like::truncate();
 
         $this->call([
             UserSeeder::class,
@@ -28,6 +30,7 @@ class DatabaseSeeder extends Seeder
             NotificationSeeder::class,
             MessageSeeder::class,
             PostSeeder::class,
+            LikeSeeder::class,
         ]);
     }
 }
