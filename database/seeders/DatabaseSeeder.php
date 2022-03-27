@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Friendship;
 use App\Models\Message;
 use App\Models\Poke;
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,7 @@ class DatabaseSeeder extends Seeder
         Poke::truncate();
         DB::table('notifications')->truncate();
         Message::truncate();
+        Post::truncate();
 
         $this->call([
             UserSeeder::class,

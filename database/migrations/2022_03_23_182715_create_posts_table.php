@@ -17,6 +17,7 @@ return new class extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->text('content');
+            $table->json('images')->nullable();
             $table->foreignIdFor(User::class, 'author_id');
             $table->timestamps();
         });

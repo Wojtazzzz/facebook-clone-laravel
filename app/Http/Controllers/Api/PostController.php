@@ -25,6 +25,7 @@ class PostController extends Controller
             ->paginate(15, [
                 'id',
                 'content',
+                'images',
                 'author_id',
                 'created_at',
                 'updated_at'

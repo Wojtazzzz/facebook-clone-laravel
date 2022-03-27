@@ -15,6 +15,10 @@ class Post extends Model
         'author_id'
     ];
 
+    protected $casts = [
+        'images' => 'array'
+    ];
+
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id', 'id');
