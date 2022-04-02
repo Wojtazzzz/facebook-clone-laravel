@@ -56,6 +56,7 @@ Route::middleware('auth:sanctum')
             ->prefix('/posts')
             ->group(function () {
                 Route::get('/', 'index');
+                Route::post('/', 'store');
             });
 
         Route::controller(LikeController::class)
