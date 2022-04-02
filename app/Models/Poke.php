@@ -17,10 +17,6 @@ class Poke extends Model
         'count'
     ];
 
-    protected $casts = [
-        'updated_at' => 'datetime:Y-m-d h:i:s'
-    ];
-
     public function initiator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'initiator_id', 'id');
