@@ -2,19 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\PostResource;
-use App\Models\Like;
-use App\Models\Post;
 use App\Models\User;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Database\Eloquent\Builder;
 
 class TestController extends Controller
 {
     public function __invoke()
     {
         $user = User::firstWhere('last_name', 'Witas');
-        $post = Post::findOrFail(124);
 
-        return Gate::authorize('create', [Like::class, $post]);
+        $friends = User::query()
+            ->whereHas('invitedByFriends', fn(Builder $query) => $query
+                    ->where('user_id', $user->id)
+                    ->orWhere('friend_id', $user->id)
+            )
+            ->orWhereHas('invitedFriends', fn(Builder $query) => $query
+                    ->where('user_id', $user->id)
+                    ->orWhere('friend_id', $user->id)
+            )
+            ->inRandomOrder()
+            ->paginate(10);
+
+        return $friends;
     }
 }
