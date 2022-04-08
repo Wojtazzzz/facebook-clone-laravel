@@ -14,14 +14,17 @@ class LikeController extends Controller
     public function store(StoreRequest $request)
     {
         $user = $request->user();
+        $data = $request->validated();
 
-        $like = Like::create($request->validated() + [
-            'user_id' => $user->id
+        Like::create($data + [
+            'user_id' => $user->id,
         ]);
 
+        $post = Post::with('likes')->findOrFail($data['post_id']);
+
         return response()->json([
-            'data' => new LikeResource($like),
-            'message' => 'Post was liked' 
+            'data'    => new LikeResource($post->likes->count()),
+            'message' => 'Post was liked',
         ], 201);
     }
 
@@ -32,8 +35,11 @@ class LikeController extends Controller
             ['post_id', $post->id],
         ])->delete();
 
+        $post = Post::with('likes')->findOrFail($post->id);
+
         return response()->json([
-            'message' => 'Post was unliked' 
+            'data'    => new LikeResource($post->likes->count()),
+            'message' => 'Post was unliked',
         ], 201);
     }
 }
