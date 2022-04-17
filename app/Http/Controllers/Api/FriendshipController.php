@@ -89,10 +89,7 @@ class FriendshipController extends Controller
 
         $friend->notify(new FriendshipInvitationAccepted($request->user()));
 
-        return response()->json([
-            'data' => new UserResource($friend),
-            'message' => 'Request accepted successfully' 
-        ], 201);
+        return response()->json(new UserResource($friend), 201);
     }
 
     // Reject invitation from another user
@@ -108,10 +105,7 @@ class FriendshipController extends Controller
             'status' => 'blocked'
         ]);
 
-        return response()->json([
-            'data' => new UserResource($friend),
-            'message' => 'Request rejected successfully' 
-        ], 201);
+        return response()->json(new UserResource($friend), 201);
     }
 
     // Remove user from friends list
