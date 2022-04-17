@@ -71,10 +71,7 @@ class FriendshipController extends Controller
 
         $friend->notify(new FriendshipInvitationSended($request->user()));
 
-        return response()->json([
-            'data' => new UserResource($friend),
-            'message' => 'Request sent successfully' 
-        ], 201);
+        return response()->json(new UserResource($friend), 201);
     }
 
     // Accept invitation from another user
@@ -131,9 +128,6 @@ class FriendshipController extends Controller
             ['friend_id', $friend->id]
         ])->delete();
 
-        return response()->json([
-            'data' => new UserResource($friend),
-            'message' => 'Friendship destroyed'
-        ], 201);
+        return response()->json(new UserResource($friend), 201);
     }
 }
