@@ -46,19 +46,19 @@ class UserSeeder extends Seeder
 
         Message::factory(100, [
             'sender_id' => $user->id
-        ]);
+        ])->create();
 
         Message::factory(100, [
             'receiver_id' => $user->id
-        ]);
+        ])->create();
 
         Poke::factory(10, [
             'initiator_id' => $user->id
-        ]);
+        ])->create();
 
         Poke::factory(10, [
             'poked_id' => $user->id
-        ]);
+        ])->create();
     }
 
     private function numberFromRangeWithNot(int $min, int $max, int $exception): int
