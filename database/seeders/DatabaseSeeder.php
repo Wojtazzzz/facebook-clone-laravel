@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
+    private int $fakeUsersCount = 300;
+
     public function run()
     {
         User::truncate();
@@ -23,14 +25,14 @@ class DatabaseSeeder extends Seeder
         Post::truncate();
         Like::truncate();
 
+        User::factory(floor($this->fakeUsersCount))->create();
+        Post::factory(floor($this->fakeUsersCount * 2))->create();
+        Like::factory(floor($this->fakeUsersCount * 3))->create();
+        Message::factory(floor($this->fakeUsersCount * 4))->create();
+        Poke::factory(floor($this->fakeUsersCount / 3))->create();
+
         $this->call([
-            UserSeeder::class,
-            FriendshipSeeder::class,
-            PokeSeeder::class,
-            NotificationSeeder::class,
-            MessageSeeder::class,
-            PostSeeder::class,
-            LikeSeeder::class,
+            UserSeeder::class, // Root user 
         ]);
     }
 }

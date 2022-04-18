@@ -9,11 +9,12 @@ class PokeFactory extends Factory
 {
     public function definition()
     {
-        $rootUserId = User::where('last_name', 'Witas')->value('id');
+        $usersCount = User::count();
 
         return [
-            'initiator_id' => $this->faker->numberBetween(1, 50),
-            'poked_id' => $rootUserId
+            'initiator_id' => $this->faker->numberBetween(1, floor(($usersCount - 1) / 2)),
+            'poked_id' => $this->faker->numberBetween(floor(($usersCount + 1) / 2), $usersCount),
+            'count' => $this->faker->numberBetween(1, 999)
         ];
     }
 }

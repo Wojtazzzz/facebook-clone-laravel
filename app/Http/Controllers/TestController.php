@@ -2,27 +2,41 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Poke;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
+use Faker\Generator as Faker;
+use Illuminate\Foundation\Testing\WithFaker;
 
 class TestController extends Controller
 {
+    use WithFaker;
+
+    public function __construct()
+    {
+        $this->setUpFaker();    
+    }
+
     public function __invoke()
     {
         $user = User::firstWhere('last_name', 'Witas');
 
-        $friends = User::query()
-            ->whereHas('invitedByFriends', fn(Builder $query) => $query
-                    ->where('user_id', $user->id)
-                    ->orWhere('friend_id', $user->id)
-            )
-            ->orWhereHas('invitedFriends', fn(Builder $query) => $query
-                    ->where('user_id', $user->id)
-                    ->orWhere('friend_id', $user->id)
-            )
-            ->inRandomOrder()
-            ->paginate(10);
+        // for ($i = 1; $i <= Poke::count(); $i++) { 
+        //     $poke = Poke::findOrFail($i);
 
-        return $friends;
+        //     $searched = Poke::where([
+        //         ['initiator_id', $poke->initiator_id],
+        //         ['poked_id', $poke->poked_id]
+        //     ])->orWhere([
+        //         ['initiator_id', $poke->poked_id],
+        //         ['poked_id', $poke->initiator_id]
+        //     ])->get();
+
+        //     if (count($searched) > 1) {
+        //         dump($searched);
+        //         return 'DUPA';
+        //     } 
+        // }
+
+        dd($this->faker->dateTimeBetween('-22 years'));
     }
 }

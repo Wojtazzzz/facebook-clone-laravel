@@ -2,27 +2,46 @@
 
 namespace Database\Seeders;
 
+use App\Models\Friendship;
+use App\Models\Like;
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
-use Faker\Factory as Faker;
+use Illuminate\Foundation\Testing\WithFaker;
 
 class UserSeeder extends Seeder
 {
+    use WithFaker;
+
+    public function __construct()
+    {
+        $this->setUpFaker();
+    }
+
     public function run()
     {
-        $faker = Faker::create();
+        $user = User::factory()
+            ->has(Post::factory(20)
+                ->has(Like::factory(10))
+            )
+            ->createOne();
+        
+        Friendship::factory(50, [
+            'user_id' => $user->id
+        ])->create();
 
-        User::factory(80)->create();
+        Friendship::factory(50, [
+            'friend_id' => $user->id
+        ])->create();
+    }
 
-        // Root user
-        User::create([
-            'first_name' => 'Marcin',
-            'last_name' => 'Witas',
-            'email' => 'admin@gmail.com',
-            'password' => Hash::make('password'),
-            'profile_image' => $faker->imageUrl(168, 168),
-            'background_image' => $faker->imageUrl(850, 350)
-        ]);
+    private function numberFromRangeWithNot(int $min, int $max, int $exception): int
+    {
+        do {
+            $randomNumber = $this->faker()->numberBetween($min, $max);
+
+        } while ($randomNumber === $exception);
+
+        return $randomNumber;
     }
 }

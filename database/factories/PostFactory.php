@@ -2,14 +2,13 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PostFactory extends Factory
 {
     public function definition()
     {
-        $date = $this->faker->date;
-
         $images = $this->faker->randomElement([
             null,
             ['https://via.placeholder.com/850x350.png/0044cc?text=suscipit'],
@@ -18,10 +17,12 @@ class PostFactory extends Factory
             ['https://via.placeholder.com/850x350.png/0044cc?text=suscipit', 'https://via.placeholder.com/850x350.png/0044cc?text=suscipit', 'https://via.placeholder.com/850x350.png/0044cc?text=suscipit', 'https://via.placeholder.com/850x350.png/0044cc?text=suscipit', 'https://via.placeholder.com/850x350.png/0044cc?text=suscipit'],
         ]);
 
+        $date = $this->faker->date;
+
         return [
             'content' => $this->faker->text,
             'images' => $images,
-            'author_id' => $this->faker->numberBetween(1, 30),
+            'author_id' => $this->faker->numberBetween(1, User::count()),
             'created_at' => $date,
             'updated_at' => $date
         ];

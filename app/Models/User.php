@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
@@ -43,6 +44,16 @@ class User extends Authenticatable
                 return $this->theMessages[0];
             }
         });
+    }
+
+    public function pokedUsers(): HasMany
+    {
+        return $this->hasMany(Poke::class, 'initiator_id', 'id');
+    }
+
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class, 'author_id', 'id');
     }
     
     public function sendedMessages(): BelongsToMany
