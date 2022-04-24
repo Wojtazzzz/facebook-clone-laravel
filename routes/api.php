@@ -32,16 +32,18 @@ Route::middleware('auth:sanctum')
             });
 
         Route::controller(PokeController::class)
+            ->prefix('/pokes')
             ->group(function () {
-                Route::get('/pokes', 'index');
-                Route::post('/pokes', 'store');
-                Route::post('/pokes/{poke}', 'update');
+                Route::get('/', 'index');
+                Route::post('/', 'store');
+                Route::post('/{poke}', 'update');
             });
 
         Route::controller(NotificationController::class)
+            ->prefix('/notifications')
             ->group(function () {
-                Route::get('/notifications', 'index');
-                Route::post('/notifications/mark-as-read', 'markAsRead');
+                Route::get('/', 'index');
+                Route::post('/mark-as-read', 'markAsRead');
             });
 
         Route::controller(MessageController::class)
