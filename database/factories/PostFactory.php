@@ -10,7 +10,7 @@ class PostFactory extends Factory
     public function definition()
     {
         $images = $this->faker->randomElement([
-            null,
+            [],
             ['https://via.placeholder.com/850x350.png/0044cc?text=suscipit'],
             ['https://via.placeholder.com/850x350.png/0088dd?text=qui'],
             ['https://via.placeholder.com/850x350.png/0044cc?text=suscipit', 'https://via.placeholder.com/850x350.png/0044cc?text=suscipit', 'https://via.placeholder.com/850x350.png/0044cc?text=suscipit'],
