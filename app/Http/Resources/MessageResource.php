@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class MessageResource extends JsonResource
 {
@@ -11,7 +12,7 @@ class MessageResource extends JsonResource
         return [
             'id' => $this->id,
             'text' => $this->text,
-            'sender_id' => $this->sender_id,
+            'isReceived' => $this->sender_id !== Auth::user()->id,
             'created_at' => $this->created_at
         ];
     }

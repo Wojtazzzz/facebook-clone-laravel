@@ -23,13 +23,13 @@ class MessageController extends Controller
             ['sender_id', $receiverId],
             ['receiver_id', $request->user()->id],
         ])
-            ->latest()
-            ->paginate(15, [
-                'id',
-                'text',
-                'sender_id',
-                'created_at',
-            ]);
+        ->latest()
+        ->paginate(15, [
+            'id',
+            'text',
+            'sender_id',
+            'created_at',
+        ]);
 
         return response()->json(MessageResource::collection($messages));
     }
@@ -49,12 +49,12 @@ class MessageController extends Controller
 
         $friends = User::query()
             ->whereHas('invitedByFriends', fn(Builder $query) => $query
-                    ->where('user_id', $user->id)
-                    ->orWhere('friend_id', $user->id)
+                ->where('user_id', $user->id)
+                ->orWhere('friend_id', $user->id)
             )
             ->orWhereHas('invitedFriends', fn(Builder $query) => $query
-                    ->where('user_id', $user->id)
-                    ->orWhere('friend_id', $user->id)
+                ->where('user_id', $user->id)
+                ->orWhere('friend_id', $user->id)
             )
             ->inRandomOrder()
             ->paginate(10);
