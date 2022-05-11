@@ -24,6 +24,7 @@ class PostController extends Controller
         $posts = Post::with('author:id,first_name,last_name,profile_image,background_image')
             ->withCount([
                 'likes',
+                'comments' => fn($query) => $query->where('resource', 'POST'),
                 'likes as isLiked' => fn($query) => $query->where('user_id', $user->id)
             ])
             ->whereIn('author_id', $authorsId)

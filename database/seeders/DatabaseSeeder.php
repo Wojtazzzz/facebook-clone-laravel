@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Comment;
 use App\Models\Friendship;
 use App\Models\Like;
 use App\Models\Message;
@@ -24,15 +25,17 @@ class DatabaseSeeder extends Seeder
         Message::truncate();
         Post::truncate();
         Like::truncate();
+        Comment::truncate();
 
         User::factory(floor($this->fakeUsersCount))->create();
         Post::factory(floor($this->fakeUsersCount * 2))->create();
         Like::factory(floor($this->fakeUsersCount * 3))->create();
         Message::factory(floor($this->fakeUsersCount * 4))->create();
         Poke::factory(floor($this->fakeUsersCount / 3))->create();
+        Comment::factory(1000)->create();
 
         $this->call([
-            UserSeeder::class, // Root user 
+            UserSeeder::class, // Root user
         ]);
     }
 }

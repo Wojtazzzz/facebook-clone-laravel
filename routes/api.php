@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\FriendshipController;
 use App\Http\Controllers\Api\LikeController;
 use App\Http\Controllers\Api\MessageController;
@@ -12,7 +13,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')
     ->group(function () {
-
         Route::controller(UserController::class)
             ->group(function () {
                 Route::get('/user', 'user');
@@ -66,6 +66,14 @@ Route::middleware('auth:sanctum')
             ->group(function () {
                 Route::post('/', 'store');
                 Route::delete('/{post}', 'destroy');
+            });
+
+        Route::controller(CommentController::class)
+            ->group(function () {
+                Route::get('/posts/{resourceId}/comments', 'index');
+                Route::post('/posts/{resourceId}/comments', 'store');
+                Route::put('/posts/{resourceId}/comments/{comment}', 'update');
+                Route::delete('/posts/{resourceId}/comments/{comment}', 'destroy');
             });
 
         Broadcast::routes();
