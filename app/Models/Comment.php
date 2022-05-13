@@ -27,6 +27,8 @@ class Comment extends Model
         parent::boot();
 
         self::creating(function ($model) {
+            if (!auth()->check()) return;
+
             $model->author_id = auth()->user()->id;
         });
     }
