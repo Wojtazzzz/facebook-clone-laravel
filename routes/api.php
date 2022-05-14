@@ -59,6 +59,7 @@ Route::middleware('auth:sanctum')
             ->group(function () {
                 Route::get('/', 'index');
                 Route::post('/', 'store');
+                Route::delete('/{post}', 'destroy');
             });
 
         Route::controller(LikeController::class)

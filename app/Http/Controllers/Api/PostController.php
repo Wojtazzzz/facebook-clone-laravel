@@ -8,6 +8,7 @@ use App\Http\Resources\PostResource;
 use App\Models\Post;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class PostController extends Controller
 {
@@ -65,5 +66,14 @@ class PostController extends Controller
             'data' => new PostResource($post),
             'message' => 'Post was created'
         ]);
+    }
+
+    public function destroy(Post $post): Response
+    {
+        $this->authorize('delete', [Post::class, $post]);
+        
+        $post->delete();
+
+        return response()->noContent();
     }
 }
