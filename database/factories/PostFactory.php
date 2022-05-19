@@ -9,12 +9,14 @@ class PostFactory extends Factory
 {
     public function definition()
     {
+        $this->faker->addProvider(new \Mmo\Faker\PicsumProvider($this->faker));
+
         $images = $this->faker->randomElement([
             [],
-            ['https://via.placeholder.com/850x350.png/0044cc?text=suscipit'],
-            ['https://via.placeholder.com/850x350.png/0088dd?text=qui'],
-            ['https://via.placeholder.com/850x350.png/0044cc?text=suscipit', 'https://via.placeholder.com/850x350.png/0044cc?text=suscipit', 'https://via.placeholder.com/850x350.png/0044cc?text=suscipit'],
-            ['https://via.placeholder.com/850x350.png/0044cc?text=suscipit', 'https://via.placeholder.com/850x350.png/0044cc?text=suscipit', 'https://via.placeholder.com/850x350.png/0044cc?text=suscipit', 'https://via.placeholder.com/850x350.png/0044cc?text=suscipit', 'https://via.placeholder.com/850x350.png/0044cc?text=suscipit'],
+            [$this->faker->picsumUrl(850, 350)],
+            [$this->faker->picsumUrl(850, 350)],
+            [$this->faker->picsumUrl(850, 350), $this->faker->picsumUrl(850, 350), $this->faker->picsumUrl(850, 350)],
+            [$this->faker->picsumUrl(850, 350), $this->faker->picsumUrl(850, 350), $this->faker->picsumUrl(850, 350), $this->faker->picsumUrl(850, 350), $this->faker->picsumUrl(850, 350)],
         ]);
 
         $date = $this->faker->date;

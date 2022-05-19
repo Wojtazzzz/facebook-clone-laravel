@@ -23,6 +23,8 @@ class UserSeeder extends Seeder
 
     public function run()
     {
+        $this->faker->addProvider(new \Mmo\Faker\PicsumProvider($this->faker));
+        
         $user = User::factory()
             ->has(Post::factory(20)
                 ->has(Like::factory(10))
@@ -32,8 +34,8 @@ class UserSeeder extends Seeder
                 'last_name' => 'Witas',
                 'email' => 'admin@gmail.com',
                 'password' => Hash::make('password'),
-                'profile_image' => $this->faker->imageUrl(168, 168),
-                'background_image' => $this->faker->imageUrl(850, 350)
+                'profile_image' => $this->faker->picsumUrl(168, 168),
+                'background_image' => $this->faker->picsumUrl(850, 350)
             ]);
 
         Friendship::factory(50, [
