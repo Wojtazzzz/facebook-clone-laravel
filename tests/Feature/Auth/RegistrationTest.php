@@ -8,7 +8,7 @@ class RegistrationTest extends TestCase
 {
     public function test_user_can_register()
     {
-        $response = $this->post('/register');
+        $response = $this->postJson('/register');
 
         $this->assertAuthenticated();
         $response->assertNoContent();

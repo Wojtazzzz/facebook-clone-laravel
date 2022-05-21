@@ -11,7 +11,7 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->post('/login', [
+        $response = $this->postJson('/login', [
             'email' => $user->email,
             'password' => 'password',
         ]);
@@ -24,20 +24,23 @@ class AuthenticationTest extends TestCase
     {
         User::factory()->create();
         
-        $response = $this->post('/login', [
+        $response = $this->postJson('/login', [
             'email' => 'not_email',
             'password' => 'password',
         ]);
 
         $this->assertGuest();
-        $response->assertSessionHasErrors('email');
+
+        $response->assertJson([
+            'message' => 'The email must be a valid email address.'
+        ]);
     }
 
     public function test_user_can_not_authenticate_with_invalid_password()
     {
         $user = User::factory()->create();
 
-        $this->post('/login', [
+        $this->postJson('/login', [
             'email' => $user->email,
             'password' => 'wrong-password',
         ]);
@@ -49,7 +52,7 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $this->post('/login', [
+        $this->postJson('/login', [
             'email' => $user->email
         ]);
 
@@ -60,8 +63,8 @@ class AuthenticationTest extends TestCase
     {
         User::factory()->create();
 
-        $this->post('/login', [
-            'password' => 'password'
+        $this->postJson('/login', [
+            'postJson' => 'password'
         ]);
 
         $this->assertGuest();
@@ -71,9 +74,8 @@ class AuthenticationTest extends TestCase
     {
         User::factory()->create();
 
-        $this->post('/login');
+        $this->postJson('/login');
 
         $this->assertGuest();
     }
-
 }
