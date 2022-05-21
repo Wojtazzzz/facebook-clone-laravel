@@ -70,11 +70,12 @@ Route::middleware('auth:sanctum')
             });
 
         Route::controller(CommentController::class)
+            ->prefix('/posts/{resourceId}')
             ->group(function () {
-                Route::get('/posts/{resourceId}/comments', 'index');
-                Route::post('/posts/{resourceId}/comments', 'store');
-                Route::put('/posts/{resourceId}/comments/{comment}', 'update');
-                Route::delete('/posts/{resourceId}/comments/{comment}', 'destroy');
+                Route::get('/comments', 'index');
+                Route::post('/comments', 'store');
+                Route::put('/comments/{comment}', 'update');
+                Route::delete('/comments/{comment}', 'destroy');
             });
 
         Broadcast::routes();
