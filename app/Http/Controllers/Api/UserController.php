@@ -18,14 +18,12 @@ class UserController extends Controller
     public function index(): JsonResponse
     {
         return response()->json([
-            'users' => User::get()
+            'users' => User::get('id')
         ]);
     }
 
     public function show(User $user): JsonResponse
     {
-        return response()->json([
-            'user' => new UserResource($user)
-        ]);
+        return response()->json(new UserResource($user));
     }
 }
