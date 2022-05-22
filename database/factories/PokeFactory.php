@@ -12,9 +12,9 @@ class PokeFactory extends Factory
         $usersCount = User::count();
 
         return [
-            'initiator_id' => $this->faker->numberBetween(1, floor(($usersCount - 1) / 2)),
-            'poked_id' => $this->faker->numberBetween(floor(($usersCount + 1) / 2), $usersCount),
-            'count' => $this->faker->numberBetween(1, 999)
+            'initiator_id' => $this->faker->numberBetween(1, $usersCount),
+            'poked_id' => $this->faker->numberBetween(1, $usersCount),
+            'count' => $this->faker->numberBetween(1, 9999)
         ];
     }
 }

@@ -20,6 +20,8 @@ return new class extends Migration
             $table->foreignIdFor(User::class, 'friend_id');
             $table->enum('status', ['PENDING', 'CONFIRMED', 'BLOCKED']);
             $table->timestamps();
+
+            $table->unique(['user_id', 'friend_id']);
         });
     }
 

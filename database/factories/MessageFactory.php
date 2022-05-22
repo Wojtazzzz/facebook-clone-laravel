@@ -10,12 +10,13 @@ class MessageFactory extends Factory
 {
     public function definition()
     {
-        $date = $this->faker->dateTimeBetween('-22 years');
+        $date = $this->faker->dateTimeBetween('-2 years');
+        $usersCount = User::count();
 
         return [
-            'text' => $this->faker->text(20),
-            'sender_id' => $this->faker->numberBetween(1, User::count()),
-            'receiver_id' => $this->faker->numberBetween(1, User::count()),
+            'text' => $this->faker->text(25),
+            'sender_id' => $this->faker->numberBetween(1, $usersCount),
+            'receiver_id' => $this->faker->numberBetween(1, $usersCount),
             'created_at' => $date,
             'updated_at' => $date
         ];

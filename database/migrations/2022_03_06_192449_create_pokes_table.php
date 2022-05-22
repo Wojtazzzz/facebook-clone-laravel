@@ -20,6 +20,8 @@ return new class extends Migration
             $table->foreignIdFor(User::class, 'poked_id');
             $table->integer('count')->default(1);
             $table->timestamps();
+
+            $table->unique(['initiator_id', 'poked_id']);
         });
     }
 

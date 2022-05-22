@@ -20,6 +20,8 @@ return new class extends Migration
             $table->foreignIdFor(User::class, 'sender_id');
             $table->foreignIdFor(User::class, 'receiver_id');
             $table->timestamps();
+
+            $table->unique(['sender_id', 'receiver_id']);
         });
     }
 

@@ -14,28 +14,41 @@ use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
-    private int $fakeUsersCount = 300;
-
     public function run()
     {
-        User::truncate();
-        Friendship::truncate();
-        Poke::truncate();
-        DB::table('notifications')->truncate();
-        Message::truncate();
-        Post::truncate();
-        Like::truncate();
-        Comment::truncate();
+        $this->clearDatabase();
 
-        User::factory(floor($this->fakeUsersCount))->create();
-        Post::factory(floor($this->fakeUsersCount * 2))->create();
-        Like::factory(floor($this->fakeUsersCount * 3))->create();
-        Message::factory(floor($this->fakeUsersCount * 4))->create();
-        Poke::factory(floor($this->fakeUsersCount / 3))->create();
-        Comment::factory(1000)->create();
+        $users = User::factory(200)->create();
+
+        Post::factory(1000)
+            ->create()
+            ->each(function (Post $post) use ($users) {
+                Like::factory(rand(5, 10))
+                    ->randomUser($users->pluck('id'))
+                    ->create([
+                        'post_id' => $post->id
+                    ]);
+            });
+
+        Message::factory(5000)->create();
+        // Poke::factory(500)->create();
+        // Comment::factory(1000)->create();
 
         $this->call([
-            UserSeeder::class, // Root user
+            UserSeeder::class
         ]);
+    }
+
+    private function clearDatabase()
+    {
+        User::truncate();
+        Post::truncate();
+        Like::truncate();
+        Message::truncate();
+
+        Poke::truncate();
+        Friendship::truncate();
+        DB::table('notifications')->truncate();
+        Comment::truncate();
     }
 }

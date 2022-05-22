@@ -11,65 +11,68 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
+use Mmo\Faker\PicsumProvider;
 
 class UserSeeder extends Seeder
 {
     use WithFaker;
 
+    private int $postsCount = 10;
+    private int $messagesCount = 500;
+
     public function __construct()
     {
         $this->setUpFaker();
+        $this->faker->addProvider(new PicsumProvider($this->faker));
     }
 
     public function run()
     {
-        $this->faker->addProvider(new \Mmo\Faker\PicsumProvider($this->faker));
-        
         $user = User::factory()
-            ->has(Post::factory(20)
-                ->has(Like::factory(10))
-            )
             ->createOne([
                 'first_name' => 'Marcin',
                 'last_name' => 'Witas',
-                'email' => 'admin@gmail.com',
+                'email' => 'marcin.witas72@gmail.com',
                 'password' => Hash::make('password'),
-                'profile_image' => $this->faker->picsumUrl(168, 168),
-                'background_image' => $this->faker->picsumUrl(850, 350)
+                'profile_image' => $this->faker->picsumStaticRandomUrl(168, 168),
+                'background_image' => $this->faker->picsumStaticRandomUrl(850, 350)
             ]);
 
-        Friendship::factory(50, [
-            'user_id' => $user->id
-        ])->create();
+        // $user = User::firstWhere('last_name', 'Witas');
 
-        Friendship::factory(50, [
-            'friend_id' => $user->id
-        ])->create();
+        $this->call(PostSeeder::class, false, [
+            'user' => $user,
+            'count' => $this->postsCount,
+            'commentsCount' => rand(1, 3)
+        ]);
 
-        Message::factory(100, [
-            'sender_id' => $user->id
-        ])->create();
+        $this->call(MessageSeeder::class, false, [
+            'user' => $user,
+            'count' => $this->messagesCount
+        ]);
 
-        Message::factory(100, [
-            'receiver_id' => $user->id
-        ])->create();
+        // Friendship::factory(50, [
+        //     'user_id' => $user->id
+        // ])->create();
 
-        Poke::factory(10, [
-            'initiator_id' => $user->id
-        ])->create();
+        // Friendship::factory(50, [
+        //     'friend_id' => $user->id
+        // ])->create();
 
-        Poke::factory(10, [
-            'poked_id' => $user->id
-        ])->create();
-    }
+        // Message::factory(100, [
+        //     'sender_id' => $user->id
+        // ])->create();
 
-    private function numberFromRangeWithNot(int $min, int $max, int $exception): int
-    {
-        do {
-            $randomNumber = $this->faker()->numberBetween($min, $max);
+        // Message::factory(100, [
+        //     'receiver_id' => $user->id
+        // ])->create();
 
-        } while ($randomNumber === $exception);
+        // Poke::factory(10, [
+        //     'initiator_id' => $user->id
+        // ])->create();
 
-        return $randomNumber;
+        // Poke::factory(10, [
+        //     'poked_id' => $user->id
+        // ])->create();
     }
 }
