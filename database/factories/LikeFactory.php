@@ -10,10 +10,12 @@ class LikeFactory extends Factory
 {
     public function definition()
     {
+        $users = User::pluck('id');
+        $posts = Post::pluck('id');
+
         return [
-            'user_id' => $this->faker->numberBetween(1, User::count()),
-            'post_id' => $this->faker->numberBetween(1, Post::count()),
-            'created_at' => $this->faker->date()
+            'user_id' => $this->faker->randomElement($users),
+            'post_id' => $this->faker->randomElement($posts)
         ];
     }
 }

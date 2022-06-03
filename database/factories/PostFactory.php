@@ -3,30 +3,28 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use Mmo\Faker\PicsumProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PostFactory extends Factory
 {
     public function definition()
     {
-        $this->faker->addProvider(new \Mmo\Faker\PicsumProvider($this->faker));
+        $this->faker->addProvider(new PicsumProvider($this->faker));
 
-        $images = $this->faker->randomElement([
+        $images = [
             [],
             [$this->faker->picsumUrl(850, 350)],
-            [$this->faker->picsumUrl(850, 350)],
             [$this->faker->picsumUrl(850, 350), $this->faker->picsumUrl(850, 350), $this->faker->picsumUrl(850, 350)],
-            [$this->faker->picsumUrl(850, 350), $this->faker->picsumUrl(850, 350), $this->faker->picsumUrl(850, 350), $this->faker->picsumUrl(850, 350), $this->faker->picsumUrl(850, 350)],
-        ]);
+            [$this->faker->picsumUrl(850, 350), $this->faker->picsumUrl(850, 350), $this->faker->picsumUrl(850, 350), $this->faker->picsumUrl(850, 350)]
+        ];
 
-        $date = $this->faker->date;
+        $users = User::pluck('id');
 
         return [
-            'content' => $this->faker->text,
-            'images' => $images,
-            'author_id' => $this->faker->numberBetween(1, User::count()),
-            'created_at' => $date,
-            'updated_at' => $date
+            'content' => $this->faker->text(),
+            'images' => $this->faker->randomElement($images),
+            'author_id' => $this->faker->randomElement($users),
         ];
     }
 }

@@ -14,28 +14,63 @@ use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
-    private int $fakeUsersCount = 300;
-
     public function run()
     {
+        $this->clearDatabase();
+
+        User::factory(2000)->create();
+        Post::factory(2000)->create();
+        Like::factory(500)->create();
+        Comment::factory(3000)->create();
+        Friendship::factory(400)->create();
+
+        $user = User::factory()->createOne([
+            'first_name' => 'Marcin',
+            'last_name' => 'Witas',
+            'email' => 'marcin.witas72@gmail.com',
+        ]);
+
+        $this->call(PostSeeder::class, parameters: [
+            'user' => $user,
+            'count' => 30
+        ]);
+
+        $this->call(LikeSeeder::class, parameters: [
+            'user' => $user,
+            'count' => 100
+        ]);
+
+        $this->call(CommentSeeder::class, parameters: [
+            'user' => $user,
+            'count' => 200
+        ]);
+
+        $this->call(FriendshipSeeder::class, parameters: [
+            'user' => $user,
+            'count' => 100
+        ]);
+
+        $this->call(MessageSeeder::class, parameters: [
+            'user' => $user,
+            'count' => 1000
+        ]);
+
+        $this->call(PokeSeeder::class, parameters: [
+            'user' => $user,
+            'count' => 20
+        ]);
+    }
+
+    private function clearDatabase()
+    {
         User::truncate();
-        Friendship::truncate();
-        Poke::truncate();
-        DB::table('notifications')->truncate();
-        Message::truncate();
         Post::truncate();
         Like::truncate();
+        Message::truncate();
+        Poke::truncate();
         Comment::truncate();
+        Friendship::truncate();
 
-        User::factory(floor($this->fakeUsersCount))->create();
-        Post::factory(floor($this->fakeUsersCount * 2))->create();
-        Like::factory(floor($this->fakeUsersCount * 3))->create();
-        Message::factory(floor($this->fakeUsersCount * 4))->create();
-        Poke::factory(floor($this->fakeUsersCount / 3))->create();
-        Comment::factory(1000)->create();
-
-        $this->call([
-            UserSeeder::class, // Root user
-        ]);
+        DB::table('notifications')->truncate();
     }
 }

@@ -9,12 +9,12 @@ class PokeFactory extends Factory
 {
     public function definition()
     {
-        $usersCount = User::count();
-
+        $users = User::pluck('id');
+        
         return [
-            'initiator_id' => $this->faker->numberBetween(1, floor(($usersCount - 1) / 2)),
-            'poked_id' => $this->faker->numberBetween(floor(($usersCount + 1) / 2), $usersCount),
-            'count' => $this->faker->numberBetween(1, 999)
+            'initiator_id' => $this->faker->unique->randomElement($users),
+            'poked_id' => $this->faker->unique->randomElement($users),
+            'count' => $this->faker->numberBetween(1, 9999),
         ];
     }
 }

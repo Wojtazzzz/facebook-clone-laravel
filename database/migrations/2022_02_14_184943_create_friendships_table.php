@@ -7,11 +7,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('friendships', function (Blueprint $table) {
@@ -20,14 +15,12 @@ return new class extends Migration
             $table->foreignIdFor(User::class, 'friend_id');
             $table->enum('status', ['PENDING', 'CONFIRMED', 'BLOCKED']);
             $table->timestamps();
+
+            $table->unique(['user_id', 'friend_id']);
+            $table->unique(['friend_id', 'user_id']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('friendships');

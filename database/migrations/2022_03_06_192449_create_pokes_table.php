@@ -7,11 +7,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('pokes', function (Blueprint $table) {
@@ -20,14 +15,11 @@ return new class extends Migration
             $table->foreignIdFor(User::class, 'poked_id');
             $table->integer('count')->default(1);
             $table->timestamps();
+
+            $table->unique(['initiator_id', 'poked_id']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('pokes');
