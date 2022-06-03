@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->clearDatabase();
+<<<<<<< HEAD
 
         User::factory(2000)->create();
         Post::factory(2000)->create();
@@ -72,6 +73,41 @@ class DatabaseSeeder extends Seeder
         Friendship::truncate();
 
         DB::table('notifications')->truncate();
+    }
+
+    private function clearDatabase()
+    {
+        User::truncate();
+        Post::truncate();
+        Like::truncate();
+        Message::truncate();
+
+        Poke::truncate();
+        Friendship::truncate();
+        DB::table('notifications')->truncate();
+        Comment::truncate();
+=======
+
+        $users = User::factory(200)->create();
+
+        Post::factory(1000)
+            ->create()
+            ->each(function (Post $post) use ($users) {
+                Like::factory(rand(5, 10))
+                    ->randomUser($users->pluck('id'))
+                    ->create([
+                        'post_id' => $post->id
+                    ]);
+            });
+
+        Message::factory(5000)->create();
+        // Poke::factory(500)->create();
+        // Comment::factory(1000)->create();
+
+        $this->call([
+            UserSeeder::class
+        ]);
+>>>>>>> 25181a0b59c051a99be7067ce7e0a4614e6be8a7
     }
 
     private function clearDatabase()

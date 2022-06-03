@@ -17,7 +17,10 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['user_id', 'friend_id']);
+<<<<<<< HEAD
             $table->unique(['friend_id', 'user_id']);
+=======
+>>>>>>> 25181a0b59c051a99be7067ce7e0a4614e6be8a7
         });
     }
 

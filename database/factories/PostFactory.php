@@ -11,6 +11,7 @@ class PostFactory extends Factory
 {
     public function definition()
     {
+<<<<<<< HEAD
         $this->faker->addProvider(new PicsumProvider($this->faker));
 
         $images = [
@@ -26,6 +27,20 @@ class PostFactory extends Factory
             'content' => $this->faker->text(),
             'images' => $this->faker->randomElement($images),
             'author_id' => $this->faker->randomElement($users),
+=======
+        $this->setupFaker();
+
+        $postsCount = User::count();
+        $images = $this->getImages();
+        $date = $this->faker->date;
+
+        return [
+            'content' => $this->faker->text,
+            'images' => $images,
+            'author_id' => $this->faker->numberBetween(1, $postsCount),
+            'created_at' => $date,
+            'updated_at' => $date
+>>>>>>> 25181a0b59c051a99be7067ce7e0a4614e6be8a7
         ];
     }
 

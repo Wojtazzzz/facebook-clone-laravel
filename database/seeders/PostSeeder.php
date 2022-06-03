@@ -6,6 +6,7 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 class PostSeeder extends Seeder
 {
@@ -15,6 +16,8 @@ class PostSeeder extends Seeder
             'author_id' => $user->id
         ]);
 =======
+=======
+>>>>>>> 25181a0b59c051a99be7067ce7e0a4614e6be8a7
 use Illuminate\Foundation\Testing\WithFaker;
 
 class PostSeeder extends Seeder
@@ -37,6 +40,9 @@ class PostSeeder extends Seeder
                     'count' => $commentsCount
                 ]);
             });
+<<<<<<< HEAD
+>>>>>>> 25181a0b59c051a99be7067ce7e0a4614e6be8a7
+=======
 >>>>>>> 25181a0b59c051a99be7067ce7e0a4614e6be8a7
     }
 }

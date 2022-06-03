@@ -14,7 +14,11 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class);
             $table->foreignIdFor(Post::class);
+<<<<<<< HEAD
             $table->timestamp('created_at')->useCurrent();
+=======
+            $table->timestamp('created_at');
+>>>>>>> 25181a0b59c051a99be7067ce7e0a4614e6be8a7
             
             $table->unique(['user_id', 'post_id']);
         });
