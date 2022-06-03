@@ -14,6 +14,7 @@ class LikeSeeder extends Seeder
 
     public function __construct()
     {
+        $this->setUpFaker();
     }
     
     public function run(User $user, int $count)
@@ -25,3 +26,4 @@ class LikeSeeder extends Seeder
             'post_id' => fn () => $this->faker->unique->randomElement($posts)
         ]);
     }
+}

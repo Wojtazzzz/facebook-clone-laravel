@@ -17,6 +17,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['initiator_id', 'poked_id']);
+            $table->unique(['poked_id', 'initiator_id']);
         });
     }
 
