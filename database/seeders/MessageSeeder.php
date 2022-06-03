@@ -10,6 +10,7 @@ class MessageSeeder extends Seeder
 {
     public function run(User $user, int $count)
     {
+<<<<<<< HEAD
         Message::factory($count)->create([
             'sender_id' => $user->id
         ]);
@@ -19,3 +20,14 @@ class MessageSeeder extends Seeder
         ]);
     }
 }
+=======
+        Message::factory(ceil($count / 2))->create([
+            'sender_id' => $user->id
+        ]);
+
+        Message::factory(floor($count / 2))->create([
+            'receiver_id' => $user->id
+        ]);
+    }
+}
+>>>>>>> 25181a0b59c051a99be7067ce7e0a4614e6be8a7

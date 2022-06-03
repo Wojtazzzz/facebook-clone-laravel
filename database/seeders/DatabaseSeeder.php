@@ -73,4 +73,17 @@ class DatabaseSeeder extends Seeder
 
         DB::table('notifications')->truncate();
     }
+
+    private function clearDatabase()
+    {
+        User::truncate();
+        Post::truncate();
+        Like::truncate();
+        Message::truncate();
+
+        Poke::truncate();
+        Friendship::truncate();
+        DB::table('notifications')->truncate();
+        Comment::truncate();
+    }
 }
