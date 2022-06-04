@@ -66,7 +66,7 @@ class FriendshipController extends Controller
         Friendship::create([
             'user_id' => $request->user()->id,
             'friend_id' => $friend->id,
-            'status' => 'pending'
+            'status' => 'PENDING'
         ]);
 
         $friend->notify(new FriendshipInvitationSended($request->user()));
@@ -84,7 +84,7 @@ class FriendshipController extends Controller
             ['user_id', $friend->id],
             ['friend_id', $request->user()->id]
         ])->update([
-            'status' => 'confirmed'
+            'status' => 'CONFIRMED'
         ]);
 
         $friend->notify(new FriendshipInvitationAccepted($request->user()));
@@ -102,7 +102,7 @@ class FriendshipController extends Controller
             ['user_id', $friend->id],
             ['friend_id', $request->user()->id]
         ])->update([
-            'status' => 'blocked'
+            'status' => 'BLOCKED'
         ]);
 
         return response()->json(new UserResource($friend), 201);

@@ -29,36 +29,79 @@ class SuggestsTest extends TestCase
     public function test_not_fetch_logged_user()
     {
         $user = User::factory()->createOne();
-        User::factory(6)->create();
 
         $response = $this->actingAs($user)->getJson('/api/friendship/suggests');
 
         $response->assertStatus(200)
-            ->assertJsonMissing([
-                'id' => $user->id,
-                'name' => "$user->first_name $user->last_name",
-                'first_name' => $user->first_name,
-                'profile_image' => $user->profile_image,
-                'background_image' => $user->background_image,
-            ]);
+            ->assertJsonCount(0);
     }
 
-    // public function test_not_fetch_users_invited_and_which_invites()
-    // {
-    //     $user = User::factory()->createOne();
-    //     User::factory(10)->create();
+    public function test_not_fetch_user_friends()
+    {
+        $user = User::factory()->createOne();
+        $users = User::factory(12)->create();
 
-    //     Friendship::factory(2)->create([
-    //         'user_id' => $user->id
-    //     ]);
+        Friendship::factory(2)->create([
+            'user_id' => $user->id,
+            'friend_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
+            'status' => 'CONFIRMED',
+        ]);
 
-    //     Friendship::factory(2)->create([
-    //         'friend_id' => $user->id
-    //     ]);
+        Friendship::factory(2)->create([
+            'user_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
+            'friend_id' => $user->id,
+            'status' => 'CONFIRMED',
+        ]);
 
-    //     $response = $this->actingAs($user)->getJson('/api/friendship/suggests');
+        $response = $this->actingAs($user)->getJson('/api/friendship/suggests');
 
-    //     $response->assertStatus(200)
-    //         ->assertJsonCount(6);
-    // }
+        $response->assertStatus(200)
+            ->assertJsonCount(8);
+    }
+
+    public function test_not_fetch_users_where_request_is_pending()
+    {
+        $user = User::factory()->createOne();
+        $users = User::factory(12)->create();
+
+        Friendship::factory(2)->create([
+            'user_id' => $user->id,
+            'friend_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
+            'status' => 'PENDING',
+        ]);
+
+        Friendship::factory(2)->create([
+            'user_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
+            'friend_id' => $user->id,
+            'status' => 'PENDING',
+        ]);
+
+        $response = $this->actingAs($user)->getJson('/api/friendship/suggests');
+
+        $response->assertStatus(200)
+            ->assertJsonCount(8);
+    }
+
+    public function test_not_fetch_blocked_users()
+    {
+        $user = User::factory()->createOne();
+        $users = User::factory(12)->create();
+
+        Friendship::factory(2)->create([
+            'user_id' => $user->id,
+            'friend_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
+            'status' => 'BLOCKED',
+        ]);
+
+        Friendship::factory(2)->create([
+            'user_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
+            'friend_id' => $user->id,
+            'status' => 'BLOCKED',
+        ]);
+
+        $response = $this->actingAs($user)->getJson('/api/friendship/suggests');
+
+        $response->assertStatus(200)
+            ->assertJsonCount(8);
+    }
 }

@@ -4,20 +4,10 @@ namespace Tests\Feature\Friendship;
 
 use App\Models\Friendship;
 use App\Models\User;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class FriendsTest extends TestCase
 {
-    use WithFaker;
-
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->setUpFaker();
-    }
-
     public function test_cannot_use_when_not_authorized()
     {
         $user = User::factory()->createOne();
