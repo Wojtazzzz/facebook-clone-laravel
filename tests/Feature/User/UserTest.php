@@ -8,30 +8,32 @@ use Tests\TestCase;
 
 class UserTest extends TestCase
 {
-    public function test_can_not_user_get_own_data_as_unauthorized()
+    private User $user;
+
+    public function setUp(): void
     {
-        User::factory()->create();
+        parent::setUp();
 
+        $this->user = User::factory()->createOne();
+    }
+
+    public function testCanNotUserGetOwnDataAsUnauthorized()
+    {
         $response = $this->getJson('/api/user');
-
         $response->assertUnauthorized();
     }
 
-    public function test_can_user_get_own_data_as_authorized()
+    public function testCanUserGetOwnDataAsAuthorized()
     {
-        $user = User::factory()->createOne();
-
-        $response = $this->actingAs($user)->getJson('/api/user');
-
+        $response = $this->actingAs($this->user)->getJson('/api/user');
         $response->assertOk();
     }
 
-    public function test_request_return_properly_data()
+    public function testRequestReturnProperlyData()
     {
-        $user = User::factory()->createOne();
-        $resource = new UserResource($user);
+        $resource = new UserResource($this->user);
 
-        $response = $this->actingAs($user)->getJson('/api/user');
+        $response = $this->actingAs($this->user)->getJson('/api/user');
 
         $response->assertJson($resource->response()->getData(true));
     }

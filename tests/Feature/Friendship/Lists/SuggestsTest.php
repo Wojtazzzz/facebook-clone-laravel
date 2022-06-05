@@ -8,100 +8,93 @@ use Tests\TestCase;
 
 class SuggestsTest extends TestCase
 {
-    public function test_cannot_use_when_not_authorized()
+    private User $user;
+
+    public function setUp(): void
     {
-        User::factory()->createOne();
+        parent::setUp();
 
+        $this->user = User::factory()->createOne();
+    }
+
+    public function testCannotUseWhenNotAuthorized()
+    {
         $response = $this->getJson('/api/friendship/suggests');
-
         $response->assertStatus(401);
     }
 
-    public function test_can_use_when_authorized()
+    public function testCanUseWhenAuthorized()
     {
-        $user = User::factory()->createOne();
-
-        $response = $this->actingAs($user)->getJson('/api/friendship/suggests');
-
+        $response = $this->actingAs($this->user)->getJson('/api/friendship/suggests');
         $response->assertStatus(200);
     }
 
-    public function test_not_fetch_logged_user()
+    public function testNotFetchLoggedUser()
     {
-        $user = User::factory()->createOne();
-
-        $response = $this->actingAs($user)->getJson('/api/friendship/suggests');
-
-        $response->assertStatus(200)
-            ->assertJsonCount(0);
+        $response = $this->actingAs($this->user)->getJson('/api/friendship/suggests');
+        $response->assertStatus(200)->assertJsonCount(0);
     }
 
-    public function test_not_fetch_user_friends()
+    public function testNotFetchUserFriends()
     {
-        $user = User::factory()->createOne();
         $users = User::factory(12)->create();
 
         Friendship::factory(2)->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
             'friend_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
             'status' => 'CONFIRMED',
         ]);
 
         Friendship::factory(2)->create([
             'user_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
-            'friend_id' => $user->id,
+            'friend_id' => $this->user->id,
             'status' => 'CONFIRMED',
         ]);
 
-        $response = $this->actingAs($user)->getJson('/api/friendship/suggests');
+        $response = $this->actingAs($this->user)->getJson('/api/friendship/suggests');
 
-        $response->assertStatus(200)
-            ->assertJsonCount(8);
+        $response->assertStatus(200)->assertJsonCount(8);
     }
 
-    public function test_not_fetch_users_where_request_is_pending()
+    public function testNotFetchUsersWhereRequestIsPending()
     {
-        $user = User::factory()->createOne();
         $users = User::factory(12)->create();
 
         Friendship::factory(2)->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
             'friend_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
             'status' => 'PENDING',
         ]);
 
         Friendship::factory(2)->create([
             'user_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
-            'friend_id' => $user->id,
+            'friend_id' => $this->user->id,
             'status' => 'PENDING',
         ]);
 
-        $response = $this->actingAs($user)->getJson('/api/friendship/suggests');
+        $response = $this->actingAs($this->user)->getJson('/api/friendship/suggests');
 
-        $response->assertStatus(200)
-            ->assertJsonCount(8);
+        $response->assertStatus(200)->assertJsonCount(8);
     }
 
-    public function test_not_fetch_blocked_users()
+    public function testNotFetchBlockedUsers()
     {
-        $user = User::factory()->createOne();
         $users = User::factory(12)->create();
 
         Friendship::factory(2)->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
             'friend_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
             'status' => 'BLOCKED',
         ]);
 
         Friendship::factory(2)->create([
             'user_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
-            'friend_id' => $user->id,
+            'friend_id' => $this->user->id,
             'status' => 'BLOCKED',
         ]);
 
-        $response = $this->actingAs($user)->getJson('/api/friendship/suggests');
+        $response = $this->actingAs($this->user)->getJson('/api/friendship/suggests');
 
-        $response->assertStatus(200)
-            ->assertJsonCount(8);
+        $response->assertStatus(200)->assertJsonCount(8);
     }
 }

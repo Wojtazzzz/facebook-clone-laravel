@@ -7,75 +7,70 @@ use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
 {
-    public function test_user_can_authenticate()
-    {
-        $user = User::factory()->create();
+    private User $user;
 
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = User::factory()->createOne();
+    }
+
+    public function testUserCanAuthenticate()
+    {
         $response = $this->postJson('/login', [
-            'email' => $user->email,
+            'email' => $this->user->email,
             'password' => 'password',
         ]);
 
-        $this->assertAuthenticated();
         $response->assertNoContent();
+        $this->assertAuthenticated();
     }
 
-    public function test_user_must_authenticate_with_properly_email()
+    public function testUserMustAuthenticateWithProperlyEmail()
     {
-        User::factory()->create();
-        
         $response = $this->postJson('/login', [
             'email' => 'not_email',
             'password' => 'password',
         ]);
 
-        $this->assertGuest();
-
         $response->assertJson([
-            'message' => 'The email must be a valid email address.'
+            'message' => 'The email must be a valid email address.',
         ]);
+        $this->assertGuest();
     }
 
-    public function test_user_can_not_authenticate_with_invalid_password()
+    public function testUserCanNotAuthenticateWithInvalidPassword()
     {
-        $user = User::factory()->create();
-
         $this->postJson('/login', [
-            'email' => $user->email,
+            'email' => $this->user->email,
             'password' => 'wrong-password',
         ]);
 
         $this->assertGuest();
     }
 
-    public function test_user_can_not_authenticate_without_password()
+    public function testUserCanNotAuthenticateWithoutPassword()
     {
-        $user = User::factory()->create();
-
         $this->postJson('/login', [
-            'email' => $user->email
+            'email' => $this->user->email,
         ]);
 
         $this->assertGuest();
     }
 
-    public function test_user_can_not_authenticate_without_email()
+    public function testUserCanNotAuthenticateWithoutEmail()
     {
-        User::factory()->create();
-
         $this->postJson('/login', [
-            'postJson' => 'password'
+            'password' => 'password',
         ]);
 
         $this->assertGuest();
     }
 
-    public function test_user_can_not_authenticate_without_any_data()
+    public function testUserCanNotAuthenticateWithoutAnyData()
     {
-        User::factory()->create();
-
         $this->postJson('/login');
-
         $this->assertGuest();
     }
 }

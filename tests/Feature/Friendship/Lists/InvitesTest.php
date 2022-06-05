@@ -8,55 +8,54 @@ use Tests\TestCase;
 
 class InvitesTest extends TestCase
 {
-    public function test_cannot_use_when_not_authorized()
+    private User $user;
+
+    public function setUp(): void
     {
-        User::factory()->createOne();
+        parent::setUp();
 
+        $this->user = User::factory()->createOne();
+    }
+
+    public function testCannotUseWhenNotAuthorized()
+    {
         $response = $this->getJson('/api/friendship/invites');
-
         $response->assertStatus(401);
     }
 
-    public function test_can_use_when_authorized()
+    public function testCanUseWhenAuthorized()
     {
-        $user = User::factory()->createOne();
-
-        $response = $this->actingAs($user)->getJson('/api/friendship/invites');
-
+        $response = $this->actingAs($this->user)->getJson('/api/friendship/invites');
         $response->assertStatus(200);
     }
 
-    public function test_fetch_received_invites()
+    public function testFetchReceivedInvites()
     {
-        $user = User::factory()->createOne();
         $users = User::factory(20)->create();
 
         Friendship::factory(5)->create([
-            'friend_id' => $user->id,
+            'friend_id' => $this->user->id,
             'user_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
-            'status' => 'PENDING'
+            'status' => 'PENDING',
         ]);
 
-        $response = $this->actingAs($user)->getJson('/api/friendship/invites');
+        $response = $this->actingAs($this->user)->getJson('/api/friendship/invites');
 
-        $response->assertStatus(200)
-            ->assertJsonCount(5);
+        $response->assertStatus(200)->assertJsonCount(5);
     }
 
-    public function test_not_fetch_sent_invites()
+    public function testNotFetchSentInvites()
     {
-        $user = User::factory()->createOne();
         $users = User::factory(20)->create();
 
         Friendship::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
             'friend_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
-            'status' => 'PENDING'
+            'status' => 'PENDING',
         ]);
 
-        $response = $this->actingAs($user)->getJson('/api/friendship/invites');
+        $response = $this->actingAs($this->user)->getJson('/api/friendship/invites');
 
-        $response->assertStatus(200)
-            ->assertJsonCount(0);
+        $response->assertStatus(200)->assertJsonCount(0);
     }
 }

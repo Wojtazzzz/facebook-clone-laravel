@@ -6,11 +6,11 @@ use Tests\TestCase;
 
 class RegistrationTest extends TestCase
 {
-    public function test_user_can_register()
+    public function testUserCanRegister()
     {
         $response = $this->postJson('/register');
 
-        $this->assertAuthenticated();
         $response->assertNoContent();
+        $this->assertAuthenticated();
     }
 }
