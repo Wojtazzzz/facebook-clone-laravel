@@ -10,8 +10,8 @@ use App\Http\Requests\Friendship\RejectRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Friendship;
 use App\Models\User;
-use App\Notifications\FriendshipInvitationSended;
 use App\Notifications\FriendshipInvitationAccepted;
+use App\Notifications\FriendshipInvitationSended;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -24,7 +24,7 @@ class FriendshipController extends Controller
 
         $friends = collect([
             ...$user->invitedFriends,
-            ...$user->invitedByFriends
+            ...$user->invitedByFriends,
         ])->paginate(10);
 
         return response()->json(UserResource::collection($friends));
@@ -34,7 +34,7 @@ class FriendshipController extends Controller
     public function suggests(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         $users = User::whereNotIn('id', [
             $user->id,
             ...$user->invitedFriends->pluck('id'),
@@ -44,15 +44,15 @@ class FriendshipController extends Controller
             ...$user->receivedBlocks->pluck('id'),
             ...$user->sendedBlocks->pluck('id'),
         ])->paginate(10);
-            
+
         return response()->json(UserResource::collection($users));
     }
-        
+
     // Load users which send invitations to logged user
     public function invites(Request $request): JsonResponse
     {
         $user = $request->user()->load('receivedInvites');
-        $users = $user->receivedInvites; 
+        $users = $user->receivedInvites;
 
         return response()->json(UserResource::collection($users->paginate(10)));
     }
@@ -66,7 +66,7 @@ class FriendshipController extends Controller
         Friendship::create([
             'user_id' => $request->user()->id,
             'friend_id' => $friend->id,
-            'status' => 'PENDING'
+            'status' => 'PENDING',
         ]);
 
         $friend->notify(new FriendshipInvitationSended($request->user()));
@@ -82,9 +82,9 @@ class FriendshipController extends Controller
 
         Friendship::where([
             ['user_id', $friend->id],
-            ['friend_id', $request->user()->id]
+            ['friend_id', $request->user()->id],
         ])->update([
-            'status' => 'CONFIRMED'
+            'status' => 'CONFIRMED',
         ]);
 
         $friend->notify(new FriendshipInvitationAccepted($request->user()));
@@ -100,9 +100,9 @@ class FriendshipController extends Controller
 
         Friendship::where([
             ['user_id', $friend->id],
-            ['friend_id', $request->user()->id]
+            ['friend_id', $request->user()->id],
         ])->update([
-            'status' => 'BLOCKED'
+            'status' => 'BLOCKED',
         ]);
 
         return response()->json(new UserResource($friend), 201);
@@ -116,10 +116,10 @@ class FriendshipController extends Controller
 
         Friendship::where([
             ['user_id', $friend->id],
-            ['friend_id', $request->user()->id]
+            ['friend_id', $request->user()->id],
         ])->orWhere([
             ['user_id', $request->user()->id],
-            ['friend_id', $friend->id]
+            ['friend_id', $friend->id],
         ])->delete();
 
         return response()->json(new UserResource($friend), 201);

@@ -22,8 +22,8 @@ class AcceptRequest extends FormRequest
                 'exists:users,id',
                 Rule::exists('friendships', 'user_id')->where(function ($query) {
                     return $query->where('friend_id', $this->user()->id);
-                })
-            ]
+                }),
+            ],
         ];
     }
 }
