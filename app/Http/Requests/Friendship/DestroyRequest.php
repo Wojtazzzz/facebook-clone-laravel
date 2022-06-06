@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Friendship;
 
+use App\Rules\Friend;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,7 +20,7 @@ class DestroyRequest extends FormRequest
                 'required',
                 'integer',
                 'exists:users,id',
-                // IsFriend::class
+                new Friend(),
             ],
         ];
     }

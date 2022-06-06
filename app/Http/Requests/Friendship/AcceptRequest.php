@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Friendship;
 
+use App\Rules\RequestReceived;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 
 class AcceptRequest extends FormRequest
 {
@@ -20,9 +20,7 @@ class AcceptRequest extends FormRequest
                 'required',
                 'integer',
                 'exists:users,id',
-                Rule::exists('friendships', 'user_id')->where(function ($query) {
-                    return $query->where('friend_id', $this->user()->id);
-                }),
+                new RequestReceived(),
             ],
         ];
     }
