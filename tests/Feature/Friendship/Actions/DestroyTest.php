@@ -90,14 +90,14 @@ class DestroyTest extends TestCase
         $response->assertUnprocessable();
     }
 
-    // public function testFriendshipNotExists()
-    // {
-    //     $response = $this->actingAs($this->user)->postJson('/api/friendship/destroy', [
-    //         'user_id' => $this->friend->id,
-    //     ]);
+    public function testCannotDestroyFriendshipWhichNotExists()
+    {
+        $response = $this->actingAs($this->user)->postJson('/api/friendship/destroy', [
+            'user_id' => $this->friend->id,
+        ]);
 
-    //     $response->assertUnprocessable();
-    // }
+        $response->assertUnprocessable();
+    }
 
     public function testCannotDestroyFriendshipWhichIsPending()
     {

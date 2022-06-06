@@ -43,6 +43,15 @@ class InviteTest extends TestCase
         ]);
     }
 
+    public function testCannotInviteSelf()
+    {
+        $response = $this->actingAs($this->user)->postJson('/api/friendship/invite', [
+            'user_id' => $this->user->id,
+        ]);
+
+        $response->assertUnprocessable();
+    }
+
     public function testInvitationCreatesNotification()
     {
         $this->actingAs($this->user)->postJson('/api/friendship/invite', [
