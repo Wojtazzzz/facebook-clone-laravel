@@ -117,10 +117,14 @@ class FriendshipController extends Controller
         Friendship::where([
             ['user_id', $friend->id],
             ['friend_id', $request->user()->id],
-        ])->orWhere([
+        ])
+        ->orWhere([
             ['user_id', $request->user()->id],
             ['friend_id', $friend->id],
-        ])->delete();
+        ])
+        ->where('status', 'CONFIRMED')
+        ->firstOrFail()
+        ->delete();
 
         return response()->json(new UserResource($friend), 201);
     }

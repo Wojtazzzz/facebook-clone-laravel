@@ -18,8 +18,9 @@ class DestroyRequest extends FormRequest
             'user_id' => [
                 'required',
                 'integer',
-                'exists:users,id'
-            ]
+                'exists:users,id',
+                // IsFriend::class
+            ],
         ];
     }
 }

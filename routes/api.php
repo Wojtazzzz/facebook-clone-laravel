@@ -36,7 +36,7 @@ Route::middleware('auth:sanctum')
             ->group(function () {
                 Route::get('/', 'index');
                 Route::post('/', 'store');
-                Route::post('/{poke}', 'update');
+                Route::put('/{poke}', 'update');
             });
 
         Route::controller(NotificationController::class)
