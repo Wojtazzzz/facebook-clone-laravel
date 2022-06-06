@@ -32,32 +32,32 @@ class DatabaseSeeder extends Seeder
 
         $this->call(PostSeeder::class, parameters: [
             'user' => $user,
-            'count' => 30
+            'count' => 30,
         ]);
 
         $this->call(LikeSeeder::class, parameters: [
             'user' => $user,
-            'count' => 100
+            'count' => 100,
         ]);
 
         $this->call(CommentSeeder::class, parameters: [
             'user' => $user,
-            'count' => 200
+            'count' => 200,
         ]);
 
         $this->call(FriendshipSeeder::class, parameters: [
             'user' => $user,
-            'count' => 100
+            'count' => 100,
         ]);
 
         $this->call(MessageSeeder::class, parameters: [
             'user' => $user,
-            'count' => 1000
+            'count' => 1000,
         ]);
 
         $this->call(PokeSeeder::class, parameters: [
             'user' => $user,
-            'count' => 20
+            'count' => 20,
         ]);
     }
 

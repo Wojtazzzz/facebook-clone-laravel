@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\FriendshipStatus;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -10,7 +11,7 @@ class FriendshipFactory extends Factory
     public function definition()
     {
         $users = User::pluck('id');
-        $status = ['PENDING', 'CONFIRMED', 'BLOCKED'];
+        $status = [FriendshipStatus::CONFIRMED, FriendshipStatus::PENDING, FriendshipStatus::BLOCKED];
 
         return [
             'user_id' => $this->faker->unique->randomElement($users),

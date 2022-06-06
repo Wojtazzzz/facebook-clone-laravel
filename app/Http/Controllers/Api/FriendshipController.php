@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\FriendshipStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Friendship\AcceptRequest;
 use App\Http\Requests\Friendship\DestroyRequest;
@@ -17,7 +18,6 @@ use Illuminate\Http\Request;
 
 class FriendshipController extends Controller
 {
-    // Load friends list
     public function friends(User $user): JsonResponse
     {
         $user->load(['invitedFriends', 'invitedByFriends']);
@@ -30,7 +30,6 @@ class FriendshipController extends Controller
         return response()->json(UserResource::collection($friends));
     }
 
-    // Load users which are suggests for send invitation
     public function suggests(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -48,7 +47,6 @@ class FriendshipController extends Controller
         return response()->json(UserResource::collection($users));
     }
 
-    // Load users which send invitations to logged user
     public function invites(Request $request): JsonResponse
     {
         $user = $request->user()->load('receivedInvites');
@@ -57,7 +55,6 @@ class FriendshipController extends Controller
         return response()->json(UserResource::collection($users->paginate(10)));
     }
 
-    // Send invitation to user
     public function invite(InviteRequest $request): JsonResponse
     {
         $data = $request->validated();
@@ -66,7 +63,7 @@ class FriendshipController extends Controller
         Friendship::create([
             'user_id' => $request->user()->id,
             'friend_id' => $friend->id,
-            'status' => 'PENDING',
+            'status' => FriendshipStatus::PENDING,
         ]);
 
         $friend->notify(new FriendshipInvitationSended($request->user()));
@@ -74,7 +71,6 @@ class FriendshipController extends Controller
         return response()->json(new UserResource($friend), 201);
     }
 
-    // Accept invitation from another user
     public function accept(AcceptRequest $request): JsonResponse
     {
         $data = $request->validated();
@@ -84,7 +80,7 @@ class FriendshipController extends Controller
             ['user_id', $friend->id],
             ['friend_id', $request->user()->id],
         ])->update([
-            'status' => 'CONFIRMED',
+            'status' => FriendshipStatus::CONFIRMED,
         ]);
 
         $friend->notify(new FriendshipInvitationAccepted($request->user()));
@@ -92,7 +88,6 @@ class FriendshipController extends Controller
         return response()->json(new UserResource($friend), 201);
     }
 
-    // Reject invitation from another user
     public function reject(RejectRequest $request): JsonResponse
     {
         $data = $request->validated();
@@ -102,13 +97,12 @@ class FriendshipController extends Controller
             ['user_id', $friend->id],
             ['friend_id', $request->user()->id],
         ])->update([
-            'status' => 'BLOCKED',
+            'status' => FriendshipStatus::BLOCKED,
         ]);
 
         return response()->json(new UserResource($friend), 201);
     }
 
-    // Remove user from friends list
     public function destroy(DestroyRequest $request): JsonResponse
     {
         $data = $request->validated();
@@ -122,7 +116,7 @@ class FriendshipController extends Controller
             ['user_id', $request->user()->id],
             ['friend_id', $friend->id],
         ])
-        ->where('status', 'CONFIRMED')
+        ->where('status', FriendshipStatus::CONFIRMED)
         ->firstOrFail()
         ->delete();
 
