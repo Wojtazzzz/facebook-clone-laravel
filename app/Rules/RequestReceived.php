@@ -2,15 +2,16 @@
 
 namespace App\Rules;
 
+use App\Enums\FriendshipStatus;
 use App\Models\Friendship;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 
 class RequestReceived implements Rule
 {
-    private string $status;
+    private FriendshipStatus $status;
 
-    public function __construct(string $status = 'PENDING')
+    public function __construct(FriendshipStatus $status = FriendshipStatus::PENDING)
     {
         $this->status = $status;
     }

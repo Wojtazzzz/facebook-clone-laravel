@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Friendship;
 
+use App\Enums\FriendshipStatus;
 use App\Models\Friendship;
 use App\Models\User;
 use Tests\TestCase;
@@ -37,14 +38,14 @@ class FriendsTest extends TestCase
             ->create([
                 'user_id' => $this->user->id,
                 'friend_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
-                'status' => 'CONFIRMED',
+                'status' => FriendshipStatus::CONFIRMED,
             ]);
 
         Friendship::factory(4)
             ->create([
                 'user_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
                 'friend_id' => $this->user->id,
-                'status' => 'CONFIRMED',
+                'status' => FriendshipStatus::CONFIRMED,
             ]);
 
         $response = $this->actingAs($this->user)->getJson("/api/friendship/friends/{$this->user->id}");
@@ -60,7 +61,7 @@ class FriendsTest extends TestCase
             ->create([
                 'user_id' => $this->user->id,
                 'friend_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
-                'status' => 'CONFIRMED',
+                'status' => FriendshipStatus::CONFIRMED,
             ]);
 
         $response = $this->actingAs($this->user)->getJson("/api/friendship/friends/{$this->user->id}");
@@ -76,7 +77,7 @@ class FriendsTest extends TestCase
             ->create([
                 'user_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
                 'friend_id' => $this->user->id,
-                'status' => 'CONFIRMED',
+                'status' => FriendshipStatus::CONFIRMED,
             ]);
 
         $response = $this->actingAs($this->user)->getJson("/api/friendship/friends/{$this->user->id}");

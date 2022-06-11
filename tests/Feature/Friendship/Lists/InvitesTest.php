@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Friendship;
 
+use App\Enums\FriendshipStatus;
 use App\Models\Friendship;
 use App\Models\User;
 use Tests\TestCase;
@@ -36,7 +37,7 @@ class InvitesTest extends TestCase
         Friendship::factory(5)->create([
             'friend_id' => $this->user->id,
             'user_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
-            'status' => 'PENDING',
+            'status' => FriendshipStatus::PENDING,
         ]);
 
         $response = $this->actingAs($this->user)->getJson('/api/friendship/invites');
@@ -51,7 +52,7 @@ class InvitesTest extends TestCase
         Friendship::factory()->create([
             'user_id' => $this->user->id,
             'friend_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
-            'status' => 'PENDING',
+            'status' => FriendshipStatus::PENDING,
         ]);
 
         $response = $this->actingAs($this->user)->getJson('/api/friendship/invites');

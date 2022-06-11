@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Friendship\Actions;
 
+use App\Enums\FriendshipStatus;
 use App\Models\Friendship;
 use App\Models\User;
 use Tests\TestCase;
@@ -33,7 +34,7 @@ class RejectTest extends TestCase
         Friendship::factory()->createOne([
             'user_id' => $this->friend->id,
             'friend_id' => $this->user->id,
-            'status' => 'PENDING',
+            'status' => FriendshipStatus::PENDING,
         ]);
 
         $response = $this->actingAs($this->user)->postJson('/api/friendship/reject', [
@@ -45,7 +46,7 @@ class RejectTest extends TestCase
         $this->assertDatabaseHas($this->friendshipsTable, [
             'user_id' => $this->friend->id,
             'friend_id' => $this->user->id,
-            'status' => 'BLOCKED',
+            'status' => FriendshipStatus::BLOCKED,
         ]);
     }
 
@@ -54,7 +55,7 @@ class RejectTest extends TestCase
         Friendship::factory()->createOne([
             'user_id' => $this->friend->id,
             'friend_id' => $this->user->id,
-            'status' => 'PENDING',
+            'status' => FriendshipStatus::PENDING,
         ]);
 
         $response = $this->actingAs($this->user)->postJson('/api/friendship/reject', [
@@ -79,7 +80,7 @@ class RejectTest extends TestCase
         Friendship::factory()->createOne([
             'user_id' => $this->user->id,
             'friend_id' => $this->friend->id,
-            'status' => 'PENDING',
+            'status' => FriendshipStatus::PENDING,
         ]);
 
         $response = $this->actingAs($this->user)->postJson('/api/friendship/reject', [
@@ -94,7 +95,7 @@ class RejectTest extends TestCase
         Friendship::factory()->createOne([
             'user_id' => $this->user->id,
             'friend_id' => $this->friend->id,
-            'status' => 'CONFIRMED',
+            'status' => FriendshipStatus::CONFIRMED,
         ]);
 
         $response = $this->actingAs($this->user)->postJson('/api/friendship/reject', [
@@ -109,7 +110,7 @@ class RejectTest extends TestCase
         Friendship::factory()->createOne([
             'user_id' => 99999,
             'friend_id' => $this->user->id,
-            'status' => 'PENDING',
+            'status' => FriendshipStatus::PENDING,
         ]);
 
         $response = $this->actingAs($this->user)->postJson('/api/friendship/reject', [

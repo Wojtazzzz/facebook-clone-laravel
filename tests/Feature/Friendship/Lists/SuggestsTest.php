@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Friendship;
 
+use App\Enums\FriendshipStatus;
 use App\Models\Friendship;
 use App\Models\User;
 use Tests\TestCase;
@@ -42,13 +43,13 @@ class SuggestsTest extends TestCase
         Friendship::factory(2)->create([
             'user_id' => $this->user->id,
             'friend_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
-            'status' => 'CONFIRMED',
+            'status' => FriendshipStatus::CONFIRMED,
         ]);
 
         Friendship::factory(2)->create([
             'user_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
             'friend_id' => $this->user->id,
-            'status' => 'CONFIRMED',
+            'status' => FriendshipStatus::CONFIRMED,
         ]);
 
         $response = $this->actingAs($this->user)->getJson('/api/friendship/suggests');
@@ -63,13 +64,13 @@ class SuggestsTest extends TestCase
         Friendship::factory(2)->create([
             'user_id' => $this->user->id,
             'friend_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
-            'status' => 'PENDING',
+            'status' => FriendshipStatus::PENDING,
         ]);
 
         Friendship::factory(2)->create([
             'user_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
             'friend_id' => $this->user->id,
-            'status' => 'PENDING',
+            'status' => FriendshipStatus::PENDING,
         ]);
 
         $response = $this->actingAs($this->user)->getJson('/api/friendship/suggests');
@@ -84,13 +85,13 @@ class SuggestsTest extends TestCase
         Friendship::factory(2)->create([
             'user_id' => $this->user->id,
             'friend_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
-            'status' => 'BLOCKED',
+            'status' => FriendshipStatus::BLOCKED,
         ]);
 
         Friendship::factory(2)->create([
             'user_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
             'friend_id' => $this->user->id,
-            'status' => 'BLOCKED',
+            'status' => FriendshipStatus::BLOCKED,
         ]);
 
         $response = $this->actingAs($this->user)->getJson('/api/friendship/suggests');
