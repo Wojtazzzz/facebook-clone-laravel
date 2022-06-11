@@ -8,14 +8,30 @@ use Tests\TestCase;
 
 class UsersRoutesTest extends TestCase
 {
+    private User $user;
+
+    private string $usersRoute;
+    private string $userRoute;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = User::factory()->createOne();
+        $this->usersRoute = route('api.next.users');
+        $this->userRoute = route('api.next.user', $this->user->id);
+    }
+
     public function testResponseReturnProperlyUsers()
     {
-        User::factory(20)->create();
+        $usersCount = 20;
+
+        User::factory($usersCount)->create();
         $users = User::latest()->get('id');
 
-        $response = $this->getJson('/api/users');
+        $response = $this->getJson($this->usersRoute);
 
-        $this->assertDatabaseCount(User::class, 20);
+        $this->assertDatabaseCount(User::class, $usersCount + 1);
 
         $response->assertStatus(200)->assertJsonFragment([
             'users' => $users,
@@ -24,10 +40,9 @@ class UsersRoutesTest extends TestCase
 
     public function testResponseReturnProperlyUser()
     {
-        $user = User::factory()->createOne();
-        $resource = new UserResource($user);
+        $resource = new UserResource($this->user);
 
-        $response = $this->getJson("/api/users/$user->id");
+        $response = $this->getJson($this->userRoute);
 
         $response->assertStatus(200)->assertJsonFragment($resource->response()->getData(true));
     }

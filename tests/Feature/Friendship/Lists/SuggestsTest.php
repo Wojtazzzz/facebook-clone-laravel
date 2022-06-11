@@ -11,28 +11,31 @@ class SuggestsTest extends TestCase
 {
     private User $user;
 
+    private string $suggestsRoute;
+
     public function setUp(): void
     {
         parent::setUp();
 
         $this->user = User::factory()->createOne();
+        $this->suggestsRoute = route('api.friendship.suggests');
     }
 
     public function testCannotUseWhenNotAuthorized()
     {
-        $response = $this->getJson('/api/friendship/suggests');
+        $response = $this->getJson($this->suggestsRoute);
         $response->assertStatus(401);
     }
 
     public function testCanUseWhenAuthorized()
     {
-        $response = $this->actingAs($this->user)->getJson('/api/friendship/suggests');
+        $response = $this->actingAs($this->user)->getJson($this->suggestsRoute);
         $response->assertStatus(200);
     }
 
     public function testNotFetchLoggedUser()
     {
-        $response = $this->actingAs($this->user)->getJson('/api/friendship/suggests');
+        $response = $this->actingAs($this->user)->getJson($this->suggestsRoute);
         $response->assertStatus(200)->assertJsonCount(0);
     }
 
@@ -52,7 +55,7 @@ class SuggestsTest extends TestCase
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson('/api/friendship/suggests');
+        $response = $this->actingAs($this->user)->getJson($this->suggestsRoute);
 
         $response->assertStatus(200)->assertJsonCount(8);
     }
@@ -73,7 +76,7 @@ class SuggestsTest extends TestCase
             'status' => FriendshipStatus::PENDING,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson('/api/friendship/suggests');
+        $response = $this->actingAs($this->user)->getJson($this->suggestsRoute);
 
         $response->assertStatus(200)->assertJsonCount(8);
     }
@@ -94,7 +97,7 @@ class SuggestsTest extends TestCase
             'status' => FriendshipStatus::BLOCKED,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson('/api/friendship/suggests');
+        $response = $this->actingAs($this->user)->getJson($this->suggestsRoute);
 
         $response->assertStatus(200)->assertJsonCount(8);
     }

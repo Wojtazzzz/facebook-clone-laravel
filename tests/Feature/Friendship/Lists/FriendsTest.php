@@ -11,22 +11,25 @@ class FriendsTest extends TestCase
 {
     private User $user;
 
+    private string $friendsRoute;
+
     public function setUp(): void
     {
         parent::setUp();
 
         $this->user = User::factory()->createOne();
+        $this->friendsRoute = route('api.friendship.friends', $this->user->id);
     }
 
     public function testCannotUseWhenNotAuthorized()
     {
-        $response = $this->getJson("/api/friendship/friends/{$this->user->id}");
+        $response = $this->getJson($this->friendsRoute);
         $response->assertStatus(401);
     }
 
     public function testCanUseWhenAuthorized()
     {
-        $response = $this->actingAs($this->user)->getJson("/api/friendship/friends/{$this->user->id}");
+        $response = $this->actingAs($this->user)->getJson($this->friendsRoute);
         $response->assertStatus(200);
     }
 
@@ -48,7 +51,7 @@ class FriendsTest extends TestCase
                 'status' => FriendshipStatus::CONFIRMED,
             ]);
 
-        $response = $this->actingAs($this->user)->getJson("/api/friendship/friends/{$this->user->id}");
+        $response = $this->actingAs($this->user)->getJson($this->friendsRoute);
 
         $response->assertStatus(200)->assertJsonCount(8);
     }
@@ -64,7 +67,7 @@ class FriendsTest extends TestCase
                 'status' => FriendshipStatus::CONFIRMED,
             ]);
 
-        $response = $this->actingAs($this->user)->getJson("/api/friendship/friends/{$this->user->id}");
+        $response = $this->actingAs($this->user)->getJson($this->friendsRoute);
 
         $response->assertStatus(200)->assertJsonCount(9);
     }
@@ -80,7 +83,7 @@ class FriendsTest extends TestCase
                 'status' => FriendshipStatus::CONFIRMED,
             ]);
 
-        $response = $this->actingAs($this->user)->getJson("/api/friendship/friends/{$this->user->id}");
+        $response = $this->actingAs($this->user)->getJson($this->friendsRoute);
 
         $response->assertStatus(200)->assertJsonCount(4);
     }

@@ -11,22 +11,25 @@ class InvitesTest extends TestCase
 {
     private User $user;
 
+    private string $invitesRoute;
+
     public function setUp(): void
     {
         parent::setUp();
 
         $this->user = User::factory()->createOne();
+        $this->invitesRoute = route('api.friendship.invites');
     }
 
     public function testCannotUseWhenNotAuthorized()
     {
-        $response = $this->getJson('/api/friendship/invites');
+        $response = $this->getJson($this->invitesRoute);
         $response->assertStatus(401);
     }
 
     public function testCanUseWhenAuthorized()
     {
-        $response = $this->actingAs($this->user)->getJson('/api/friendship/invites');
+        $response = $this->actingAs($this->user)->getJson($this->invitesRoute);
         $response->assertStatus(200);
     }
 
@@ -40,7 +43,7 @@ class InvitesTest extends TestCase
             'status' => FriendshipStatus::PENDING,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson('/api/friendship/invites');
+        $response = $this->actingAs($this->user)->getJson($this->invitesRoute);
 
         $response->assertStatus(200)->assertJsonCount(5);
     }
@@ -55,7 +58,7 @@ class InvitesTest extends TestCase
             'status' => FriendshipStatus::PENDING,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson('/api/friendship/invites');
+        $response = $this->actingAs($this->user)->getJson($this->invitesRoute);
 
         $response->assertStatus(200)->assertJsonCount(0);
     }

@@ -12,6 +12,8 @@ class RejectTest extends TestCase
     private User $user;
     private User $friend;
 
+    private string $rejectRoute;
+
     private string $friendshipsTable = 'friendships';
     private string $notificationsTable = 'notifications';
 
@@ -20,12 +22,13 @@ class RejectTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->createOne();
+        $this->rejectRoute = route('api.friendship.reject');
         $this->friend = User::factory()->createOne();
     }
 
     public function testCannotUseWhenNotAuthorized()
     {
-        $response = $this->postJson('/api/friendship/reject');
+        $response = $this->postJson($this->rejectRoute);
         $response->assertStatus(401);
     }
 
@@ -37,7 +40,7 @@ class RejectTest extends TestCase
             'status' => FriendshipStatus::PENDING,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson('/api/friendship/reject', [
+        $response = $this->actingAs($this->user)->postJson($this->rejectRoute, [
             'user_id' => $this->friend->id,
         ]);
 
@@ -58,7 +61,7 @@ class RejectTest extends TestCase
             'status' => FriendshipStatus::PENDING,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson('/api/friendship/reject', [
+        $response = $this->actingAs($this->user)->postJson($this->rejectRoute, [
             'user_id' => $this->friend->id,
         ]);
 
@@ -68,7 +71,7 @@ class RejectTest extends TestCase
 
     public function testCannotRejectInvitationWhichNotExists()
     {
-        $response = $this->actingAs($this->user)->postJson('/api/friendship/reject', [
+        $response = $this->actingAs($this->user)->postJson($this->rejectRoute, [
             'user_id' => $this->friend->id,
         ]);
 
@@ -83,7 +86,7 @@ class RejectTest extends TestCase
             'status' => FriendshipStatus::PENDING,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson('/api/friendship/reject', [
+        $response = $this->actingAs($this->user)->postJson($this->rejectRoute, [
             'user_id' => $this->friend->id,
         ]);
 
@@ -98,7 +101,7 @@ class RejectTest extends TestCase
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson('/api/friendship/reject', [
+        $response = $this->actingAs($this->user)->postJson($this->rejectRoute, [
             'user_id' => $this->friend->id,
         ]);
 
@@ -113,7 +116,7 @@ class RejectTest extends TestCase
             'status' => FriendshipStatus::PENDING,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson('/api/friendship/reject', [
+        $response = $this->actingAs($this->user)->postJson($this->rejectRoute, [
             'user_id' => 99999,
         ]);
 

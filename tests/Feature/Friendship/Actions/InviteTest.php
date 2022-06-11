@@ -13,6 +13,8 @@ class InviteTest extends TestCase
     private User $user;
     private User $friend;
 
+    private string $inviteRoute;
+
     private string $friendshipsTable = 'friendships';
     private string $notificationsTable = 'notifications';
 
@@ -21,18 +23,19 @@ class InviteTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->createOne();
+        $this->inviteRoute = route('api.friendship.invite', $this->user->id);
         $this->friend = User::factory()->createOne();
     }
 
     public function testCannotUseWhenNotAuthorized()
     {
-        $response = $this->postJson('/api/friendship/invite');
+        $response = $this->postJson($this->inviteRoute);
         $response->assertStatus(401);
     }
 
     public function testCanSendInvitation()
     {
-        $response = $this->actingAs($this->user)->postJson('/api/friendship/invite', [
+        $response = $this->actingAs($this->user)->postJson($this->inviteRoute, [
             'user_id' => $this->friend->id,
         ]);
 
@@ -46,7 +49,7 @@ class InviteTest extends TestCase
 
     public function testCannotInviteSelf()
     {
-        $response = $this->actingAs($this->user)->postJson('/api/friendship/invite', [
+        $response = $this->actingAs($this->user)->postJson($this->inviteRoute, [
             'user_id' => $this->user->id,
         ]);
 
@@ -55,7 +58,7 @@ class InviteTest extends TestCase
 
     public function testInvitationCreatesNotification()
     {
-        $this->actingAs($this->user)->postJson('/api/friendship/invite', [
+        $this->actingAs($this->user)->postJson($this->inviteRoute, [
             'user_id' => $this->friend->id,
         ]);
 
@@ -74,7 +77,7 @@ class InviteTest extends TestCase
             'status' => FriendshipStatus::PENDING,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson('/api/friendship/invite', [
+        $response = $this->actingAs($this->user)->postJson($this->inviteRoute, [
             'user_id' => $this->friend->id,
         ]);
 
@@ -90,7 +93,7 @@ class InviteTest extends TestCase
             'status' => FriendshipStatus::PENDING,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson('/api/friendship/invite', [
+        $response = $this->actingAs($this->user)->postJson($this->inviteRoute, [
             'user_id' => $this->friend->id,
         ]);
 
@@ -106,7 +109,7 @@ class InviteTest extends TestCase
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson('/api/friendship/invite', [
+        $response = $this->actingAs($this->user)->postJson($this->inviteRoute, [
             'user_id' => $this->friend->id,
         ]);
 
@@ -122,7 +125,7 @@ class InviteTest extends TestCase
             'status' => FriendshipStatus::BLOCKED,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson('/api/friendship/invite', [
+        $response = $this->actingAs($this->user)->postJson($this->inviteRoute, [
             'user_id' => $this->friend->id,
         ]);
 
@@ -132,7 +135,7 @@ class InviteTest extends TestCase
 
     public function testCannotInviteUserWhichNotExists()
     {
-        $response = $this->actingAs($this->user)->postJson('/api/friendship/accept', [
+        $response = $this->actingAs($this->user)->postJson($this->inviteRoute, [
             'user_id' => 99999,
         ]);
 

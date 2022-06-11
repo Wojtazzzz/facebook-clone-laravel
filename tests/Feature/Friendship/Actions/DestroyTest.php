@@ -12,6 +12,8 @@ class DestroyTest extends TestCase
     private User $user;
     private User $friend;
 
+    private string $destroyRoute;
+
     private string $friendshipsTable = 'friendships';
 
     public function setUp(): void
@@ -19,12 +21,13 @@ class DestroyTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->createOne();
+        $this->destroyRoute = route('api.friendship.destroy');
         $this->friend = User::factory()->createOne();
     }
 
     public function testCannotUseWhenNotAuthorized()
     {
-        $response = $this->postJson('/api/friendship/destroy');
+        $response = $this->postJson($this->destroyRoute);
         $response->assertStatus(401);
     }
 
@@ -36,7 +39,7 @@ class DestroyTest extends TestCase
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson('/api/friendship/destroy', [
+        $response = $this->actingAs($this->user)->postJson($this->destroyRoute, [
             'user_id' => $this->friend->id,
         ]);
 
@@ -56,7 +59,7 @@ class DestroyTest extends TestCase
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson('/api/friendship/destroy', [
+        $response = $this->actingAs($this->user)->postJson($this->destroyRoute, [
             'user_id' => $this->friend->id,
         ]);
 
@@ -70,7 +73,7 @@ class DestroyTest extends TestCase
 
     public function testErrorMessageWhenNoIdPassed()
     {
-        $response = $this->actingAs($this->user)->postJson('/api/friendship/destroy');
+        $response = $this->actingAs($this->user)->postJson($this->destroyRoute);
         $response->assertInvalid([
             'user_id' => 'The user id field is required',
         ]);
@@ -84,7 +87,7 @@ class DestroyTest extends TestCase
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson('/api/friendship/destroy', [
+        $response = $this->actingAs($this->user)->postJson($this->destroyRoute, [
             'user_id' => 25,
         ]);
 
@@ -93,7 +96,7 @@ class DestroyTest extends TestCase
 
     public function testCannotDestroyFriendshipWhichNotExists()
     {
-        $response = $this->actingAs($this->user)->postJson('/api/friendship/destroy', [
+        $response = $this->actingAs($this->user)->postJson($this->destroyRoute, [
             'user_id' => $this->friend->id,
         ]);
 
@@ -108,7 +111,7 @@ class DestroyTest extends TestCase
             'status' => FriendshipStatus::PENDING,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson('/api/friendship/destroy', [
+        $response = $this->actingAs($this->user)->postJson($this->destroyRoute, [
             'user_id' => $this->friend->id,
         ]);
 

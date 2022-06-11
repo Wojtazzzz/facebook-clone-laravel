@@ -8,17 +8,19 @@ use Tests\TestCase;
 class AuthenticationTest extends TestCase
 {
     private User $user;
+    private string $loginRoute;
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->user = User::factory()->createOne();
+        $this->loginRoute = route('api.auth.login');
     }
 
     public function testUserCanAuthenticate()
     {
-        $response = $this->postJson('/login', [
+        $response = $this->postJson($this->loginRoute, [
             'email' => $this->user->email,
             'password' => 'password',
         ]);
@@ -29,7 +31,7 @@ class AuthenticationTest extends TestCase
 
     public function testUserMustAuthenticateWithProperlyEmail()
     {
-        $response = $this->postJson('/login', [
+        $response = $this->postJson($this->loginRoute, [
             'email' => 'not_email',
             'password' => 'password',
         ]);
@@ -42,7 +44,7 @@ class AuthenticationTest extends TestCase
 
     public function testUserCanNotAuthenticateWithInvalidPassword()
     {
-        $this->postJson('/login', [
+        $this->postJson($this->loginRoute, [
             'email' => $this->user->email,
             'password' => 'wrong-password',
         ]);
@@ -52,7 +54,7 @@ class AuthenticationTest extends TestCase
 
     public function testUserCanNotAuthenticateWithoutPassword()
     {
-        $this->postJson('/login', [
+        $this->postJson($this->loginRoute, [
             'email' => $this->user->email,
         ]);
 
@@ -61,7 +63,7 @@ class AuthenticationTest extends TestCase
 
     public function testUserCanNotAuthenticateWithoutEmail()
     {
-        $this->postJson('/login', [
+        $this->postJson($this->loginRoute, [
             'password' => 'password',
         ]);
 
@@ -70,7 +72,7 @@ class AuthenticationTest extends TestCase
 
     public function testUserCanNotAuthenticateWithoutAnyData()
     {
-        $this->postJson('/login');
+        $this->postJson($this->loginRoute);
         $this->assertGuest();
     }
 }
