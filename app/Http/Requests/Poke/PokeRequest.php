@@ -2,11 +2,13 @@
 
 namespace App\Http\Requests\Poke;
 
+use App\Rules\Friend;
+use App\Rules\PokeInitiator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-class UpdateRequest extends FormRequest
+class PokeRequest extends FormRequest
 {
     public function authorize()
     {
@@ -20,9 +22,10 @@ class UpdateRequest extends FormRequest
                 'required',
                 'integer',
                 'exists:users,id',
-                'exists:pokes,initiator_id',
-                Rule::notIn($this->user()->id)
-            ]
+                Rule::notIn([$this->user()->id]),
+                new Friend(),
+                new PokeInitiator(),
+            ],
         ];
     }
 }

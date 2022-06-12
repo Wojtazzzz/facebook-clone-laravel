@@ -38,8 +38,7 @@ Route::middleware('auth:sanctum')
             ->prefix('/pokes')
             ->group(function () {
                 Route::get('/', 'index')->name('index');
-                Route::post('/', 'store')->name('store');
-                Route::put('/{poke}', 'update')->name('update');
+                Route::post('/', 'poke')->name('poke');
             });
 
         Route::controller(NotificationController::class)

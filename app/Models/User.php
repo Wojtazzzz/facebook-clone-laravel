@@ -7,12 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens;
+    use HasFactory;
+    use Notifiable;
 
     protected $fillable = [
         'first_name',
@@ -20,19 +22,19 @@ class User extends Authenticatable
         'email',
         'profile_image',
         'background_image',
-        'password'
+        'password',
     ];
 
     protected $hidden = [
         'password',
         'email',
-        'created_at'
+        'created_at',
     ];
 
     protected $casts = [
         'email_verified_at' => 'datetime',
         'created_at' => 'datetime:Y-m-d H:i:s',
-        'updated_at' => 'datetime:Y-m-d H:i:s'
+        'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
 
     protected function lastConversationMessage(): Attribute
@@ -40,7 +42,7 @@ class User extends Authenticatable
         return new Attribute(function () {
             if ($this->messages[0]->pivot->created_at > $this->theMessages[0]->pivot->created_at) {
                 return $this->messages[0];
-            } else  {
+            } else {
                 return $this->theMessages[0];
             }
         });
@@ -55,7 +57,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(Post::class, 'author_id', 'id');
     }
-    
+
     public function sendedMessages(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'messages', 'sender_id', 'receiver_id')

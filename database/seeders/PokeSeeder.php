@@ -19,17 +19,21 @@ class PokeSeeder extends Seeder
     public function run(User $user, int $count)
     {
         $users = User::pluck('id');
-        
+
         $faker = $this->faker->unique();
 
+        $friendId = fn () => $faker->randomElement($users->except($user->id));
+
         Poke::factory($count)->create([
-            'initiator_id' => $user->id,
-            'poked_id' => fn () => $faker->randomElement($users->except($user->id))
+            'user_id' => $user->id,
+            'friend_id' => $friendId,
+            'latest_initiator_id' => $user->id,
         ]);
 
         Poke::factory($count)->create([
-            'initiator_id' => fn () => $faker->randomElement($users->except($user->id)),
-            'poked_id' => $user->id
+            'user_id' => $friendId,
+            'friend_id' => $user->id,
+            'latest_initiator_id' => $friendId,
         ]);
     }
 }

@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Poke\StoreRequest;
-use App\Http\Requests\Poke\UpdateRequest;
+use App\Http\Requests\Poke\PokeRequest;
 use App\Http\Resources\PokeResource;
 use App\Http\Resources\UserResource;
 use App\Models\Poke;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -17,51 +17,44 @@ class PokeController extends Controller
     public function index(Request $request): JsonResponse
     {
         $pokes = Poke::with('initiator')
-            ->where('poked_id', $request->user()->id)
+            ->whereNot('latest_initiator_id', $request->user()->id)
             ->paginate(10, [
                 'id',
-                'initiator_id',
+                'user_id',
+                'latest_initiator_id',
                 'count',
-                'updated_at'
+                'updated_at',
             ]);
 
         return response()->json(PokeResource::collection($pokes));
     }
 
-    public function store(StoreRequest $request): JsonResponse
+    public function poke(PokeRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $pokedUser = User::findOrFail($data['user_id']);
-
-        Poke::create([
-            'initiator_id' => $request->user()->id,
-            'poked_id' => $pokedUser->id,
-        ]);
-
-        return response()->json([
-            'data' => new UserResource($pokedUser),
-            'message' => 'User poked successfully'
-        ], 201);
-    }
-
-    public function update(UpdateRequest $request): JsonResponse
-    {
         $user = $request->user();
-        $data = $request->validated();
+        $friend = User::findOrFail($data['user_id']);
 
-        $pokedUser = User::findOrFail($data['user_id']);
+        $poke = Poke::poke($user->id, $data['user_id'])->first('count');
 
-        Poke::firstWhere([
-            'initiator_id' => $pokedUser->id,
-            'poked_id' => $user->id
-        ])->increment('count', 1, [
-            'initiator_id' => $user->id,
-            'poked_id' => $pokedUser->id
-        ]);
+        Poke::when(
+            (bool) $poke,
+            function (Builder $query) use ($user, $poke) {
+                $query->update([
+                    'latest_initiator_id' => $user->id,
+                    'count' => $poke->count + 1,
+                ]);
+            },
+            fn (Builder $query) => $query->create([
+                'user_id' => $user->id,
+                'friend_id' => $friend->id,
+                'latest_initiator_id' => $user->id,
+            ])
+        );
 
         return response()->json([
-            'data' => new UserResource($pokedUser),
-            'message' => 'User poked back successfully'
+            'data' => new UserResource($friend),
+            'message' => 'User poked successfully',
         ], 201);
     }
 }
