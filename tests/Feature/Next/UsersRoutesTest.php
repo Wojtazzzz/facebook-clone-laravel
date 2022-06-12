@@ -33,7 +33,7 @@ class UsersRoutesTest extends TestCase
 
         $this->assertDatabaseCount(User::class, $usersCount + 1);
 
-        $response->assertStatus(200)->assertJsonFragment([
+        $response->assertOk()->assertJsonFragment([
             'users' => $users,
         ]);
     }
@@ -44,6 +44,7 @@ class UsersRoutesTest extends TestCase
 
         $response = $this->getJson($this->userRoute);
 
-        $response->assertStatus(200)->assertJsonFragment($resource->response()->getData(true));
+        $response->assertOk()
+            ->assertJsonFragment($resource->response()->getData(true));
     }
 }

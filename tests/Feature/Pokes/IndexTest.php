@@ -34,7 +34,7 @@ class IndexTest extends TestCase
     {
         $response = $this->actingAs($this->user)->getJson($this->pokesRoute);
 
-        $response->assertStatus(200);
+        $response->assertOk();
     }
 
     public function testReturnMaxTenPokes()
@@ -47,7 +47,7 @@ class IndexTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->pokesRoute);
 
-        $response->assertStatus(200)
+        $response->assertOk()
             ->assertJsonCount(10);
     }
 
@@ -69,7 +69,7 @@ class IndexTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->pokesRoute);
 
-        $response->assertStatus(200)
+        $response->assertOk()
             ->assertJsonCount(8);
     }
 
@@ -77,7 +77,7 @@ class IndexTest extends TestCase
     {
         $response = $this->actingAs($this->user)->getJson($this->pokesRoute);
 
-        $response->assertStatus(200)
+        $response->assertOk()
             ->assertJsonCount(0);
     }
 }

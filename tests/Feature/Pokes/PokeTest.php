@@ -12,7 +12,6 @@ class PokeTest extends TestCase
 {
     private User $user;
     private User $friend;
-    // private Collection $users;
 
     private string $pokeRoute;
 
@@ -24,7 +23,6 @@ class PokeTest extends TestCase
 
         $this->user = User::factory()->createOne();
         $this->friend = User::factory()->createOne();
-        // $this->users = User::factory(60)->create();
         $this->pokeRoute = route('api.pokes.poke');
     }
 

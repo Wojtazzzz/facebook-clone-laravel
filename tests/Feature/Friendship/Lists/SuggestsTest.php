@@ -24,19 +24,19 @@ class SuggestsTest extends TestCase
     public function testCannotUseWhenNotAuthorized()
     {
         $response = $this->getJson($this->suggestsRoute);
-        $response->assertStatus(401);
+        $response->assertUnauthorized();
     }
 
     public function testCanUseWhenAuthorized()
     {
         $response = $this->actingAs($this->user)->getJson($this->suggestsRoute);
-        $response->assertStatus(200);
+        $response->assertOk();
     }
 
     public function testNotFetchLoggedUser()
     {
         $response = $this->actingAs($this->user)->getJson($this->suggestsRoute);
-        $response->assertStatus(200)->assertJsonCount(0);
+        $response->assertOk()->assertJsonCount(0);
     }
 
     public function testNotFetchUserFriends()
@@ -57,7 +57,7 @@ class SuggestsTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->suggestsRoute);
 
-        $response->assertStatus(200)->assertJsonCount(8);
+        $response->assertOk()->assertJsonCount(8);
     }
 
     public function testNotFetchUsersWhereRequestIsPending()
@@ -78,7 +78,7 @@ class SuggestsTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->suggestsRoute);
 
-        $response->assertStatus(200)->assertJsonCount(8);
+        $response->assertOk()->assertJsonCount(8);
     }
 
     public function testNotFetchBlockedUsers()
@@ -99,6 +99,6 @@ class SuggestsTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->suggestsRoute);
 
-        $response->assertStatus(200)->assertJsonCount(8);
+        $response->assertOk()->assertJsonCount(8);
     }
 }

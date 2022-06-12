@@ -28,7 +28,7 @@ class DestroyTest extends TestCase
     public function testCannotUseWhenNotAuthorized()
     {
         $response = $this->postJson($this->destroyRoute);
-        $response->assertStatus(401);
+        $response->assertUnauthorized();
     }
 
     public function testCanDestroyFriendshipWhichUserInitialize()
@@ -43,7 +43,7 @@ class DestroyTest extends TestCase
             'user_id' => $this->friend->id,
         ]);
 
-        $response->assertStatus(201);
+        $response->assertCreated();
         $this->assertDatabaseMissing($this->friendshipsTable, [
             'user_id' => $this->user->id,
             'friend_id' => $this->friend->id,
@@ -63,7 +63,7 @@ class DestroyTest extends TestCase
             'user_id' => $this->friend->id,
         ]);
 
-        $response->assertStatus(201);
+        $response->assertCreated();
         $this->assertDatabaseMissing($this->friendshipsTable, [
             'user_id' => $this->friend->id,
             'friend_id' => $this->user->id,
@@ -115,6 +115,6 @@ class DestroyTest extends TestCase
             'user_id' => $this->friend->id,
         ]);
 
-        $response->assertNotFound();
+        $response->assertUnprocessable();
     }
 }

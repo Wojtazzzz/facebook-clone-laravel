@@ -24,13 +24,13 @@ class FriendsTest extends TestCase
     public function testCannotUseWhenNotAuthorized()
     {
         $response = $this->getJson($this->friendsRoute);
-        $response->assertStatus(401);
+        $response->assertUnauthorized();
     }
 
     public function testCanUseWhenAuthorized()
     {
         $response = $this->actingAs($this->user)->getJson($this->friendsRoute);
-        $response->assertStatus(200);
+        $response->assertOk();
     }
 
     public function testReturnFriendsInvitedAndWhichSendInvites()
@@ -53,7 +53,7 @@ class FriendsTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->friendsRoute);
 
-        $response->assertStatus(200)->assertJsonCount(8);
+        $response->assertOk()->assertJsonCount(8);
     }
 
     public function testReturnFriendsWhenUserHasOnlyInvitedFriends()
@@ -69,7 +69,7 @@ class FriendsTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->friendsRoute);
 
-        $response->assertStatus(200)->assertJsonCount(9);
+        $response->assertOk()->assertJsonCount(9);
     }
 
     public function testReturnFriendsWhenUserHasOnlyFriendsWhichInvite()
@@ -85,6 +85,6 @@ class FriendsTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->friendsRoute);
 
-        $response->assertStatus(200)->assertJsonCount(4);
+        $response->assertOk()->assertJsonCount(4);
     }
 }

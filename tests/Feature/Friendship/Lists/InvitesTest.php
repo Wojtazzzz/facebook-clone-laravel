@@ -24,13 +24,13 @@ class InvitesTest extends TestCase
     public function testCannotUseWhenNotAuthorized()
     {
         $response = $this->getJson($this->invitesRoute);
-        $response->assertStatus(401);
+        $response->assertUnauthorized();
     }
 
     public function testCanUseWhenAuthorized()
     {
         $response = $this->actingAs($this->user)->getJson($this->invitesRoute);
-        $response->assertStatus(200);
+        $response->assertOk();
     }
 
     public function testFetchReceivedInvites()
@@ -45,7 +45,7 @@ class InvitesTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->invitesRoute);
 
-        $response->assertStatus(200)->assertJsonCount(5);
+        $response->assertOk()->assertJsonCount(5);
     }
 
     public function testNotFetchSentInvites()
@@ -60,6 +60,6 @@ class InvitesTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->invitesRoute);
 
-        $response->assertStatus(200)->assertJsonCount(0);
+        $response->assertOk()->assertJsonCount(0);
     }
 }

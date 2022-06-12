@@ -29,7 +29,7 @@ class RejectTest extends TestCase
     public function testCannotUseWhenNotAuthorized()
     {
         $response = $this->postJson($this->rejectRoute);
-        $response->assertStatus(401);
+        $response->assertUnauthorized();
     }
 
     public function testCanRejectInvitation()
