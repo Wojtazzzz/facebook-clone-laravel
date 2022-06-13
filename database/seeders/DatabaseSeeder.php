@@ -6,11 +6,11 @@ use App\Models\Comment;
 use App\Models\Friendship;
 use App\Models\Like;
 use App\Models\Message;
+use App\Models\Notification;
 use App\Models\Poke;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
         Like::factory(500)->create();
         Comment::factory(3000)->create();
         Friendship::factory(400)->create();
+        Notification::factory(1000)->create();
 
         $user = User::factory()->createOne([
             'first_name' => 'Marcin',
@@ -59,6 +60,11 @@ class DatabaseSeeder extends Seeder
             'user' => $user,
             'count' => 20,
         ]);
+
+        $this->call(NotificationSeeder::class, parameters: [
+            'user' => $user,
+            'count' => 50,
+        ]);
     }
 
     private function clearDatabase()
@@ -70,6 +76,6 @@ class DatabaseSeeder extends Seeder
         Poke::truncate();
         Comment::truncate();
         Friendship::truncate();
-        DB::table('notifications')->truncate();
+        Notification::truncate();
     }
 }

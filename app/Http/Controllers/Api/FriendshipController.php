@@ -11,8 +11,8 @@ use App\Http\Requests\Friendship\RejectRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Friendship;
 use App\Models\User;
-use App\Notifications\FriendshipInvitationAccepted;
-use App\Notifications\FriendshipInvitationSended;
+use App\Notifications\FriendshipRequestAccepted;
+use App\Notifications\FriendshipRequestSent;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -66,7 +66,7 @@ class FriendshipController extends Controller
             'status' => FriendshipStatus::PENDING,
         ]);
 
-        $friend->notify(new FriendshipInvitationSended($request->user()));
+        $friend->notify(new FriendshipRequestSent());
 
         return response()->json(new UserResource($friend), 201);
     }
@@ -83,7 +83,7 @@ class FriendshipController extends Controller
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
-        $friend->notify(new FriendshipInvitationAccepted($request->user()));
+        $friend->notify(new FriendshipRequestAccepted());
 
         return response()->json(new UserResource($friend), 201);
     }

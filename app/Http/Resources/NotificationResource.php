@@ -11,11 +11,11 @@ class NotificationResource extends JsonResource
         return [
             'id' => $this->id,
             'data' => [
-                'type' => $this->data['type'],
-                'initiator' => new UserResource((object) $this->data['initiator'])
+                // 'type' => $this->data['type'],
+                // 'initiator' => new UserResource((object) $this->data['initiator'])
             ],
             'read_at' => $this->read_at,
-            'created_at' => $this->created_at
+            'created_at' => $this->created_at,
         ];
     }
 }

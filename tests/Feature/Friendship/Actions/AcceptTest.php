@@ -5,7 +5,7 @@ namespace Tests\Feature\Friendship\Actions;
 use App\Enums\FriendshipStatus;
 use App\Models\Friendship;
 use App\Models\User;
-use App\Notifications\FriendshipInvitationAccepted;
+use App\Notifications\FriendshipRequestAccepted;
 use Tests\TestCase;
 
 class AcceptTest extends TestCase
@@ -69,7 +69,7 @@ class AcceptTest extends TestCase
         $response->assertCreated();
         $this->assertDatabaseCount($this->notificationsTable, 1);
         $this->assertDatabaseHas($this->notificationsTable, [
-            'type' => FriendshipInvitationAccepted::class,
+            'type' => FriendshipRequestAccepted::class,
             'notifiable_id' => $this->friend->id,
         ]);
     }

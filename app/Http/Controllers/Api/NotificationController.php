@@ -24,7 +24,7 @@ class NotificationController extends Controller
 
         return response()->json([
             'data' => NotificationResource::collection($notifications),
-            'message' => 'All notifications marked as read'
+            'message' => 'All notifications marked as read',
         ]);
     }
 }
