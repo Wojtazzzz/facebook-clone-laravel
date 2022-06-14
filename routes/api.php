@@ -53,9 +53,9 @@ Route::middleware('auth:sanctum')
             ->name('messages.')
             ->prefix('/messages')
             ->group(function () {
-                Route::get('/{receiverId}', 'index')->whereNumber('receiverId')->name('index');
-                Route::post('/', 'store')->name('store');
                 Route::get('/messenger', 'messenger')->name('messenger');
+                Route::get('/{user}', 'index')->name('index');
+                Route::post('/', 'store')->name('store');
             });
 
         Route::controller(PostController::class)

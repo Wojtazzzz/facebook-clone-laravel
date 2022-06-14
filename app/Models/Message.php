@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Events\ChatMessageSended;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Message extends Model
 {
@@ -13,14 +15,38 @@ class Message extends Model
     protected $fillable = [
         'text',
         'sender_id',
-        'receiver_id'
+        'receiver_id',
     ];
 
     protected $dispatchesEvents = [
-        'created' => ChatMessageSended::class
+        'created' => ChatMessageSended::class,
     ];
 
     protected $casts = [
-        'created_at' => 'datetime:Y-m-d H:i:s'
+        'created_at' => 'datetime:Y-m-d H:i:s',
     ];
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        self::creating(function (Message $model) {
+            if (!Auth::check()) {
+                return;
+            }
+
+            $model->sender_id = Auth::user()->id;
+        });
+    }
+
+    public function scopeConversation(Builder $query, int $userId, int $friendId): Builder
+    {
+        return $query->where([
+            ['sender_id', $userId],
+            ['receiver_id', $friendId],
+        ])->orWhere([
+            ['sender_id', $friendId],
+            ['receiver_id', $userId],
+        ])->latest();
+    }
 }

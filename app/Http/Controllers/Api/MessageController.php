@@ -14,31 +14,24 @@ use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
-    public function index(Request $request, int $receiverId): JsonResponse
+    // $user === $friend
+    public function index(Request $request, User $user): JsonResponse
     {
-        $messages = Message::where([
-            ['sender_id', $request->user()->id],
-            ['receiver_id', $receiverId],
-        ])->orWhere([
-            ['sender_id', $receiverId],
-            ['receiver_id', $request->user()->id],
-        ])
-        ->latest()
-        ->paginate(15, [
-            'id',
-            'text',
-            'sender_id',
-            'created_at',
-        ]);
+        $messages = Message::query()
+            ->conversation($request->user()->id, $user->id)
+            ->paginate(15, [
+                'id',
+                'text',
+                'sender_id',
+                'created_at',
+            ]);
 
         return response()->json(MessageResource::collection($messages));
     }
 
     public function store(StoreRequest $request): JsonResponse
     {
-        $message = Message::create($request->validated() + [
-            'sender_id' => $request->user()->id,
-        ]);
+        $message = Message::create($request->validated());
 
         return response()->json(new MessageResource($message), 201);
     }
@@ -47,17 +40,24 @@ class MessageController extends Controller
     {
         $user = $request->user();
 
-        $friends = User::query()
-            ->whereHas('invitedByFriends', fn(Builder $query) => $query
-                ->where('user_id', $user->id)
-                ->orWhere('friend_id', $user->id)
-            )
-            ->orWhereHas('invitedFriends', fn(Builder $query) => $query
-                ->where('user_id', $user->id)
-                ->orWhere('friend_id', $user->id)
-            )
-            ->inRandomOrder()
-            ->paginate(10);
+        $friends = collect([
+            ...$user->invitedFriends,
+            ...$user->invitedByFriends,
+        ])
+        // ->inRandomOrder()
+        ->paginate(10);
+
+        // $friends = User::query()
+        //     ->whereHas('invitedByFriends', fn (Builder $query) => $query
+        //         ->where('user_id', $user->id)
+        //         ->orWhere('friend_id', $user->id)
+        //     )
+        //     ->orWhereHas('invitedFriends', fn (Builder $query) => $query
+        //         ->where('user_id', $user->id)
+        //         ->orWhere('friend_id', $user->id)
+        //     )
+        //     ->inRandomOrder()
+        //     ->paginate(10);
 
         return response()->json(UserResource::collection($friends));
     }

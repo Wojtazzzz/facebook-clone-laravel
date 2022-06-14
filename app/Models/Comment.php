@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 
 class Comment extends Model
 {
@@ -14,7 +15,7 @@ class Comment extends Model
         'content',
         'resource',
         'author_id',
-        'resource_id'
+        'resource_id',
     ];
 
     public function comments(): HasMany
@@ -26,10 +27,12 @@ class Comment extends Model
     {
         parent::boot();
 
-        self::creating(function ($model) {
-            if (!auth()->check()) return;
+        self::creating(function (Comment $model) {
+            if (!Auth::check()) {
+                return;
+            }
 
-            $model->author_id = auth()->user()->id;
+            $model->author_id = Auth::user()->id;
         });
     }
 }

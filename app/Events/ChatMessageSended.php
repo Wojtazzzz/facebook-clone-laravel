@@ -11,24 +11,19 @@ use Illuminate\Queue\SerializesModels;
 
 class ChatMessageSended implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
-    /**
-     * Create a new event instance.
-     *
-     * @return void
-     */
-    public function __construct(
-        public Message $message
-    ) { }
+    private Message $message;
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
+    public function __construct(Message $message)
+    {
+        $this->message = $message;
+    }
+
     public function broadcastOn()
     {
-        return new PrivateChannel('messages.'. $this->message->sender_id .'.'. $this->message->receiver_id);
+        return new PrivateChannel('messages.'.$this->message->sender_id.'.'.$this->message->receiver_id);
     }
 }
