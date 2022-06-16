@@ -16,14 +16,12 @@ class CommentController extends Controller
 {
     public function index(Request $request, int $resourceId): JsonResponse
     {
-        if ($request->segment(2) === 'posts') {
+        if ('posts' === $request->segment(2)) {
             $post = Post::findOrFail($resourceId);
             $comments = $post->comments;
-
-        } else if ($request->segment(2) === 'comments') {
+        } elseif ('comments' === $request->segment(2)) {
             $comment = Comment::findOrFail($resourceId);
             $comments = $comment->comments;
-        
         } else {
             // $sale = Sale::findOrFail($resourceId);
             // $comments = $sale->comments;
@@ -43,10 +41,10 @@ class CommentController extends Controller
         };
 
         $comment = Comment::create($request->validated() + [
-            'resource' => $resource
+            'resource' => $resource,
         ]);
 
-        return response()->json(new CommentResource($comment));
+        return response()->json(new CommentResource($comment), 201);
     }
 
     public function update(UpdateRequest $request, int $resourceId, Comment $comment): JsonResponse
@@ -54,7 +52,7 @@ class CommentController extends Controller
         $data = $request->validated();
 
         $comment->update([
-            'content' => $data['content']
+            'content' => $data['content'],
         ]);
 
         return response()->json(new CommentResource($comment));

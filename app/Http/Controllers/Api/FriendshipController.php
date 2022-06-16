@@ -85,7 +85,7 @@ class FriendshipController extends Controller
 
         $friend->notify(new FriendshipRequestAccepted());
 
-        return response()->json(new UserResource($friend), 201);
+        return response()->json(new UserResource($friend));
     }
 
     public function reject(RejectRequest $request): JsonResponse
@@ -100,7 +100,7 @@ class FriendshipController extends Controller
             'status' => FriendshipStatus::BLOCKED,
         ]);
 
-        return response()->json(new UserResource($friend), 201);
+        return response()->json(new UserResource($friend));
     }
 
     public function destroy(DestroyRequest $request): JsonResponse
@@ -120,6 +120,6 @@ class FriendshipController extends Controller
         ->firstOrFail()
         ->delete();
 
-        return response()->json(new UserResource($friend), 201);
+        return response()->json(new UserResource($friend));
     }
 }

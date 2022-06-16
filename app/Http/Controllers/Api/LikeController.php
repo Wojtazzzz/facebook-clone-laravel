@@ -34,6 +34,6 @@ class LikeController extends Controller
         return response()->json([
             'data' => new LikeResource($post->likes->count()),
             'message' => 'Post was unliked',
-        ], 200);
+        ]);
     }
 }

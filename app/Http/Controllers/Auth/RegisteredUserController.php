@@ -21,7 +21,7 @@ class RegisteredUserController extends Controller
             'email' => $faker->email,
             'password' => Hash::make($faker->iban),
             'profile_image' => $faker->imageUrl(168, 168),
-            'background_image' => $faker->imageUrl(850, 350)
+            'background_image' => $faker->imageUrl(850, 350),
         ]);
 
         Auth::login($user);

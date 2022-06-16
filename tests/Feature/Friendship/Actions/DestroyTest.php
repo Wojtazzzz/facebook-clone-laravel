@@ -43,7 +43,7 @@ class DestroyTest extends TestCase
             'user_id' => $this->friend->id,
         ]);
 
-        $response->assertCreated();
+        $response->assertOk();
         $this->assertDatabaseMissing($this->friendshipsTable, [
             'user_id' => $this->user->id,
             'friend_id' => $this->friend->id,
@@ -63,7 +63,7 @@ class DestroyTest extends TestCase
             'user_id' => $this->friend->id,
         ]);
 
-        $response->assertCreated();
+        $response->assertOk();
         $this->assertDatabaseMissing($this->friendshipsTable, [
             'user_id' => $this->friend->id,
             'friend_id' => $this->user->id,

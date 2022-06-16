@@ -44,7 +44,7 @@ class RejectTest extends TestCase
             'user_id' => $this->friend->id,
         ]);
 
-        $response->assertCreated();
+        $response->assertOk();
         $this->assertDatabaseCount($this->friendshipsTable, 1);
         $this->assertDatabaseHas($this->friendshipsTable, [
             'user_id' => $this->friend->id,
@@ -65,7 +65,7 @@ class RejectTest extends TestCase
             'user_id' => $this->friend->id,
         ]);
 
-        $response->assertCreated();
+        $response->assertOk();
         $this->assertDatabaseCount($this->notificationsTable, 0);
     }
 
