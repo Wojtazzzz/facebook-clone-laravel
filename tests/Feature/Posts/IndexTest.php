@@ -177,13 +177,13 @@ class IndexTest extends TestCase
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
-        Post::factory()->create([
-            'author_id' => fn () => $this->faker->randomElement($this->friends->pluck('id')),
+        Post::factory(5)->create([
+            'author_id' => fn () => $this->faker->randomElement([$this->friends[0]->id, $this->friends[1]->id]),
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute);
 
         $response->assertOk()
-            ->assertJsonCount(0);
+            ->assertJsonCount(5);
     }
 }

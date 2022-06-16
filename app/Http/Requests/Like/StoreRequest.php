@@ -2,15 +2,15 @@
 
 namespace App\Http\Requests\Like;
 
-use App\Models\Post;
+use App\Rules\LikeNotExists;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Auth;
 
 class StoreRequest extends FormRequest
 {
     public function authorize()
     {
-        return Gate::authorize('create', [Like::class, Post::findOrFail($this->post_id)]);
+        return Auth::check();
     }
 
     public function rules()
@@ -19,8 +19,9 @@ class StoreRequest extends FormRequest
             'post_id' => [
                 'required',
                 'integer',
-                'exists:posts,id'
-            ]
+                'exists:posts,id',
+                new LikeNotExists(),
+            ],
         ];
     }
 }
