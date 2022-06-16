@@ -19,24 +19,25 @@ class PostController extends Controller
         $authorsId = collect([
             $user->id,
             ...$user->invitedFriends->pluck('id'),
-            ...$user->invitedByFriends->pluck('id')
+            ...$user->invitedByFriends->pluck('id'),
         ]);
 
-        $posts = Post::with('author:id,first_name,last_name,profile_image,background_image')
+        $posts = Post::query()
+            ->with('author:id,first_name,last_name,profile_image,background_image')
             ->withCount([
                 'likes',
-                'comments' => fn($query) => $query->where('resource', 'POST'),
-                'likes as isLiked' => fn($query) => $query->where('user_id', $user->id)
+                'comments' => fn ($query) => $query->where('resource', 'POST'),
+                'likes as isLiked' => fn ($query) => $query->where('user_id', $user->id),
             ])
             ->whereIn('author_id', $authorsId)
             ->latest()
-            ->paginate(15, [
+            ->paginate(10, [
                 'id',
                 'content',
                 'images',
                 'author_id',
                 'created_at',
-                'updated_at'
+                'updated_at',
             ]);
 
         return response()->json(PostResource::collection($posts));
@@ -44,34 +45,32 @@ class PostController extends Controller
 
     public function store(StoreRequest $request): JsonResponse
     {
-        $user = $request->user();
-
+        $content = $request->validated()['content'] ?? null;
         $paths = [];
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $path = $image->store('public/posts');
-                
+
                 $paths[] = str_replace('public', '', $path);
             }
         }
 
         $post = Post::create([
-            'content' => $request->validated()['content'],
-            'author_id' => $user->id,
-            'images' => $paths
+            'content' => $content,
+            'images' => $paths,
         ]);
-        
+
         return response()->json([
             'data' => new PostResource($post),
-            'message' => 'Post was created'
-        ]);
+            'message' => 'Post was created',
+        ], 201);
     }
 
     public function destroy(Post $post): Response
     {
         $this->authorize('delete', [Post::class, $post]);
-        
+
         $post->delete();
 
         return response()->noContent();

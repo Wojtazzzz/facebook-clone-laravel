@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 
 class Post extends Model
 {
@@ -14,12 +15,25 @@ class Post extends Model
     protected $fillable = [
         'content',
         'images',
-        'author_id'
+        'author_id',
     ];
 
     protected $casts = [
-        'images' => 'array'
+        'images' => 'array',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::creating(function (Post $post) {
+            if (!Auth::check()) {
+                return;
+            }
+
+            $post->author_id = Auth::user()->id;
+        });
+    }
 
     public function author(): BelongsTo
     {

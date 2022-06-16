@@ -16,23 +16,22 @@ class StoreRequest extends FormRequest
     {
         return [
             'content' => [
-                'nullable',
-                'required_if:images,""',
+                'required_without:images',
                 'string',
                 'min:2',
-                'max:63206'
+                'max:500',
             ],
 
             'images' => [
-                'required_if:content,""',
+                'required_without:content',
                 'array',
             ],
 
             'images.*' => [
                 'required',
                 'file',
-                'image'
-            ]
+                'image',
+            ],
         ];
     }
 }

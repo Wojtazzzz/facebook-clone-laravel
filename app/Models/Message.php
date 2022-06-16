@@ -30,12 +30,12 @@ class Message extends Model
     {
         parent::boot();
 
-        self::creating(function (Message $model) {
+        self::creating(function (Message $message) {
             if (!Auth::check()) {
                 return;
             }
 
-            $model->sender_id = Auth::user()->id;
+            $message->sender_id = Auth::user()->id;
         });
     }
 
