@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -38,17 +37,6 @@ class User extends Authenticatable
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
-
-    protected function lastConversationMessage(): Attribute
-    {
-        return new Attribute(function () {
-            if ($this->messages[0]->pivot->created_at > $this->theMessages[0]->pivot->created_at) {
-                return $this->messages[0];
-            } else {
-                return $this->theMessages[0];
-            }
-        });
-    }
 
     public function pokedUsers(): HasMany
     {
