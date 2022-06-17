@@ -47,7 +47,7 @@ class PokeTest extends TestCase
         $this->createFriendship($this->user->id, $this->friend->id, FriendshipStatus::CONFIRMED);
 
         $response = $this->actingAs($this->user)->postJson($this->pokeRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertCreated();
@@ -63,7 +63,7 @@ class PokeTest extends TestCase
     public function testCannotPassUserIdWhichIsNotYourFriend()
     {
         $response = $this->actingAs($this->user)->postJson($this->pokeRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertUnprocessable();
@@ -72,7 +72,7 @@ class PokeTest extends TestCase
     public function testCannotPassUserIdWhichNotExist()
     {
         $response = $this->actingAs($this->user)->postJson($this->pokeRoute, [
-            'user_id' => 99999,
+            'friend_id' => 99999,
         ]);
 
         $response->assertUnprocessable();
@@ -81,7 +81,7 @@ class PokeTest extends TestCase
     public function testCannotPassOwnId()
     {
         $response = $this->actingAs($this->user)->postJson($this->pokeRoute, [
-            'user_id' => $this->user->id,
+            'friend_id' => $this->user->id,
         ]);
 
         $response->assertUnprocessable();
@@ -94,7 +94,7 @@ class PokeTest extends TestCase
         $this->assertDatabaseCount($this->pokesTable, 0);
 
         $response = $this->actingAs($this->user)->postJson($this->pokeRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertCreated();
@@ -108,7 +108,7 @@ class PokeTest extends TestCase
         $this->assertDatabaseCount($this->pokesTable, 0);
 
         $response = $this->actingAs($this->user)->postJson($this->pokeRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertCreated();
@@ -120,7 +120,7 @@ class PokeTest extends TestCase
         $this->createFriendship($this->user->id, $this->friend->id, FriendshipStatus::PENDING);
 
         $response = $this->actingAs($this->user)->postJson($this->pokeRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertUnprocessable();
@@ -131,7 +131,7 @@ class PokeTest extends TestCase
         $this->createFriendship($this->user->id, $this->friend->id, FriendshipStatus::BLOCKED);
 
         $response = $this->actingAs($this->user)->postJson($this->pokeRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertUnprocessable();
@@ -152,7 +152,7 @@ class PokeTest extends TestCase
         $this->assertDatabaseCount($this->pokesTable, 1);
 
         $response = $this->actingAs($this->user)->postJson($this->pokeRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertCreated();
@@ -173,7 +173,7 @@ class PokeTest extends TestCase
         $this->assertDatabaseCount($this->pokesTable, 1);
 
         $response = $this->actingAs($this->user)->postJson($this->pokeRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertUnprocessable();

@@ -40,7 +40,7 @@ class DestroyTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->postJson($this->destroyRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertOk();
@@ -60,7 +60,7 @@ class DestroyTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->postJson($this->destroyRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertOk();
@@ -74,9 +74,7 @@ class DestroyTest extends TestCase
     public function testErrorMessageWhenNoIdPassed()
     {
         $response = $this->actingAs($this->user)->postJson($this->destroyRoute);
-        $response->assertInvalid([
-            'user_id' => 'The user id field is required',
-        ]);
+        $response->assertJsonValidationErrorFor('friend_id');
     }
 
     public function testFriendNotExists()
@@ -88,7 +86,7 @@ class DestroyTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->postJson($this->destroyRoute, [
-            'user_id' => 25,
+            'friend_id' => 25,
         ]);
 
         $response->assertUnprocessable();
@@ -97,7 +95,7 @@ class DestroyTest extends TestCase
     public function testCannotDestroyFriendshipWhichNotExists()
     {
         $response = $this->actingAs($this->user)->postJson($this->destroyRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertUnprocessable();
@@ -112,7 +110,7 @@ class DestroyTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->postJson($this->destroyRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertUnprocessable();

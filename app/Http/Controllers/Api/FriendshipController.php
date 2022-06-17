@@ -58,7 +58,7 @@ class FriendshipController extends Controller
     public function invite(InviteRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $friend = User::findOrFail($data['user_id']);
+        $friend = User::findOrFail($data['friend_id']);
 
         Friendship::create([
             'user_id' => $request->user()->id,
@@ -74,7 +74,7 @@ class FriendshipController extends Controller
     public function accept(AcceptRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $friend = User::findOrFail($data['user_id']);
+        $friend = User::findOrFail($data['friend_id']);
 
         Friendship::where([
             ['user_id', $friend->id],
@@ -91,7 +91,7 @@ class FriendshipController extends Controller
     public function reject(RejectRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $friend = User::findOrFail($data['user_id']);
+        $friend = User::findOrFail($data['friend_id']);
 
         Friendship::where([
             ['user_id', $friend->id],
@@ -106,7 +106,7 @@ class FriendshipController extends Controller
     public function destroy(DestroyRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $friend = User::findOrFail($data['user_id']);
+        $friend = User::findOrFail($data['friend_id']);
 
         Friendship::where([
             ['user_id', $friend->id],

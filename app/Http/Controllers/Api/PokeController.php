@@ -33,9 +33,9 @@ class PokeController extends Controller
     {
         $data = $request->validated();
         $user = $request->user();
-        $friend = User::findOrFail($data['user_id']);
+        $friend = User::findOrFail($data['friend_id']);
 
-        $poke = Poke::poke($user->id, $data['user_id'])->first('count');
+        $poke = Poke::poke($user->id, $data['friend_id'])->first('count');
 
         Poke::when(
             (bool) $poke,

@@ -42,7 +42,7 @@ class AcceptTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->postJson($this->acceptRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertOk();
@@ -63,7 +63,7 @@ class AcceptTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->postJson($this->acceptRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertOk();
@@ -77,7 +77,7 @@ class AcceptTest extends TestCase
     public function testCannotAcceptInvitationWhichNotExists()
     {
         $response = $this->actingAs($this->user)->postJson($this->acceptRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertUnprocessable();
@@ -92,7 +92,7 @@ class AcceptTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->postJson($this->acceptRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertUnprocessable();
@@ -107,7 +107,7 @@ class AcceptTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->postJson($this->acceptRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertUnprocessable();
@@ -122,9 +122,9 @@ class AcceptTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->postJson($this->acceptRoute, [
-            'user_id' => 99999,
+            'friend_id' => 99999,
         ]);
 
-        $response->assertUnprocessable();
+        $response->assertJsonValidationErrorFor('friend_id');
     }
 }

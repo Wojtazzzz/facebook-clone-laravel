@@ -41,7 +41,7 @@ class RejectTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->postJson($this->rejectRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertOk();
@@ -62,7 +62,7 @@ class RejectTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->postJson($this->rejectRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertOk();
@@ -72,7 +72,7 @@ class RejectTest extends TestCase
     public function testCannotRejectInvitationWhichNotExists()
     {
         $response = $this->actingAs($this->user)->postJson($this->rejectRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertUnprocessable();
@@ -87,7 +87,7 @@ class RejectTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->postJson($this->rejectRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertUnprocessable();
@@ -102,7 +102,7 @@ class RejectTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->postJson($this->rejectRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertUnprocessable();
@@ -117,7 +117,7 @@ class RejectTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->postJson($this->rejectRoute, [
-            'user_id' => 99999,
+            'friend_id' => 99999,
         ]);
 
         $response->assertUnprocessable();

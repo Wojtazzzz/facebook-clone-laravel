@@ -36,7 +36,7 @@ class InviteTest extends TestCase
     public function testCanSendInvitation()
     {
         $response = $this->actingAs($this->user)->postJson($this->inviteRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertCreated();
@@ -50,7 +50,7 @@ class InviteTest extends TestCase
     public function testCannotInviteSelf()
     {
         $response = $this->actingAs($this->user)->postJson($this->inviteRoute, [
-            'user_id' => $this->user->id,
+            'friend_id' => $this->user->id,
         ]);
 
         $response->assertUnprocessable();
@@ -59,7 +59,7 @@ class InviteTest extends TestCase
     public function testInvitationCreatesNotification()
     {
         $this->actingAs($this->user)->postJson($this->inviteRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $this->assertDatabaseCount($this->notificationsTable, 1);
@@ -78,7 +78,7 @@ class InviteTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->postJson($this->inviteRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertUnprocessable();
@@ -94,7 +94,7 @@ class InviteTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->postJson($this->inviteRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertUnprocessable();
@@ -110,7 +110,7 @@ class InviteTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->postJson($this->inviteRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertUnprocessable();
@@ -126,7 +126,7 @@ class InviteTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->postJson($this->inviteRoute, [
-            'user_id' => $this->friend->id,
+            'friend_id' => $this->friend->id,
         ]);
 
         $response->assertUnprocessable();
@@ -136,7 +136,7 @@ class InviteTest extends TestCase
     public function testCannotInviteUserWhichNotExists()
     {
         $response = $this->actingAs($this->user)->postJson($this->inviteRoute, [
-            'user_id' => 99999,
+            'friend_id' => 99999,
         ]);
 
         $response->assertUnprocessable();
