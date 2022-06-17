@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Friendship;
+namespace Tests\Feature\Friendship\Lists;
 
 use App\Enums\FriendshipStatus;
 use App\Models\Friendship;

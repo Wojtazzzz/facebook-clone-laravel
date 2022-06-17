@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
-use App\Models\Like;
-use App\Policies\LikePolicy;
+use App\Models\Comment;
+use App\Models\Post;
+use App\Policies\CommentPolicy;
+use App\Policies\PostPolicy;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -15,7 +17,8 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        Like::class => LikePolicy::class
+        Post::class => PostPolicy::class,
+        Comment::class => CommentPolicy::class,
     ];
 
     /**
@@ -30,7 +33,5 @@ class AuthServiceProvider extends ServiceProvider
         // ResetPassword::createUrlUsing(function ($notifiable, $token) {
         //     return config('app.frontend_url')."/password-reset/$token?email={$notifiable->getEmailForPasswordReset()}";
         // });
-
-        //
     }
 }
