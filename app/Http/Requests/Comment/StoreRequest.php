@@ -2,16 +2,15 @@
 
 namespace App\Http\Requests\Comment;
 
-use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Auth;
 
 class StoreRequest extends FormRequest
 {
     public function authorize()
     {
-        return Gate::authorize('create', Comment::class);
+        return Auth::check();
     }
 
     public function rules()
@@ -21,13 +20,13 @@ class StoreRequest extends FormRequest
                 'required',
                 'string',
                 'min:2',
-                'max:8000'
+                'max:1000',
             ],
 
             'resource_id' => [
                 'required',
-                'numeric'
-            ]
+                'numeric',
+            ],
         ];
     }
 
@@ -40,7 +39,7 @@ class StoreRequest extends FormRequest
                 // 'sales' => Sale::find($this->input('resource_id')),
             };
 
-            if (!!!$resource) {
+            if (!(bool) $resource) {
                 $validator->errors()->add('resource_id', 'You are trying to comment unrecognized resource');
             }
         });

@@ -19,8 +19,8 @@ class UpdateRequest extends FormRequest
                 'required',
                 'string',
                 'min:2',
-                'max:8000'
-            ]
+                'max:1000',
+            ],
         ];
     }
 }

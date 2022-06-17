@@ -78,13 +78,13 @@ Route::middleware('auth:sanctum')
         Route::controller(CommentController::class)
             ->name('comments.')
             ->group(function () {
-                Route::prefix('/posts/{resourceId}')
+                Route::prefix('/posts/{resourceId}/comments')
                     ->name('posts.')
                     ->group(function () {
-                        Route::get('/comments', 'index')->name('index');
-                        Route::post('/comments', 'store')->name('store');
-                        Route::put('/comments/{comment}', 'update')->name('update');
-                        Route::delete('/comments/{comment}', 'destroy')->name('destroy');
+                        Route::get('/', 'index')->name('index');
+                        Route::post('/', 'store')->name('store');
+                        Route::put('/{comment}', 'update')->name('update');
+                        Route::delete('/{comment}', 'destroy')->name('destroy');
                     });
             });
 
