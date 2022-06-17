@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Auth;
 
 use Tests\TestCase;
@@ -15,7 +17,7 @@ class RegistrationTest extends TestCase
         $this->registerPath = route('api.auth.register');
     }
 
-    public function testUserCanRegister()
+    public function testUserCanRegister(): void
     {
         $response = $this->postJson($this->registerPath);
 

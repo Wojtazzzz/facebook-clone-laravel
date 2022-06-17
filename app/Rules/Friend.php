@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Rules;
 
 use App\Enums\FriendshipStatus;
@@ -9,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class Friend implements Rule
 {
-    public function passes($attribute, $value)
+    public function passes($attribute, $value): bool
     {
         return Friendship::query()
             ->where('status', FriendshipStatus::CONFIRMED)
@@ -24,7 +26,7 @@ class Friend implements Rule
             ->exists();
     }
 
-    public function message()
+    public function message(): string
     {
         return 'This user is not your friend.';
     }

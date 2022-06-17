@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Comments\Posts;
 
 use App\Models\Comment;
@@ -23,19 +25,19 @@ class IndexTest extends TestCase
         $this->commentsIndexRoute = route('api.comments.posts.index', $this->post->id);
     }
 
-    public function testCannotUseAsUnauthorized()
+    public function testCannotUseAsUnauthorized(): void
     {
         $response = $this->getJson($this->commentsIndexRoute);
         $response->assertUnauthorized();
     }
 
-    public function testCanUseAsAuthorized()
+    public function testCanUseAsAuthorized(): void
     {
         $response = $this->actingAs($this->user)->getJson($this->commentsIndexRoute);
         $response->assertOk();
     }
 
-    public function testReturnEmptyResponseWhenPostHasNoComments()
+    public function testReturnEmptyResponseWhenPostHasNoComments(): void
     {
         $response = $this->actingAs($this->user)->getJson($this->commentsIndexRoute);
 
@@ -43,7 +45,7 @@ class IndexTest extends TestCase
             ->assertJsonCount(0);
     }
 
-    public function testReturnCommentsProperly()
+    public function testReturnCommentsProperly(): void
     {
         $this->generateComments(1);
 
@@ -53,7 +55,7 @@ class IndexTest extends TestCase
             ->assertJsonCount(1);
     }
 
-    public function testReturnCommentsWhichAuthorsIsLoggedUser()
+    public function testReturnCommentsWhichAuthorsIsLoggedUser(): void
     {
         $this->generateComments(5);
 
@@ -63,7 +65,7 @@ class IndexTest extends TestCase
             ->assertJsonCount(5);
     }
 
-    public function testReturnCommentsWhichAuthorsIsFriend()
+    public function testReturnCommentsWhichAuthorsIsFriend(): void
     {
         $friend = User::factory()->createOne();
 
@@ -75,7 +77,7 @@ class IndexTest extends TestCase
             ->assertJsonCount(8);
     }
 
-    public function testCannotReturnCommentsFromAnotherPost()
+    public function testCannotReturnCommentsFromAnotherPost(): void
     {
         $anotherPost = Post::factory()->createOne();
 
@@ -87,7 +89,7 @@ class IndexTest extends TestCase
             ->assertJsonCount(0);
     }
 
-    public function testReturnMaxTenComments()
+    public function testReturnMaxTenComments(): void
     {
         $this->generateComments(14);
 
@@ -97,7 +99,7 @@ class IndexTest extends TestCase
             ->assertJsonCount(10);
     }
 
-    public function testCanFetchMoreCommentsFromSecondPage()
+    public function testCanFetchMoreCommentsFromSecondPage(): void
     {
         $this->generateComments(14);
 
@@ -107,7 +109,7 @@ class IndexTest extends TestCase
             ->assertJsonCount(4);
     }
 
-    public function testCannotReturnCommentsFromPostWhichNotExists()
+    public function testCannotReturnCommentsFromPostWhichNotExists(): void
     {
         $this->generateComments(8, postId: 99999);
 

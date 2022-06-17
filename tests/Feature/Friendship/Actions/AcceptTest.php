@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Friendship\Actions;
 
 use App\Enums\FriendshipStatus;
@@ -27,13 +29,13 @@ class AcceptTest extends TestCase
         $this->friend = User::factory()->createOne();
     }
 
-    public function testCannotUseWhenNotAuthorized()
+    public function testCannotUseWhenNotAuthorized(): void
     {
         $response = $this->postJson($this->acceptRoute);
         $response->assertUnauthorized();
     }
 
-    public function testCanAcceptInvitation()
+    public function testCanAcceptInvitation(): void
     {
         Friendship::factory()->createOne([
             'user_id' => $this->friend->id,
@@ -54,7 +56,7 @@ class AcceptTest extends TestCase
         ]);
     }
 
-    public function testAcceptInvitationSendsNotification()
+    public function testAcceptInvitationSendsNotification(): void
     {
         Friendship::factory()->createOne([
             'user_id' => $this->friend->id,
@@ -74,7 +76,7 @@ class AcceptTest extends TestCase
         ]);
     }
 
-    public function testCannotAcceptInvitationWhichNotExists()
+    public function testCannotAcceptInvitationWhichNotExists(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->acceptRoute, [
             'friend_id' => $this->friend->id,
@@ -83,7 +85,7 @@ class AcceptTest extends TestCase
         $response->assertUnprocessable();
     }
 
-    public function testCannotAcceptOwn()
+    public function testCannotAcceptOwn(): void
     {
         Friendship::factory()->createOne([
             'user_id' => $this->user->id,
@@ -98,7 +100,7 @@ class AcceptTest extends TestCase
         $response->assertUnprocessable();
     }
 
-    public function testCannotAcceptInvitationWhichIsAlreadyConfirmed()
+    public function testCannotAcceptInvitationWhichIsAlreadyConfirmed(): void
     {
         Friendship::factory()->createOne([
             'user_id' => $this->user->id,
@@ -113,7 +115,7 @@ class AcceptTest extends TestCase
         $response->assertUnprocessable();
     }
 
-    public function testCannotAcceptInvitationWhenInviterNotExistsNow()
+    public function testCannotAcceptInvitationWhenInviterNotExistsNow(): void
     {
         Friendship::factory()->createOne([
             'user_id' => 99999,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\Friendship;
@@ -8,14 +10,14 @@ use Illuminate\Database\Seeder;
 
 class FriendshipSeeder extends Seeder
 {
-    public function run(User $user, int $count)
+    public function run(User $user, int $count): void
     {
         Friendship::factory($count)->create([
-            'user_id' => $user->id
+            'user_id' => $user->id,
         ]);
 
         Friendship::factory($count)->create([
-            'friend_id' => $user->id
+            'friend_id' => $user->id,
         ]);
     }
 }

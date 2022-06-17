@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Pokes;
 
 use App\Enums\FriendshipStatus;
@@ -35,14 +37,14 @@ class PokeTest extends TestCase
         ]);
     }
 
-    public function testCannotUseAsUnauthorized()
+    public function testCannotUseAsUnauthorized(): void
     {
         $response = $this->postJson($this->pokeRoute);
 
         $response->assertUnauthorized();
     }
 
-    public function testCanUseAsAuthorized()
+    public function testCanUseAsAuthorized(): void
     {
         $this->createFriendship($this->user->id, $this->friend->id, FriendshipStatus::CONFIRMED);
 
@@ -53,14 +55,14 @@ class PokeTest extends TestCase
         $response->assertCreated();
     }
 
-    public function testCannotPassNoUserId()
+    public function testCannotPassNoUserId(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->pokeRoute);
 
         $response->assertUnprocessable();
     }
 
-    public function testCannotPassUserIdWhichIsNotYourFriend()
+    public function testCannotPassUserIdWhichIsNotYourFriend(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->pokeRoute, [
             'friend_id' => $this->friend->id,
@@ -69,7 +71,7 @@ class PokeTest extends TestCase
         $response->assertUnprocessable();
     }
 
-    public function testCannotPassUserIdWhichNotExist()
+    public function testCannotPassUserIdWhichNotExist(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->pokeRoute, [
             'friend_id' => 99999,
@@ -78,7 +80,7 @@ class PokeTest extends TestCase
         $response->assertUnprocessable();
     }
 
-    public function testCannotPassOwnId()
+    public function testCannotPassOwnId(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->pokeRoute, [
             'friend_id' => $this->user->id,
@@ -87,7 +89,7 @@ class PokeTest extends TestCase
         $response->assertUnprocessable();
     }
 
-    public function testCreateNewPokeWhenNoPokesWithSameFriendYet()
+    public function testCreateNewPokeWhenNoPokesWithSameFriendYet(): void
     {
         $this->createFriendship($this->user->id, $this->friend->id, FriendshipStatus::CONFIRMED);
 
@@ -101,7 +103,7 @@ class PokeTest extends TestCase
         $this->assertDatabaseCount($this->pokesTable, 1);
     }
 
-    public function testWhoSentFriendshipRequestMakesNoOdds()
+    public function testWhoSentFriendshipRequestMakesNoOdds(): void
     {
         $this->createFriendship($this->friend->id, $this->user->id, FriendshipStatus::CONFIRMED);
 
@@ -115,7 +117,7 @@ class PokeTest extends TestCase
         $this->assertDatabaseCount($this->pokesTable, 1);
     }
 
-    public function testCannotPokeUserWhoseRequestIsPending()
+    public function testCannotPokeUserWhoseRequestIsPending(): void
     {
         $this->createFriendship($this->user->id, $this->friend->id, FriendshipStatus::PENDING);
 
@@ -126,7 +128,7 @@ class PokeTest extends TestCase
         $response->assertUnprocessable();
     }
 
-    public function testCannotPokeUserWhoseRequestIsBlocked()
+    public function testCannotPokeUserWhoseRequestIsBlocked(): void
     {
         $this->createFriendship($this->user->id, $this->friend->id, FriendshipStatus::BLOCKED);
 
@@ -137,7 +139,7 @@ class PokeTest extends TestCase
         $response->assertUnprocessable();
     }
 
-    public function testUpdateOldPokeWhenAlreadyHasPokesWithSameFriend()
+    public function testUpdateOldPokeWhenAlreadyHasPokesWithSameFriend(): void
     {
         $count = 20;
         $this->createFriendship($this->user->id, $this->friend->id, FriendshipStatus::CONFIRMED);
@@ -160,7 +162,7 @@ class PokeTest extends TestCase
             ->assertDatabaseHas($this->pokesTable, ['count' => $count + 1]);
     }
 
-    public function testCannotPokeWhenFriendNotRespondeForUserPokeYet()
+    public function testCannotPokeWhenFriendNotRespondeForUserPokeYet(): void
     {
         $this->createFriendship($this->user->id, $this->friend->id, FriendshipStatus::CONFIRMED);
 

@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\Friendship;
-use App\Models\Like;
 use App\Models\Message;
 use App\Models\Poke;
-use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -26,7 +26,7 @@ class UserSeeder extends Seeder
         $this->faker->addProvider(new PicsumProvider($this->faker));
     }
 
-    public function run()
+    public function run(): void
     {
         $user = User::factory()
             ->createOne([
@@ -35,20 +35,18 @@ class UserSeeder extends Seeder
                 'email' => 'marcin.witas72@gmail.com',
                 'password' => Hash::make('password'),
                 'profile_image' => $this->faker->picsumStaticRandomUrl(168, 168),
-                'background_image' => $this->faker->picsumStaticRandomUrl(850, 350)
+                'background_image' => $this->faker->picsumStaticRandomUrl(850, 350),
             ]);
-
-        // $user = User::firstWhere('last_name', 'Witas');
 
         $this->call(PostSeeder::class, false, [
             'user' => $user,
             'count' => $this->postsCount,
-            'commentsCount' => rand(1, 3)
+            'commentsCount' => rand(1, 3),
         ]);
 
         $this->call(MessageSeeder::class, false, [
             'user' => $user,
-            'count' => $this->messagesCount
+            'count' => $this->messagesCount,
         ]);
 
         // Friendship::factory(50, [

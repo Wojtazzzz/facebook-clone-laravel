@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\User;
-use Mmo\Faker\PicsumProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Mmo\Faker\PicsumProvider;
 
 class PostFactory extends Factory
 {
-    public function definition()
+    public function definition(): array
     {
         $this->faker->addProvider(new PicsumProvider($this->faker));
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace {{ namespace }};
 
 use Illuminate\Contracts\Validation\{{ ruleType }};
@@ -11,12 +13,12 @@ class {{ class }} implements {{ ruleType }}
         //
     }
 
-    public function passes($attribute, $value)
+    public function passes($attribute, $value): bool
     {
         return false;
     }
 
-    public function message()
+    public function message(): string
     {
         return 'The validation error message.';
     }

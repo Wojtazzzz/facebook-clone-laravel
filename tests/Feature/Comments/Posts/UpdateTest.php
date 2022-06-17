@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Comments\Posts;
 
 use App\Models\Comment;
@@ -35,13 +37,13 @@ class UpdateTest extends TestCase
         ]);
     }
 
-    public function testCannotUseAsUnauthorized()
+    public function testCannotUseAsUnauthorized(): void
     {
         $response = $this->putJson($this->commentsUpdateRoute);
         $response->assertUnauthorized();
     }
 
-    public function testCanUseAsAuthorized()
+    public function testCanUseAsAuthorized(): void
     {
         $response = $this->actingAs($this->user)->putJson($this->commentsUpdateRoute, [
             'content' => 'Simple comment',
@@ -51,7 +53,7 @@ class UpdateTest extends TestCase
         $this->assertDatabaseCount($this->commentsTable, 1);
     }
 
-    public function testCanUpdateOwnComment()
+    public function testCanUpdateOwnComment(): void
     {
         $response = $this->actingAs($this->user)->putJson($this->commentsUpdateRoute, [
             'content' => 'Simple updated comment',
@@ -65,7 +67,7 @@ class UpdateTest extends TestCase
             ]);
     }
 
-    public function testCannotUpdateSomebodysComment()
+    public function testCannotUpdateSomebodysComment(): void
     {
         $friend = User::factory()->createOne();
         $comment = Comment::factory()->createOne([
@@ -88,13 +90,13 @@ class UpdateTest extends TestCase
             ]);
     }
 
-    public function testCannotUpdateCommentWithoutPassingContent()
+    public function testCannotUpdateCommentWithoutPassingContent(): void
     {
         $response = $this->actingAs($this->user)->putJson($this->commentsUpdateRoute);
         $response->assertJsonValidationErrorFor('content');
     }
 
-    public function testCannotUpdateCommentWithSingleLetterLengthContent()
+    public function testCannotUpdateCommentWithSingleLetterLengthContent(): void
     {
         $response = $this->actingAs($this->user)->putJson($this->commentsUpdateRoute, [
             'content' => 'S',
@@ -103,7 +105,7 @@ class UpdateTest extends TestCase
         $response->assertJsonValidationErrorFor('content');
     }
 
-    public function testCannotUpdateCommentWithTooLongContent()
+    public function testCannotUpdateCommentWithTooLongContent(): void
     {
         $response = $this->actingAs($this->user)->putJson($this->commentsUpdateRoute, [
             'content' => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
@@ -112,7 +114,7 @@ class UpdateTest extends TestCase
         $response->assertJsonValidationErrorFor('content');
     }
 
-    public function testResponseIncludesUpdatedComment()
+    public function testResponseIncludesUpdatedComment(): void
     {
         $response = $this->actingAs($this->user)->putJson($this->commentsUpdateRoute, [
             'content' => 'Simple updated comment',
@@ -124,7 +126,7 @@ class UpdateTest extends TestCase
             ]);
     }
 
-    public function testCannotUpdateCommentWhichNotExists()
+    public function testCannotUpdateCommentWhichNotExists(): void
     {
         $route = route('api.comments.posts.update', [
             'resourceId' => $this->post->id,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Friendship;
 
 use App\Enums\FriendshipStatus;
@@ -21,19 +23,19 @@ class InvitesTest extends TestCase
         $this->invitesRoute = route('api.friendship.invites');
     }
 
-    public function testCannotUseWhenNotAuthorized()
+    public function testCannotUseWhenNotAuthorized(): void
     {
         $response = $this->getJson($this->invitesRoute);
         $response->assertUnauthorized();
     }
 
-    public function testCanUseWhenAuthorized()
+    public function testCanUseWhenAuthorized(): void
     {
         $response = $this->actingAs($this->user)->getJson($this->invitesRoute);
         $response->assertOk();
     }
 
-    public function testFetchReceivedInvites()
+    public function testFetchReceivedInvites(): void
     {
         $users = User::factory(20)->create();
 
@@ -48,7 +50,7 @@ class InvitesTest extends TestCase
         $response->assertOk()->assertJsonCount(5);
     }
 
-    public function testNotFetchSentInvites()
+    public function testNotFetchSentInvites(): void
     {
         $users = User::factory(20)->create();
 

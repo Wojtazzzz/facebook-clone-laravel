@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Friendship;
 
 use App\Enums\FriendshipStatus;
@@ -27,13 +29,13 @@ class InviteTest extends TestCase
         $this->friend = User::factory()->createOne();
     }
 
-    public function testCannotUseWhenNotAuthorized()
+    public function testCannotUseWhenNotAuthorized(): void
     {
         $response = $this->postJson($this->inviteRoute);
         $response->assertUnauthorized();
     }
 
-    public function testCanSendInvitation()
+    public function testCanSendInvitation(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->inviteRoute, [
             'friend_id' => $this->friend->id,
@@ -47,7 +49,7 @@ class InviteTest extends TestCase
         ]);
     }
 
-    public function testCannotInviteSelf()
+    public function testCannotInviteSelf(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->inviteRoute, [
             'friend_id' => $this->user->id,
@@ -56,7 +58,7 @@ class InviteTest extends TestCase
         $response->assertUnprocessable();
     }
 
-    public function testInvitationCreatesNotification()
+    public function testInvitationCreatesNotification(): void
     {
         $this->actingAs($this->user)->postJson($this->inviteRoute, [
             'friend_id' => $this->friend->id,
@@ -69,7 +71,7 @@ class InviteTest extends TestCase
         ]);
     }
 
-    public function testCannotSendSecondInvitation()
+    public function testCannotSendSecondInvitation(): void
     {
         Friendship::factory()->createOne([
             'user_id' => $this->user->id,
@@ -85,7 +87,7 @@ class InviteTest extends TestCase
         $this->assertDatabaseCount($this->friendshipsTable, 1);
     }
 
-    public function testCannotSendInvitationWhenFriendSentItYet()
+    public function testCannotSendInvitationWhenFriendSentItYet(): void
     {
         Friendship::factory()->createOne([
             'user_id' => $this->friend->id,
@@ -101,7 +103,7 @@ class InviteTest extends TestCase
         $this->assertDatabaseCount($this->friendshipsTable, 1);
     }
 
-    public function testCannotSendInvitationWhenAlreadyHaveFriendshipWithThisFriend()
+    public function testCannotSendInvitationWhenAlreadyHaveFriendshipWithThisFriend(): void
     {
         Friendship::factory()->createOne([
             'user_id' => $this->user->id,
@@ -117,7 +119,7 @@ class InviteTest extends TestCase
         $this->assertDatabaseCount($this->friendshipsTable, 1);
     }
 
-    public function testCannotSendInvitationWhenAlreadyHaveBlockedFriendshipWithThisFriend()
+    public function testCannotSendInvitationWhenAlreadyHaveBlockedFriendshipWithThisFriend(): void
     {
         Friendship::factory()->createOne([
             'user_id' => $this->user->id,
@@ -133,7 +135,7 @@ class InviteTest extends TestCase
         $this->assertDatabaseCount($this->friendshipsTable, 1);
     }
 
-    public function testCannotInviteUserWhichNotExists()
+    public function testCannotInviteUserWhichNotExists(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->inviteRoute, [
             'friend_id' => 99999,

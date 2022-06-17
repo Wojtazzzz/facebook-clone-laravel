@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\Like;
@@ -16,14 +18,14 @@ class LikeSeeder extends Seeder
     {
         $this->setUpFaker();
     }
-    
-    public function run(User $user, int $count)
+
+    public function run(User $user, int $count): void
     {
         $posts = Post::pluck('id');
 
         Like::factory($count)->create([
             'user_id' => $user->id,
-            'post_id' => fn () => $this->faker->unique->randomElement($posts)
+            'post_id' => fn () => $this->faker->unique->randomElement($posts),
         ]);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Rules;
 
 use App\Models\Like;
@@ -8,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class LikeNotExists implements Rule
 {
-    public function passes($attribute, $value)
+    public function passes($attribute, $value): bool
     {
         return !(bool) Like::firstWhere([
             ['user_id', Auth::user()->id],
@@ -16,7 +18,7 @@ class LikeNotExists implements Rule
         ]);
     }
 
-    public function message()
+    public function message(): string
     {
         return 'You already like this post.';
     }

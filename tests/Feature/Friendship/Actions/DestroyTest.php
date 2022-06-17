@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Friendship\Actions;
 
 use App\Enums\FriendshipStatus;
@@ -25,13 +27,13 @@ class DestroyTest extends TestCase
         $this->friend = User::factory()->createOne();
     }
 
-    public function testCannotUseWhenNotAuthorized()
+    public function testCannotUseWhenNotAuthorized(): void
     {
         $response = $this->postJson($this->destroyRoute);
         $response->assertUnauthorized();
     }
 
-    public function testCanDestroyFriendshipWhichUserInitialize()
+    public function testCanDestroyFriendshipWhichUserInitialize(): void
     {
         Friendship::factory()->createOne([
             'user_id' => $this->user->id,
@@ -51,7 +53,7 @@ class DestroyTest extends TestCase
         ]);
     }
 
-    public function testCanDestroyFriendshipWhichFriendInitialize()
+    public function testCanDestroyFriendshipWhichFriendInitialize(): void
     {
         Friendship::factory()->createOne([
             'user_id' => $this->friend->id,
@@ -71,13 +73,13 @@ class DestroyTest extends TestCase
         ]);
     }
 
-    public function testErrorMessageWhenNoIdPassed()
+    public function testErrorMessageWhenNoIdPassed(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->destroyRoute);
         $response->assertJsonValidationErrorFor('friend_id');
     }
 
-    public function testFriendNotExists()
+    public function testFriendNotExists(): void
     {
         Friendship::factory()->createOne([
             'user_id' => $this->user->id,
@@ -92,7 +94,7 @@ class DestroyTest extends TestCase
         $response->assertUnprocessable();
     }
 
-    public function testCannotDestroyFriendshipWhichNotExists()
+    public function testCannotDestroyFriendshipWhichNotExists(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->destroyRoute, [
             'friend_id' => $this->friend->id,
@@ -101,7 +103,7 @@ class DestroyTest extends TestCase
         $response->assertUnprocessable();
     }
 
-    public function testCannotDestroyFriendshipWhichIsPending()
+    public function testCannotDestroyFriendshipWhichIsPending(): void
     {
         Friendship::factory()->createOne([
             'user_id' => $this->user->id,

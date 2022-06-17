@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Pokes;
 
 use App\Models\Poke;
@@ -23,21 +25,21 @@ class IndexTest extends TestCase
         $this->pokesRoute = route('api.pokes.index');
     }
 
-    public function testCannotUseAsUnauthorized()
+    public function testCannotUseAsUnauthorized(): void
     {
         $response = $this->getJson($this->pokesRoute);
 
         $response->assertUnauthorized();
     }
 
-    public function testCanUseAsAuthorized()
+    public function testCanUseAsAuthorized(): void
     {
         $response = $this->actingAs($this->user)->getJson($this->pokesRoute);
 
         $response->assertOk();
     }
 
-    public function testReturnMaxTenPokes()
+    public function testReturnMaxTenPokes(): void
     {
         Poke::factory(20)->create([
             'user_id' => fn () => $this->faker()->unique()->randomElement($this->users->pluck('id')->except($this->user->id)),
@@ -51,7 +53,7 @@ class IndexTest extends TestCase
             ->assertJsonCount(10);
     }
 
-    public function testReturnOnlyPokesWhereLoggedUserIsPoked()
+    public function testReturnOnlyPokesWhereLoggedUserIsPoked(): void
     {
         $faker = $this->faker()->unique();
 
@@ -73,7 +75,7 @@ class IndexTest extends TestCase
             ->assertJsonCount(8);
     }
 
-    public function testReturnEmptyResponseWhenNoPokes()
+    public function testReturnEmptyResponseWhenNoPokes(): void
     {
         $response = $this->actingAs($this->user)->getJson($this->pokesRoute);
 

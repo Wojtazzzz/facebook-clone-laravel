@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Next;
 
 use App\Models\User;
@@ -19,7 +21,7 @@ class UsersTest extends TestCase
         $this->usersRoute = route('api.next.users');
     }
 
-    public function testResponseReturnProperlyUsers()
+    public function testResponseReturnProperlyUsers(): void
     {
         User::factory($this->usersCount)->create();
 

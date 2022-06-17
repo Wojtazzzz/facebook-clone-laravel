@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Posts;
 
 use App\Models\User;
@@ -22,13 +24,13 @@ class StoreTest extends TestCase
         $this->postsStoreRoute = route('api.posts.store');
     }
 
-    public function testCannotUseAsUnauthorized()
+    public function testCannotUseAsUnauthorized(): void
     {
         $response = $this->postJson($this->postsStoreRoute);
         $response->assertUnauthorized();
     }
 
-    public function testCanUseAsAuthorized()
+    public function testCanUseAsAuthorized(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute, [
             'content' => 'Simple post',
@@ -37,7 +39,7 @@ class StoreTest extends TestCase
         $response->assertCreated();
     }
 
-    public function testCannotCreatePostWithoutData()
+    public function testCannotCreatePostWithoutData(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute);
 
@@ -45,7 +47,7 @@ class StoreTest extends TestCase
         $response->assertUnprocessable();
     }
 
-    public function testCanCreatePostWithOnlyContent()
+    public function testCanCreatePostWithOnlyContent(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute, [
             'content' => 'Simple post',
@@ -60,7 +62,7 @@ class StoreTest extends TestCase
             ]);
     }
 
-    public function testPostContentMustBeAtLeastTwoCharactersLong()
+    public function testPostContentMustBeAtLeastTwoCharactersLong(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute, [
             'content' => 'S',
@@ -69,7 +71,7 @@ class StoreTest extends TestCase
         $response->assertJsonValidationErrorFor('content');
     }
 
-    public function testPostContentCannotBeToLong()
+    public function testPostContentCannotBeToLong(): void
     {
         $content = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
 
@@ -80,7 +82,7 @@ class StoreTest extends TestCase
         $response->assertJsonValidationErrorFor('content');
     }
 
-    public function testCanCreatePostWithOnlyImages()
+    public function testCanCreatePostWithOnlyImages(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute, [
             'images' => [
@@ -98,7 +100,7 @@ class StoreTest extends TestCase
             ]);
     }
 
-    public function testCanCreatePostWithManyImages()
+    public function testCanCreatePostWithManyImages(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute, [
             'images' => [
@@ -115,7 +117,7 @@ class StoreTest extends TestCase
             ->assertJsonCount(6, 'data.images');
     }
 
-    public function testCanPassOnlyFilesWithSpecifiedTypes()
+    public function testCanPassOnlyFilesWithSpecifiedTypes(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute, [
             'images' => [
@@ -144,7 +146,7 @@ class StoreTest extends TestCase
         $response->assertUnprocessable();
     }
 
-    public function testCannotPassEmptyArrayAsImages()
+    public function testCannotPassEmptyArrayAsImages(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute, [
             'images' => [],
@@ -153,7 +155,7 @@ class StoreTest extends TestCase
         $response->assertUnprocessable();
     }
 
-    public function testModelAutoFillAuthorIdWithUserId()
+    public function testModelAutoFillAuthorIdWithUserId(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute, [
             'content' => 'Simple post',

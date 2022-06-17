@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Messages;
 
 use App\Enums\FriendshipStatus;
@@ -25,19 +27,19 @@ class StoreTest extends TestCase
         $this->messagesStoreRoute = route('api.messages.store');
     }
 
-    public function testCannotUseAsUnauthorized()
+    public function testCannotUseAsUnauthorized(): void
     {
         $response = $this->postJson($this->messagesStoreRoute);
         $response->assertUnauthorized();
     }
 
-    public function testCanUseAsAuthorized()
+    public function testCanUseAsAuthorized(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->messagesStoreRoute);
         $response->assertUnprocessable();
     }
 
-    public function testCannotCreateMessageWithEmptyText()
+    public function testCannotCreateMessageWithEmptyText(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->messagesStoreRoute, [
             'receiver_id' => $this->friend->id,
@@ -46,7 +48,7 @@ class StoreTest extends TestCase
         $response->assertJsonValidationErrorFor('text');
     }
 
-    public function testCannotCreateTooLongMessage()
+    public function testCannotCreateTooLongMessage(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->messagesStoreRoute, [
             'text' => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
@@ -56,7 +58,7 @@ class StoreTest extends TestCase
         $response->assertJsonValidationErrorFor('text');
     }
 
-    public function testCannotCreateMessageWithoutSpecificReceiver()
+    public function testCannotCreateMessageWithoutSpecificReceiver(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->messagesStoreRoute, [
             'text' => 'Simple message',
@@ -65,7 +67,7 @@ class StoreTest extends TestCase
         $response->assertJsonValidationErrorFor('receiver_id');
     }
 
-    public function testCannotCreateMessageForReceiverWhichNotExist()
+    public function testCannotCreateMessageForReceiverWhichNotExist(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->messagesStoreRoute, [
             'text' => 'Simple message',
@@ -75,7 +77,7 @@ class StoreTest extends TestCase
         $response->assertJsonValidationErrorFor('receiver_id');
     }
 
-    public function testCannotCreateMessageForSelf()
+    public function testCannotCreateMessageForSelf(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->messagesStoreRoute, [
             'text' => 'Simple message',
@@ -85,7 +87,7 @@ class StoreTest extends TestCase
         $response->assertJsonValidationErrorFor('receiver_id');
     }
 
-    public function testCannotCreateMessageForReceiverWhichIsNotFriend()
+    public function testCannotCreateMessageForReceiverWhichIsNotFriend(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->messagesStoreRoute, [
             'text' => 'Simple message',
@@ -95,7 +97,7 @@ class StoreTest extends TestCase
         $response->assertJsonValidationErrorFor('receiver_id');
     }
 
-    public function testCannotCreateMessageForReceiverWhichRequestIsPending()
+    public function testCannotCreateMessageForReceiverWhichRequestIsPending(): void
     {
         $this->generateFriendship(FriendshipStatus::PENDING);
 
@@ -107,7 +109,7 @@ class StoreTest extends TestCase
         $response->assertJsonValidationErrorFor('receiver_id');
     }
 
-    public function testCannotCreateMessageForReceiverWhichRequestIsBlocked()
+    public function testCannotCreateMessageForReceiverWhichRequestIsBlocked(): void
     {
         $this->generateFriendship(FriendshipStatus::BLOCKED);
 
@@ -119,7 +121,7 @@ class StoreTest extends TestCase
         $response->assertJsonValidationErrorFor('receiver_id');
     }
 
-    public function testCanCreateMessageForFriend()
+    public function testCanCreateMessageForFriend(): void
     {
         $this->generateFriendship(FriendshipStatus::CONFIRMED);
 
@@ -131,7 +133,7 @@ class StoreTest extends TestCase
         $response->assertCreated();
     }
 
-    public function testAutoAddingSenderIdToMessageModelDuringCreatingProcess()
+    public function testAutoAddingSenderIdToMessageModelDuringCreatingProcess(): void
     {
         $this->generateFriendship(FriendshipStatus::CONFIRMED);
 

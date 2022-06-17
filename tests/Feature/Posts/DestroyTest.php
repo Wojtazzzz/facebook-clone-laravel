@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Posts;
 
 use App\Models\Post;
@@ -26,19 +28,19 @@ class DestroyTest extends TestCase
         $this->postsDestroyRoute = route('api.posts.destroy', $this->post);
     }
 
-    public function testCannotUseAsUnauthorized()
+    public function testCannotUseAsUnauthorized(): void
     {
         $response = $this->deleteJson($this->postsDestroyRoute);
         $response->assertUnauthorized();
     }
 
-    public function testCanUseAsAuthorized()
+    public function testCanUseAsAuthorized(): void
     {
         $response = $this->actingAs($this->user)->deleteJson($this->postsDestroyRoute);
         $response->assertNoContent();
     }
 
-    public function testCanDeleteOwnPost()
+    public function testCanDeleteOwnPost(): void
     {
         $response = $this->actingAs($this->user)->deleteJson($this->postsDestroyRoute);
 
@@ -46,13 +48,13 @@ class DestroyTest extends TestCase
         $this->assertDatabaseCount($this->postsTable, 0);
     }
 
-    public function testCannotDeletePostWhichNotExist()
+    public function testCannotDeletePostWhichNotExist(): void
     {
         $response = $this->actingAs($this->user)->deleteJson(route('api.posts.destroy', 99999));
         $response->assertNotFound();
     }
 
-    public function testCannotDeleteSomebodysPost()
+    public function testCannotDeleteSomebodysPost(): void
     {
         $friend = User::factory()->createOne();
         $friendPost = Post::factory()->createOne([

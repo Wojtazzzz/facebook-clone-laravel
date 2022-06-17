@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -14,11 +16,11 @@ class UserController extends Controller
     {
         return response()->json(new UserResource($request->user()));
     }
-    
+
     public function index(): JsonResponse
     {
         return response()->json([
-            'users' => User::get('id')
+            'users' => User::get('id'),
         ]);
     }
 

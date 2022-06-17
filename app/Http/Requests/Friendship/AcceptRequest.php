@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Friendship;
 
 use App\Rules\RequestReceived;
@@ -8,12 +10,12 @@ use Illuminate\Support\Facades\Auth;
 
 class AcceptRequest extends FormRequest
 {
-    public function authorize()
+    public function authorize(): bool
     {
         return Auth::check();
     }
 
-    public function rules()
+    public function rules(): array
     {
         return [
             'friend_id' => [

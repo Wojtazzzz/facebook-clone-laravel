@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Events;
 
 use App\Models\Message;
@@ -22,7 +24,7 @@ class ChatMessageSended implements ShouldBroadcast
         $this->message = $message;
     }
 
-    public function broadcastOn()
+    public function broadcastOn(): PrivateChannel
     {
         return new PrivateChannel('messages.'.$this->message->sender_id.'.'.$this->message->receiver_id);
     }

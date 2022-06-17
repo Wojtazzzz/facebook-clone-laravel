@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Comments\Posts;
 
 use App\Models\Comment;
@@ -34,19 +36,19 @@ class DestroyTest extends TestCase
         ]);
     }
 
-    public function testCannotUseAsUnauthorized()
+    public function testCannotUseAsUnauthorized(): void
     {
         $response = $this->deleteJson($this->commentsDestroyRoute);
         $response->assertUnauthorized();
     }
 
-    public function testCanUseAsAuthorized()
+    public function testCanUseAsAuthorized(): void
     {
         $response = $this->actingAs($this->user)->deleteJson($this->commentsDestroyRoute);
         $response->assertNoContent();
     }
 
-    public function testCanDestroyOwnComment()
+    public function testCanDestroyOwnComment(): void
     {
         $this->assertDatabaseCount($this->commentsTable, 1);
 
@@ -56,7 +58,7 @@ class DestroyTest extends TestCase
         $this->assertDatabaseCount($this->commentsTable, 0);
     }
 
-    public function testCannotDestroySomebodysComment()
+    public function testCannotDestroySomebodysComment(): void
     {
         $friend = User::factory()->createOne();
         $comment = Comment::factory()->createOne([
@@ -74,7 +76,7 @@ class DestroyTest extends TestCase
         $this->assertDatabaseCount($this->commentsTable, 2);
     }
 
-    public function testCannotDestroyCommentWhichNotExists()
+    public function testCannotDestroyCommentWhichNotExists(): void
     {
         $route = route('api.comments.posts.destroy', [
             'resourceId' => $this->post->id,

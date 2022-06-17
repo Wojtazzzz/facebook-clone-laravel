@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
 use App\Models\Comment;
@@ -10,12 +12,12 @@ class CommentPolicy
 {
     use HandlesAuthorization;
 
-    public function update(User $user, Comment $comment)
+    public function update(User $user, Comment $comment): bool
     {
         return $comment->author_id === $user->id;
     }
 
-    public function delete(User $user, Comment $comment)
+    public function delete(User $user, Comment $comment): bool
     {
         return $comment->author_id === $user->id;
     }

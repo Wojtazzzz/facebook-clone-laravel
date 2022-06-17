@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Likes;
 
 use App\Models\Like;
@@ -25,13 +27,13 @@ class StoreTest extends TestCase
         $this->likesStoreRoute = route('api.likes.store');
     }
 
-    public function testCannotUseAsUnauthorized()
+    public function testCannotUseAsUnauthorized(): void
     {
         $response = $this->postJson($this->likesStoreRoute);
         $response->assertUnauthorized();
     }
 
-    public function testCanUseAsAuthorized()
+    public function testCanUseAsAuthorized(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->likesStoreRoute, [
             'post_id' => $this->post->id,
@@ -40,7 +42,7 @@ class StoreTest extends TestCase
         $response->assertCreated();
     }
 
-    public function testCannotCreateLikeForPostWhichNotExists()
+    public function testCannotCreateLikeForPostWhichNotExists(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->likesStoreRoute, [
             'post_id' => 99999,
@@ -50,7 +52,7 @@ class StoreTest extends TestCase
         $this->assertDatabaseCount($this->likesTable, 0);
     }
 
-    public function testCannotCreateLikeForPostWhichIsAlreadyLikedByLoggedUser()
+    public function testCannotCreateLikeForPostWhichIsAlreadyLikedByLoggedUser(): void
     {
         Like::factory()->createOne([
             'user_id' => $this->user->id,
@@ -65,7 +67,7 @@ class StoreTest extends TestCase
         $this->assertDatabaseCount($this->likesTable, 1);
     }
 
-    public function testCanCreateLike()
+    public function testCanCreateLike(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->likesStoreRoute, [
             'post_id' => $this->post->id,
@@ -75,13 +77,13 @@ class StoreTest extends TestCase
         $this->assertDatabaseCount($this->likesTable, 1);
     }
 
-    public function testCannotPassNoPostId()
+    public function testCannotPassNoPostId(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->likesStoreRoute);
         $response->assertJsonValidationErrorFor('post_id');
     }
 
-    public function testCanLikePostWhichIsLikedByAnotherUser()
+    public function testCanLikePostWhichIsLikedByAnotherUser(): void
     {
         $friend = User::factory()->createOne();
 
@@ -94,7 +96,7 @@ class StoreTest extends TestCase
         $response->assertCreated();
     }
 
-    public function testResponseHasProperlyLikesCount()
+    public function testResponseHasProperlyLikesCount(): void
     {
         $friends = User::factory(2)->create();
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\User;
@@ -7,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PokeFactory extends Factory
 {
-    public function definition()
+    public function definition(): array
     {
         $users = User::pluck('id');
 
@@ -23,7 +25,7 @@ class PokeFactory extends Factory
         ];
     }
 
-    public function user()
+    public function user(): Factory
     {
         return $this->state(fn (array $attributes) => [
             'latest_initiator_id' => $attributes['user_id'],

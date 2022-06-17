@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Messages;
 
 use App\Models\Message;
@@ -22,19 +24,19 @@ class IndexTest extends TestCase
         $this->messagesIndexRoute = route('api.messages.index', $this->friend);
     }
 
-    public function testCannotUseAsUnauthorized()
+    public function testCannotUseAsUnauthorized(): void
     {
         $response = $this->getJson($this->messagesIndexRoute);
         $response->assertUnauthorized();
     }
 
-    public function testCanUseAsAuthorized()
+    public function testCanUseAsAuthorized(): void
     {
         $response = $this->actingAs($this->user)->getJson($this->messagesIndexRoute);
         $response->assertOk();
     }
 
-    public function testCanReturnOnlySentMessages()
+    public function testCanReturnOnlySentMessages(): void
     {
         Message::factory(20)->create([
             'sender_id' => $this->user->id,
@@ -47,7 +49,7 @@ class IndexTest extends TestCase
             ->assertJsonCount(15);
     }
 
-    public function testCanReturnOnlyReceivedMessages()
+    public function testCanReturnOnlyReceivedMessages(): void
     {
         Message::factory(20)->create([
             'sender_id' => $this->friend->id,
@@ -60,7 +62,7 @@ class IndexTest extends TestCase
             ->assertJsonCount(15);
     }
 
-    public function testCanReturnSentAndReceivedMessages()
+    public function testCanReturnSentAndReceivedMessages(): void
     {
         $this->generateMessages();
 
@@ -75,7 +77,7 @@ class IndexTest extends TestCase
             ]);
     }
 
-    public function testReturnMaxFiveteenMessages()
+    public function testReturnMaxFiveteenMessages(): void
     {
         $this->generateMessages();
 
@@ -84,7 +86,7 @@ class IndexTest extends TestCase
             ->assertJsonCount(15);
     }
 
-    public function testCanFetchMoreMessagesOnSecondPage()
+    public function testCanFetchMoreMessagesOnSecondPage(): void
     {
         $this->generateMessages();
 

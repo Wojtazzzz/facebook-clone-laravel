@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Message;
 
 use App\Rules\Friend;
@@ -9,12 +11,12 @@ use Illuminate\Validation\Rule;
 
 class StoreRequest extends FormRequest
 {
-    public function authorize()
+    public function authorize(): bool
     {
         return Auth::check();
     }
 
-    public function rules()
+    public function rules(): array
     {
         return [
             'text' => [

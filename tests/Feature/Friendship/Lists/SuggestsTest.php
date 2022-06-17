@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Friendship;
 
 use App\Enums\FriendshipStatus;
@@ -21,25 +23,25 @@ class SuggestsTest extends TestCase
         $this->suggestsRoute = route('api.friendship.suggests');
     }
 
-    public function testCannotUseWhenNotAuthorized()
+    public function testCannotUseWhenNotAuthorized(): void
     {
         $response = $this->getJson($this->suggestsRoute);
         $response->assertUnauthorized();
     }
 
-    public function testCanUseWhenAuthorized()
+    public function testCanUseWhenAuthorized(): void
     {
         $response = $this->actingAs($this->user)->getJson($this->suggestsRoute);
         $response->assertOk();
     }
 
-    public function testNotFetchLoggedUser()
+    public function testNotFetchLoggedUser(): void
     {
         $response = $this->actingAs($this->user)->getJson($this->suggestsRoute);
         $response->assertOk()->assertJsonCount(0);
     }
 
-    public function testNotFetchUserFriends()
+    public function testNotFetchUserFriends(): void
     {
         $users = User::factory(12)->create();
 
@@ -60,7 +62,7 @@ class SuggestsTest extends TestCase
         $response->assertOk()->assertJsonCount(8);
     }
 
-    public function testNotFetchUsersWhereRequestIsPending()
+    public function testNotFetchUsersWhereRequestIsPending(): void
     {
         $users = User::factory(12)->create();
 
@@ -81,7 +83,7 @@ class SuggestsTest extends TestCase
         $response->assertOk()->assertJsonCount(8);
     }
 
-    public function testNotFetchBlockedUsers()
+    public function testNotFetchBlockedUsers(): void
     {
         $users = User::factory(12)->create();
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Friendship\Actions;
 
 use App\Enums\FriendshipStatus;
@@ -26,13 +28,13 @@ class RejectTest extends TestCase
         $this->friend = User::factory()->createOne();
     }
 
-    public function testCannotUseWhenNotAuthorized()
+    public function testCannotUseWhenNotAuthorized(): void
     {
         $response = $this->postJson($this->rejectRoute);
         $response->assertUnauthorized();
     }
 
-    public function testCanRejectInvitation()
+    public function testCanRejectInvitation(): void
     {
         Friendship::factory()->createOne([
             'user_id' => $this->friend->id,
@@ -53,7 +55,7 @@ class RejectTest extends TestCase
         ]);
     }
 
-    public function testRejectInvitationNotSendsNotification()
+    public function testRejectInvitationNotSendsNotification(): void
     {
         Friendship::factory()->createOne([
             'user_id' => $this->friend->id,
@@ -69,7 +71,7 @@ class RejectTest extends TestCase
         $this->assertDatabaseCount($this->notificationsTable, 0);
     }
 
-    public function testCannotRejectInvitationWhichNotExists()
+    public function testCannotRejectInvitationWhichNotExists(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->rejectRoute, [
             'friend_id' => $this->friend->id,
@@ -78,7 +80,7 @@ class RejectTest extends TestCase
         $response->assertUnprocessable();
     }
 
-    public function testCannotRejectOwn()
+    public function testCannotRejectOwn(): void
     {
         Friendship::factory()->createOne([
             'user_id' => $this->user->id,
@@ -93,7 +95,7 @@ class RejectTest extends TestCase
         $response->assertUnprocessable();
     }
 
-    public function testCannotRejectInvitationWhichIsAlreadyConfirmed()
+    public function testCannotRejectInvitationWhichIsAlreadyConfirmed(): void
     {
         Friendship::factory()->createOne([
             'user_id' => $this->user->id,
@@ -108,7 +110,7 @@ class RejectTest extends TestCase
         $response->assertUnprocessable();
     }
 
-    public function testCannotRejectInvitationWhenInviterNotExistsNow()
+    public function testCannotRejectInvitationWhenInviterNotExistsNow(): void
     {
         Friendship::factory()->createOne([
             'user_id' => 99999,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Comments\Posts;
 
 use App\Models\Post;
@@ -24,13 +26,13 @@ class StoreTest extends TestCase
         $this->commentsStoreRoute = route('api.comments.posts.store', $this->post->id);
     }
 
-    public function testCannotUseAsUnauthorized()
+    public function testCannotUseAsUnauthorized(): void
     {
         $response = $this->postJson($this->commentsStoreRoute);
         $response->assertUnauthorized();
     }
 
-    public function testCanUseAsAuthorized()
+    public function testCanUseAsAuthorized(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->commentsStoreRoute, [
             'content' => 'Simple comment',
@@ -41,7 +43,7 @@ class StoreTest extends TestCase
         $this->assertDatabaseCount($this->commentsTable, 1);
     }
 
-    public function testCanCreateComment()
+    public function testCanCreateComment(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->commentsStoreRoute, [
             'content' => 'Simple comment',
@@ -57,7 +59,7 @@ class StoreTest extends TestCase
             ]);
     }
 
-    public function testCannotCreateCommentWithoutContent()
+    public function testCannotCreateCommentWithoutContent(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->commentsStoreRoute, [
             'resource_id' => $this->post->id,
@@ -67,7 +69,7 @@ class StoreTest extends TestCase
         $this->assertDatabaseCount($this->commentsTable, 0);
     }
 
-    public function testCannotCreateCommentWithOneLetterLengthContent()
+    public function testCannotCreateCommentWithOneLetterLengthContent(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->commentsStoreRoute, [
             'content' => 'S',
@@ -78,7 +80,7 @@ class StoreTest extends TestCase
         $this->assertDatabaseCount($this->commentsTable, 0);
     }
 
-    public function testCannotCreateCommentWithToLongContent()
+    public function testCannotCreateCommentWithToLongContent(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->commentsStoreRoute, [
             'content' => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
@@ -89,7 +91,7 @@ class StoreTest extends TestCase
         $this->assertDatabaseCount($this->commentsTable, 0);
     }
 
-    public function testCannotCreateCommentWithoutResourceId()
+    public function testCannotCreateCommentWithoutResourceId(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->commentsStoreRoute, [
             'content' => 'Simple comment',
@@ -99,7 +101,7 @@ class StoreTest extends TestCase
         $this->assertDatabaseCount($this->commentsTable, 0);
     }
 
-    public function testCannotCreateCommentForPostWhichNotExists()
+    public function testCannotCreateCommentForPostWhichNotExists(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->commentsStoreRoute, [
             'content' => 'Simple comment',
@@ -110,7 +112,7 @@ class StoreTest extends TestCase
         $this->assertDatabaseCount($this->commentsTable, 0);
     }
 
-    public function testResponseIncludesNewComment()
+    public function testResponseIncludesNewComment(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->commentsStoreRoute, [
             'content' => 'Simple comment',

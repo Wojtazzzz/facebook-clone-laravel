@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Notifications;
 
 use App\Models\Notification;
@@ -22,19 +24,19 @@ class MarkAsReadTest extends TestCase
         $this->notificationsRoute = route('api.notifications.markAsRead');
     }
 
-    public function testCannotUseAsUnauthorized()
+    public function testCannotUseAsUnauthorized(): void
     {
         $response = $this->putJson($this->notificationsRoute);
         $response->assertUnauthorized();
     }
 
-    public function testCanUseAsAuthorized()
+    public function testCanUseAsAuthorized(): void
     {
         $response = $this->actingAs($this->user)->putJson($this->notificationsRoute);
         $response->assertOk();
     }
 
-    public function testCanMarkAsReadAllNotifications()
+    public function testCanMarkAsReadAllNotifications(): void
     {
         Notification::factory(50)->create();
 
@@ -46,7 +48,7 @@ class MarkAsReadTest extends TestCase
         ]);
     }
 
-    public function testWorksWhenUserHasNotNotifications()
+    public function testWorksWhenUserHasNotNotifications(): void
     {
         $response = $this->actingAs($this->user)->putJson($this->notificationsRoute);
         $response->assertOk();

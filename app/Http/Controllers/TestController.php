@@ -1,12 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use App\Http\Resources\CommentResource;
-use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Http\JsonResponse;
 
 class TestController extends Controller
 {
@@ -14,13 +13,13 @@ class TestController extends Controller
 
     public function __construct()
     {
-        $this->setUpFaker();    
+        $this->setUpFaker();
     }
 
-    public function __invoke()
+    public function __invoke(mixed $int)
     {
         $class = Post::class;
-        
+
         return $class;
     }
 }

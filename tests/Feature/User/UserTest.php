@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\User;
 
 use App\Http\Resources\UserResource;
@@ -19,19 +21,19 @@ class UserTest extends TestCase
         $this->userRoute = route('api.user');
     }
 
-    public function testCanNotUserGetOwnDataAsUnauthorized()
+    public function testCanNotUserGetOwnDataAsUnauthorized(): void
     {
         $response = $this->getJson($this->userRoute);
         $response->assertUnauthorized();
     }
 
-    public function testCanUserGetOwnDataAsAuthorized()
+    public function testCanUserGetOwnDataAsAuthorized(): void
     {
         $response = $this->actingAs($this->user)->getJson($this->userRoute);
         $response->assertOk();
     }
 
-    public function testRequestReturnProperlyData()
+    public function testRequestReturnProperlyData(): void
     {
         $resource = new UserResource($this->user);
 

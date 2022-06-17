@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\Post;
@@ -8,10 +10,10 @@ use Illuminate\Database\Seeder;
 
 class PostSeeder extends Seeder
 {
-    public function run(User $user, int $count)
+    public function run(User $user, int $count): void
     {
         Post::factory($count)->create([
-            'author_id' => $user->id
+            'author_id' => $user->id,
         ]);
     }
 }

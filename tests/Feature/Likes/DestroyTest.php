@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Likes;
 
 use App\Models\Like;
@@ -25,13 +27,13 @@ class DestroyTest extends TestCase
         $this->likesDestroyRoute = route('api.likes.destroy', $this->post->id);
     }
 
-    public function testCannotUseAsUnauthorized()
+    public function testCannotUseAsUnauthorized(): void
     {
         $response = $this->deleteJson($this->likesDestroyRoute);
         $response->assertUnauthorized();
     }
 
-    public function testCanUseAsAuthorized()
+    public function testCanUseAsAuthorized(): void
     {
         $this->generateLike();
 
@@ -39,7 +41,7 @@ class DestroyTest extends TestCase
         $response->assertOk();
     }
 
-    public function testCanDeleteOwnLike()
+    public function testCanDeleteOwnLike(): void
     {
         $this->generateLike();
 
@@ -49,7 +51,7 @@ class DestroyTest extends TestCase
         $this->assertDatabaseCount($this->likesTable, 0);
     }
 
-    public function testCannotDeleteSomebodysLike()
+    public function testCannotDeleteSomebodysLike(): void
     {
         $friend = User::factory()->createOne();
 
@@ -61,7 +63,7 @@ class DestroyTest extends TestCase
         $this->assertDatabaseCount($this->likesTable, 1);
     }
 
-    public function testCannotDeleteLikeWhichNotExists()
+    public function testCannotDeleteLikeWhichNotExists(): void
     {
         $response = $this->actingAs($this->user)->deleteJson($this->likesDestroyRoute);
 
@@ -69,7 +71,7 @@ class DestroyTest extends TestCase
         $this->assertDatabaseCount($this->likesTable, 0);
     }
 
-    public function testResponseHasProperlyLikesCount()
+    public function testResponseHasProperlyLikesCount(): void
     {
         $friends = User::factory(2)->create();
 

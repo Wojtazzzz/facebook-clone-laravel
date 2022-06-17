@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\FriendshipController;
 use App\Http\Controllers\Api\LikeController;

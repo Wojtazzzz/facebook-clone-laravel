@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,7 +24,7 @@ class Post extends Model
         'images' => 'array',
     ];
 
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\Poke;
@@ -16,7 +18,7 @@ class PokeSeeder extends Seeder
         $this->setUpFaker();
     }
 
-    public function run(User $user, int $count)
+    public function run(User $user, int $count): void
     {
         $users = User::pluck('id');
 

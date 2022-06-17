@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\Post;
@@ -8,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CommentFactory extends Factory
 {
-    public function definition()
+    public function definition(): array
     {
         $users = User::pluck('id');
         $posts = Post::pluck('id');

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
@@ -18,7 +20,7 @@ class AuthenticationTest extends TestCase
         $this->loginRoute = route('api.auth.login');
     }
 
-    public function testUserCanAuthenticate()
+    public function testUserCanAuthenticate(): void
     {
         $response = $this->postJson($this->loginRoute, [
             'email' => $this->user->email,
@@ -29,7 +31,7 @@ class AuthenticationTest extends TestCase
         $this->assertAuthenticated();
     }
 
-    public function testUserMustAuthenticateWithProperlyEmail()
+    public function testUserMustAuthenticateWithProperlyEmail(): void
     {
         $response = $this->postJson($this->loginRoute, [
             'email' => 'not_email',
@@ -42,7 +44,7 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
     }
 
-    public function testUserCanNotAuthenticateWithInvalidPassword()
+    public function testUserCanNotAuthenticateWithInvalidPassword(): void
     {
         $this->postJson($this->loginRoute, [
             'email' => $this->user->email,
@@ -52,7 +54,7 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
     }
 
-    public function testUserCanNotAuthenticateWithoutPassword()
+    public function testUserCanNotAuthenticateWithoutPassword(): void
     {
         $this->postJson($this->loginRoute, [
             'email' => $this->user->email,
@@ -61,7 +63,7 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
     }
 
-    public function testUserCanNotAuthenticateWithoutEmail()
+    public function testUserCanNotAuthenticateWithoutEmail(): void
     {
         $this->postJson($this->loginRoute, [
             'password' => 'password',
@@ -70,7 +72,7 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
     }
 
-    public function testUserCanNotAuthenticateWithoutAnyData()
+    public function testUserCanNotAuthenticateWithoutAnyData(): void
     {
         $this->postJson($this->loginRoute);
         $this->assertGuest();

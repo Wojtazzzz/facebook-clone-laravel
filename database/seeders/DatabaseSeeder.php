@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\Comment;
@@ -14,7 +16,7 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         $this->clearDatabase();
 
@@ -67,7 +69,7 @@ class DatabaseSeeder extends Seeder
         ]);
     }
 
-    private function clearDatabase()
+    private function clearDatabase(): void
     {
         User::truncate();
         Post::truncate();

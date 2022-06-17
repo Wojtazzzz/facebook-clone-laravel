@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Posts;
 
 use App\Enums\FriendshipStatus;
@@ -26,19 +28,19 @@ class IndexTest extends TestCase
         $this->postsIndexRoute = route('api.posts.index');
     }
 
-    public function testCannotUseAsUnauthorized()
+    public function testCannotUseAsUnauthorized(): void
     {
         $response = $this->getJson($this->postsIndexRoute);
         $response->assertUnauthorized();
     }
 
-    public function testCanUseAsAuthorized()
+    public function testCanUseAsAuthorized(): void
     {
         $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute);
         $response->assertOk();
     }
 
-    public function testCanReturnPosts()
+    public function testCanReturnPosts(): void
     {
         Post::factory(6)->create();
 
@@ -48,7 +50,7 @@ class IndexTest extends TestCase
             ->assertJsonCount(6);
     }
 
-    public function testCanReturnMaxTenPosts()
+    public function testCanReturnMaxTenPosts(): void
     {
         Post::factory(17)->create();
 
@@ -58,7 +60,7 @@ class IndexTest extends TestCase
             ->assertJsonCount(10);
     }
 
-    public function testCanFetchMorePostsOnSecondPage()
+    public function testCanFetchMorePostsOnSecondPage(): void
     {
         Post::factory(17)->create();
 
@@ -68,7 +70,7 @@ class IndexTest extends TestCase
             ->assertJsonCount(7);
     }
 
-    public function testCanReturnEmptyResponseWhenNoPosts()
+    public function testCanReturnEmptyResponseWhenNoPosts(): void
     {
         $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute.'?page=2');
 
@@ -76,7 +78,7 @@ class IndexTest extends TestCase
             ->assertJsonCount(0);
     }
 
-    public function testReturnProperlyLikesAndCommentsStats()
+    public function testReturnProperlyLikesAndCommentsStats(): void
     {
         $this->friends = User::factory(20)->create();
 
@@ -102,7 +104,7 @@ class IndexTest extends TestCase
             ]);
     }
 
-    public function testReturnProperlyDataWhenPostIsLikedByLoggedUser()
+    public function testReturnProperlyDataWhenPostIsLikedByLoggedUser(): void
     {
         $post = Post::factory()->createOne([
             'author_id' => $this->user->id,
@@ -121,7 +123,7 @@ class IndexTest extends TestCase
             ]);
     }
 
-    public function testReturnProperlyDataWhenPostIsNotLikedByLoggedUser()
+    public function testReturnProperlyDataWhenPostIsNotLikedByLoggedUser(): void
     {
         Post::factory()->createOne([
             'author_id' => $this->user->id,
@@ -135,7 +137,7 @@ class IndexTest extends TestCase
             ]);
     }
 
-    public function testCanReturnOwnPosts()
+    public function testCanReturnOwnPosts(): void
     {
         Post::factory(3)->create([
             'author_id' => $this->user->id,
@@ -147,7 +149,7 @@ class IndexTest extends TestCase
             ->assertJsonCount(3);
     }
 
-    public function testCannotReturnUsersPostsWhichAreNotFriends()
+    public function testCannotReturnUsersPostsWhichAreNotFriends(): void
     {
         $this->friends = User::factory(5)->create();
 
@@ -161,7 +163,7 @@ class IndexTest extends TestCase
             ->assertJsonCount(0);
     }
 
-    public function testCanReturnUsersPostsWhichAreFriends()
+    public function testCanReturnUsersPostsWhichAreFriends(): void
     {
         $this->friends = User::factory(10)->create();
 

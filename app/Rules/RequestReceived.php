@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Rules;
 
 use App\Enums\FriendshipStatus;
@@ -16,7 +18,7 @@ class RequestReceived implements Rule
         $this->status = $status;
     }
 
-    public function passes($attribute, $value)
+    public function passes($attribute, $value): bool
     {
         return Friendship::where([
             'user_id' => $value,
@@ -26,7 +28,7 @@ class RequestReceived implements Rule
         ->exists();
     }
 
-    public function message()
+    public function message(): string
     {
         return 'This Friendship instance not exists.';
     }

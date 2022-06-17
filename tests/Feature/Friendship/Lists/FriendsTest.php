@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Friendship;
 
 use App\Enums\FriendshipStatus;
@@ -21,19 +23,19 @@ class FriendsTest extends TestCase
         $this->friendsRoute = route('api.friendship.friends', $this->user->id);
     }
 
-    public function testCannotUseWhenNotAuthorized()
+    public function testCannotUseWhenNotAuthorized(): void
     {
         $response = $this->getJson($this->friendsRoute);
         $response->assertUnauthorized();
     }
 
-    public function testCanUseWhenAuthorized()
+    public function testCanUseWhenAuthorized(): void
     {
         $response = $this->actingAs($this->user)->getJson($this->friendsRoute);
         $response->assertOk();
     }
 
-    public function testReturnFriendsInvitedAndWhichSendInvites()
+    public function testReturnFriendsInvitedAndWhichSendInvites(): void
     {
         $users = User::factory(50)->create();
 
@@ -56,7 +58,7 @@ class FriendsTest extends TestCase
         $response->assertOk()->assertJsonCount(8);
     }
 
-    public function testReturnFriendsWhenUserHasOnlyInvitedFriends()
+    public function testReturnFriendsWhenUserHasOnlyInvitedFriends(): void
     {
         $users = User::factory(50)->create();
 
@@ -72,7 +74,7 @@ class FriendsTest extends TestCase
         $response->assertOk()->assertJsonCount(9);
     }
 
-    public function testReturnFriendsWhenUserHasOnlyFriendsWhichInvite()
+    public function testReturnFriendsWhenUserHasOnlyFriendsWhichInvite(): void
     {
         $users = User::factory(50)->create();
 

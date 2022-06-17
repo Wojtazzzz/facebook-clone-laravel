@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Comment;
 
 use App\Models\Post;
@@ -8,12 +10,12 @@ use Illuminate\Support\Facades\Auth;
 
 class StoreRequest extends FormRequest
 {
-    public function authorize()
+    public function authorize(): bool
     {
         return Auth::check();
     }
 
-    public function rules()
+    public function rules(): array
     {
         return [
             'content' => [
@@ -30,7 +32,7 @@ class StoreRequest extends FormRequest
         ];
     }
 
-    public function withValidator($validator)
+    public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
             $resource = match ($this->segment(2)) {
