@@ -22,7 +22,7 @@ class StoreRequest extends FormRequest
                 'required_without:images',
                 'string',
                 'min:2',
-                'max:500',
+                'max:1000',
             ],
 
             'images' => [
