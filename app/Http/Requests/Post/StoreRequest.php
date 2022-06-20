@@ -18,6 +18,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'content' => [
+                'nullable',
                 'required_without:images',
                 'string',
                 'min:2',
@@ -25,6 +26,7 @@ class StoreRequest extends FormRequest
             ],
 
             'images' => [
+                'nullable',
                 'required_without:content',
                 'array',
             ],

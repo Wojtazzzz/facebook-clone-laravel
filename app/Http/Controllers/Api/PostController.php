@@ -47,19 +47,18 @@ class PostController extends Controller
 
     public function store(StoreRequest $request): JsonResponse
     {
-        $content = $request->validated()['content'] ?? null;
         $paths = [];
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                $path = $image->store('public/posts');
+                $path = $image->store('posts', 'public');
 
                 $paths[] = str_replace('public', '', $path);
             }
         }
 
         $post = Post::create([
-            'content' => $content,
+            'content' => $request->validated('content', null),
             'images' => $paths,
         ]);
 

@@ -6,6 +6,7 @@ namespace Tests\Feature\Posts;
 
 use App\Models\User;
 use Illuminate\Http\Testing\File;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class StoreTest extends TestCase
@@ -20,8 +21,17 @@ class StoreTest extends TestCase
     {
         parent::setUp();
 
+        Storage::fake('public');
+
         $this->user = User::factory()->createOne();
         $this->postsStoreRoute = route('api.posts.store');
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+
+        Storage::fake('public');
     }
 
     public function testCannotUseAsUnauthorized(): void
@@ -152,7 +162,7 @@ class StoreTest extends TestCase
             'images' => [],
         ]);
 
-        $response->assertUnprocessable();
+        $response->assertJsonValidationErrorFor('images');
     }
 
     public function testModelAutoFillAuthorIdWithUserId(): void
@@ -167,5 +177,33 @@ class StoreTest extends TestCase
                 'content' => 'Simple post',
                 'author_id' => $this->user->id,
             ]);
+    }
+
+    public function testCanCreatePostWithOnlyImagesWhenPassedImagesAndEmptyContent(): void
+    {
+        $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute, [
+            'content' => '',
+            'images' => [
+                new File('test.gif', tmpfile()),
+                new File('test.svg', tmpfile()),
+            ],
+        ]);
+
+        $response->assertCreated();
+        $this->assertDatabaseCount($this->postsTable, 1);
+    }
+
+    public function testPassedImagesAreStoreInStorage(): void
+    {
+        $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute, [
+            'images' => [
+                new File('test.gif', tmpfile()),
+                new File('test.jpg', tmpfile()),
+                new File('test.svg', tmpfile()),
+            ],
+        ]);
+
+        $response->assertCreated();
+        $this->assertCount(3, Storage::disk('public')->allFiles('posts'));
     }
 }
