@@ -77,4 +77,15 @@ class AuthenticationTest extends TestCase
         $this->postJson($this->loginRoute);
         $this->assertGuest();
     }
+
+    public function testPassedEmptyStringValuesAreTreatingAsNullValues(): void
+    {
+        $response = $this->postJson($this->loginRoute, [
+            'email' => '',
+            'password' => '',
+        ]);
+
+        $response->assertJsonValidationErrorFor('email')
+            ->assertJsonValidationErrorFor('password');
+    }
 }

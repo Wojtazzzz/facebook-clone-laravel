@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->clearDatabase();
 
-        User::factory(450)->create();
+        User::factory(2000)->create();
         Post::factory(2000)->create();
         Like::factory(500)->create();
         Comment::factory(3000)->create();

@@ -80,6 +80,17 @@ class StoreTest extends TestCase
         $this->assertDatabaseCount($this->commentsTable, 0);
     }
 
+    public function testPassedEmptyStringValuesAreTreatingAsNulLValues(): void
+    {
+        $response = $this->actingAs($this->user)->postJson($this->commentsStoreRoute, [
+            'content' => '',
+            'resource_id' => '',
+        ]);
+
+        $response->assertJsonValidationErrorFor('content')
+            ->assertJsonValidationErrorFor('resource_id');
+    }
+
     public function testCannotCreateCommentWithToLongContent(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->commentsStoreRoute, [

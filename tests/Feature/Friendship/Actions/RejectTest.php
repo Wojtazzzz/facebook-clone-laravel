@@ -71,6 +71,15 @@ class RejectTest extends TestCase
         $this->assertDatabaseCount($this->notificationsTable, 0);
     }
 
+    public function testPassedEmptyStringValueIsTreatingAsNullValue(): void
+    {
+        $response = $this->actingAs($this->user)->postJson($this->rejectRoute, [
+            'friend_id' => '',
+        ]);
+
+        $response->assertJsonValidationErrorFor('friend_id');
+    }
+
     public function testCannotRejectInvitationWhichNotExists(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->rejectRoute, [

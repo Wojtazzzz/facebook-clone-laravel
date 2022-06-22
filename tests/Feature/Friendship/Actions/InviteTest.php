@@ -49,6 +49,15 @@ class InviteTest extends TestCase
         ]);
     }
 
+    public function testPassedEmptyStringValueIsTreatingAsNullValue(): void
+    {
+        $response = $this->actingAs($this->user)->postJson($this->inviteRoute, [
+            'friend_id' => '',
+        ]);
+
+        $response->assertJsonValidationErrorFor('friend_id');
+    }
+
     public function testCannotInviteSelf(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->inviteRoute, [

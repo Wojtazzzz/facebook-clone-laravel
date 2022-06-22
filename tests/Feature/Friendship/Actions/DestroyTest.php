@@ -79,6 +79,15 @@ class DestroyTest extends TestCase
         $response->assertJsonValidationErrorFor('friend_id');
     }
 
+    public function testPassedEmptyStringValueIsTreatingAsNullValue(): void
+    {
+        $response = $this->actingAs($this->user)->postJson($this->destroyRoute, [
+            'friend_id' => '',
+        ]);
+
+        $response->assertJsonValidationErrorFor('friend_id');
+    }
+
     public function testFriendNotExists(): void
     {
         Friendship::factory()->createOne([

@@ -76,6 +76,15 @@ class AcceptTest extends TestCase
         ]);
     }
 
+    public function testPassedEmptyStringValueIsTreatingAsNullValue(): void
+    {
+        $response = $this->actingAs($this->user)->postJson($this->acceptRoute, [
+            'friend_id' => '',
+        ]);
+
+        $response->assertJsonValidationErrorFor('friend_id');
+    }
+
     public function testCannotAcceptInvitationWhichNotExists(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->acceptRoute, [

@@ -62,6 +62,15 @@ class PokeTest extends TestCase
         $response->assertUnprocessable();
     }
 
+    public function testPassedEmptyStringIsTreatingAsNullValue(): void
+    {
+        $response = $this->actingAs($this->user)->postJson($this->pokeRoute, [
+            'friend_id' => '',
+        ]);
+
+        $response->assertJsonValidationErrorFor('friend_id');
+    }
+
     public function testCannotPassUserIdWhichIsNotYourFriend(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->pokeRoute, [

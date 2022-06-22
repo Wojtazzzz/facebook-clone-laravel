@@ -126,6 +126,15 @@ class UpdateTest extends TestCase
             ]);
     }
 
+    public function testPassedEmptyStringValueIsTreatingAsNullValue(): void
+    {
+        $response = $this->actingAs($this->user)->putJson($this->commentsUpdateRoute, [
+            'content' => '',
+        ]);
+
+        $response->assertJsonValidationErrorFor('content');
+    }
+
     public function testCannotUpdateCommentWhichNotExists(): void
     {
         $route = route('api.comments.posts.update', [

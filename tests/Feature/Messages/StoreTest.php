@@ -148,6 +148,17 @@ class StoreTest extends TestCase
         ]);
     }
 
+    public function testPassedEmptyValuesAreTreatingAsNullValues(): void
+    {
+        $response = $this->actingAs($this->user)->postJson($this->messagesStoreRoute, [
+            'text' => '',
+            'receiver_id' => '',
+        ]);
+
+        $response->assertJsonValidationErrorFor('text')
+            ->assertJsonValidationErrorFor('receiver_id');
+    }
+
     private function generateFriendship(FriendshipStatus $status): void
     {
         Friendship::factory()->create([

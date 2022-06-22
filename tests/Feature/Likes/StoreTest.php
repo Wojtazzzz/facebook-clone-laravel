@@ -42,6 +42,15 @@ class StoreTest extends TestCase
         $response->assertCreated();
     }
 
+    public function testPassedEmptyValueIsTreatingAsNullValue(): void
+    {
+        $response = $this->actingAs($this->user)->postJson($this->likesStoreRoute, [
+            'post_id' => '',
+        ]);
+
+        $response->assertJsonValidationErrorFor('post_id');
+    }
+
     public function testCannotCreateLikeForPostWhichNotExists(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->likesStoreRoute, [
