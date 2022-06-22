@@ -181,4 +181,35 @@ class PokeTest extends TestCase
         $response->assertUnprocessable();
         $this->assertDatabaseCount($this->pokesTable, 1);
     }
+
+    public function testOnePokeDontImpactOnOtherPokes(): void
+    {
+        $secondFriend = User::factory()->createOne();
+
+        $this->createFriendship($this->user->id, $this->friend->id, FriendshipStatus::CONFIRMED);
+        $this->createFriendship($this->user->id, $secondFriend->id, FriendshipStatus::CONFIRMED);
+
+        Poke::create([
+            'user_id' => $this->user->id,
+            'friend_id' => $this->friend->id,
+            'latest_initiator_id' => $this->friend->id,
+        ]);
+
+        $dataForSecondPoke = [
+            'user_id' => $this->user->id,
+            'friend_id' => $secondFriend->id,
+            'latest_initiator_id' => $secondFriend->id,
+            'count' => 50,
+        ];
+
+        Poke::create($dataForSecondPoke);
+
+        $response = $this->actingAs($this->user)->postJson($this->pokeRoute, [
+            'friend_id' => $this->friend->id,
+        ]);
+
+        $response->assertCreated();
+        $this->assertDatabaseCount($this->pokesTable, 2)
+            ->assertDatabaseHas($this->pokesTable, $dataForSecondPoke);
+    }
 }

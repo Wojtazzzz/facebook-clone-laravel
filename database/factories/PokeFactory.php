@@ -24,11 +24,4 @@ class PokeFactory extends Factory
             'count' => $this->faker->numberBetween(1, 9999),
         ];
     }
-
-    public function user(): Factory
-    {
-        return $this->state(fn (array $attributes) => [
-            'latest_initiator_id' => $attributes['user_id'],
-        ]);
-    }
 }

@@ -41,7 +41,7 @@ class PokeController extends Controller
 
         Poke::when(
             (bool) $poke,
-            fn (Builder $query) => $query->update([
+            fn (Builder $query) => $query->poke($user->id, $data['friend_id'])->update([
                     'latest_initiator_id' => $user->id,
                     'count' => $poke->count + 1,
                 ]),
