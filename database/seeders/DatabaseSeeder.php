@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->clearDatabase();
 
-        User::factory(2000)->create();
+        User::factory(450)->create();
         Post::factory(2000)->create();
         Like::factory(500)->create();
         Comment::factory(3000)->create();
@@ -50,7 +50,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call(FriendshipSeeder::class, parameters: [
             'user' => $user,
-            'count' => 100,
+            'count' => 80,
         ]);
 
         $this->call(MessageSeeder::class, parameters: [
