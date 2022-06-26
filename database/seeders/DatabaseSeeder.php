@@ -62,7 +62,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call(PokeSeeder::class, parameters: [
             'user' => $user,
-            'count' => 20,
+            'count' => 25,
         ]);
 
         $this->call(NotificationSeeder::class, parameters: [

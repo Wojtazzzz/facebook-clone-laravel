@@ -18,7 +18,7 @@ class {{ class }} extends Notification
         //
     }
 
-    public function via($notifiable): arrray
+    public function via($notifiable): array
     {
         return ['mail'];
     }

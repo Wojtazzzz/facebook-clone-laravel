@@ -7,9 +7,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Poke\PokeRequest;
 use App\Http\Resources\PokeResource;
-use App\Http\Resources\UserResource;
 use App\Models\Poke;
 use App\Models\User;
+use App\Notifications\Poked;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -37,13 +37,14 @@ class PokeController extends Controller
         $user = $request->user();
         $friend = User::findOrFail($data['friend_id']);
 
-        $poke = Poke::poke($user->id, $data['friend_id'])->first('count');
+        $pokeCount = Poke::poke($user->id, $data['friend_id'])->value('count');
 
         Poke::when(
-            (bool) $poke,
-            fn (Builder $query) => $query->poke($user->id, $data['friend_id'])->update([
+            (bool) $pokeCount,
+            fn (Builder $query) => $query->poke($user->id, $data['friend_id'])
+                ->update([
                     'latest_initiator_id' => $user->id,
-                    'count' => $poke->count + 1,
+                    'count' => $pokeCount + 1,
                 ]),
             fn (Builder $query) => $query->create([
                 'user_id' => $user->id,
@@ -52,8 +53,12 @@ class PokeController extends Controller
             ])
         );
 
+        $poke = Poke::poke($user->id, $data['friend_id'])->firstOrFail();
+
+        $friend->notify(new Poked($user->id, $poke->count));
+
         return response()->json([
-            'data' => new UserResource($friend),
+            'data' => new PokeResource($poke),
             'message' => 'User poked successfully',
         ], 201);
     }

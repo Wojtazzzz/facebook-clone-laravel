@@ -15,6 +15,7 @@ class NotificationResource extends JsonResource
             'id' => $this->id,
             'message' => $this->data['message'],
             'friend' => new UserResource($friend),
+            'link' => $this->data['link'],
             'read_at' => $this->read_at,
             'created_at' => $this->created_at,
         ];

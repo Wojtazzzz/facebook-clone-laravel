@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use App\Models\Poke;
 use App\Models\User;
+use App\Notifications\Poked;
 use Illuminate\Database\Seeder;
 use Illuminate\Foundation\Testing\WithFaker;
 
@@ -31,9 +32,11 @@ class PokeSeeder extends Seeder
             ->state(fn () => [
                 'user_id' => $user->id,
                 'friend_id' => $faker->randomElement($friends),
-            ])->create([
+            ])
+            ->create([
                 'latest_initiator_id' => $user->id,
-            ]);
+            ])
+            ->each(fn (Poke $poke) => $this->sendNotification($poke));
 
         for ($i = 0; $i < $count; ++$i) {
             $friendId = $faker->randomElement($friends);
@@ -43,7 +46,17 @@ class PokeSeeder extends Seeder
                     'user_id' => $friendId,
                     'friend_id' => $user->id,
                     'latest_initiator_id' => $friendId,
-                ]);
+                ])
+                ->each(fn (Poke $poke) => $this->sendNotification($poke));
         }
+    }
+
+    private function sendNotification(Poke $poke): void
+    {
+        $pokedUser = $poke->user_id === $poke->latest_initiator_id
+            ? User::findOrFail($poke->friend_id)
+            : User::findOrFail($poke->user_id);
+
+        $pokedUser->notify(new Poked($poke->initiator->id, $poke->count));
     }
 }

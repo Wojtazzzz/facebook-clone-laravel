@@ -18,6 +18,7 @@ class PokeTest extends TestCase
     private string $pokeRoute;
 
     private string $pokesTable = 'pokes';
+    private string $notificationsTable = 'notifications';
 
     public function setUp(): void
     {
@@ -220,5 +221,64 @@ class PokeTest extends TestCase
         $response->assertCreated();
         $this->assertDatabaseCount($this->pokesTable, 2)
             ->assertDatabaseHas($this->pokesTable, $dataForSecondPoke);
+    }
+
+    public function testPokeCreatesNotification(): void
+    {
+        $this->createFriendship($this->user->id, $this->friend->id, FriendshipStatus::CONFIRMED);
+
+        $response = $this->actingAs($this->user)->postJson($this->pokeRoute, [
+            'friend_id' => $this->friend->id,
+        ]);
+
+        $response->assertCreated();
+        $this->assertDatabaseCount($this->notificationsTable, 1);
+    }
+
+    public function testCreatedNotificationHasProperlyFirstPokeMessageFriendIdAndLink(): void
+    {
+        $this->createFriendship($this->user->id, $this->friend->id, FriendshipStatus::CONFIRMED);
+
+        $response = $this->actingAs($this->user)->postJson($this->pokeRoute, [
+            'friend_id' => $this->friend->id,
+        ]);
+
+        $response->assertCreated();
+        $this->assertDatabaseCount($this->notificationsTable, 1)
+            ->assertDatabaseHas($this->notificationsTable, [
+                'notifiable_id' => $this->friend->id,
+                'data' => json_encode([
+                    'friendId' => $this->user->id,
+                    'message' => 'Poked you first time',
+                    'link' => '/friends/pokes',
+                ]),
+            ]);
+    }
+
+    public function testCreatedNotificationHasProperlyAgainPokeMessageWithIncrementedCount(): void
+    {
+        $this->createFriendship($this->user->id, $this->friend->id, FriendshipStatus::CONFIRMED);
+
+        Poke::create([
+            'user_id' => $this->user->id,
+            'friend_id' => $this->friend->id,
+            'latest_initiator_id' => $this->friend->id,
+            'count' => 3,
+        ]);
+
+        $response = $this->actingAs($this->user)->postJson($this->pokeRoute, [
+            'friend_id' => $this->friend->id,
+        ]);
+
+        $response->assertCreated();
+        $this->assertDatabaseCount($this->notificationsTable, 1)
+            ->assertDatabaseHas($this->notificationsTable, [
+                'notifiable_id' => $this->friend->id,
+                'data' => json_encode([
+                    'friendId' => $this->user->id,
+                    'message' => 'Poked you 4 times in a row',
+                    'link' => '/friends/pokes',
+                ]),
+            ]);
     }
 }
