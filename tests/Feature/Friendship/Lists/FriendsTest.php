@@ -89,4 +89,36 @@ class FriendsTest extends TestCase
 
         $response->assertOk()->assertJsonCount(4);
     }
+
+    public function testMaxReturnTenFriends(): void
+    {
+        $users = User::factory(50)->create();
+
+        Friendship::factory(12)
+            ->create([
+                'user_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
+                'friend_id' => $this->user->id,
+                'status' => FriendshipStatus::CONFIRMED,
+            ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->friendsRoute);
+
+        $response->assertOk()->assertJsonCount(10);
+    }
+
+    public function testCanFetchMoreFriendsFromSecondPage(): void
+    {
+        $users = User::factory(50)->create();
+
+        Friendship::factory(16)
+            ->create([
+                'user_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
+                'friend_id' => $this->user->id,
+                'status' => FriendshipStatus::CONFIRMED,
+            ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->friendsRoute.'?page=2');
+
+        $response->assertOk()->assertJsonCount(6);
+    }
 }

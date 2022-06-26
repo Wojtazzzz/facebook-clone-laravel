@@ -53,6 +53,20 @@ class IndexTest extends TestCase
             ->assertJsonCount(10);
     }
 
+    public function testCanFetchMorePokesFromSecondPage(): void
+    {
+        Poke::factory(14)->create([
+            'user_id' => fn () => $this->faker()->unique()->randomElement($this->users->pluck('id')->except($this->user->id)),
+            'friend_id' => $this->user->id,
+            'latest_initiator_id' => fn () => $this->faker()->unique()->randomElement($this->users->pluck('id')->except($this->user->id)),
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->pokesRoute.'?page=2');
+
+        $response->assertOk()
+            ->assertJsonCount(4);
+    }
+
     public function testReturnOnlyPokesWhereLoggedUserIsPoked(): void
     {
         $faker = $this->faker()->unique();

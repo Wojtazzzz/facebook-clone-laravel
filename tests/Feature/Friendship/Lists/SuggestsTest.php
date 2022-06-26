@@ -103,4 +103,22 @@ class SuggestsTest extends TestCase
 
         $response->assertOk()->assertJsonCount(8);
     }
+
+    public function testReturnMaxTenSuggests(): void
+    {
+        User::factory(18)->create();
+
+        $response = $this->actingAs($this->user)->getJson($this->suggestsRoute);
+
+        $response->assertOk()->assertJsonCount(10);
+    }
+
+    public function testCanFetchMoreSuggestsFromSecondPage(): void
+    {
+        User::factory(17)->create();
+
+        $response = $this->actingAs($this->user)->getJson($this->suggestsRoute.'?page=2');
+
+        $response->assertOk()->assertJsonCount(7);
+    }
 }

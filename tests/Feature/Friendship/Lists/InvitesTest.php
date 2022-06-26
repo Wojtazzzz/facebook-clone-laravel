@@ -64,4 +64,34 @@ class InvitesTest extends TestCase
 
         $response->assertOk()->assertJsonCount(0);
     }
+
+    public function testReturnMaxTenInvites(): void
+    {
+        $users = User::factory(50)->create();
+
+        Friendship::factory(12)->create([
+            'friend_id' => $this->user->id,
+            'user_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
+            'status' => FriendshipStatus::PENDING,
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->invitesRoute);
+
+        $response->assertOk()->assertJsonCount(10);
+    }
+
+    public function testCanFetchMoreInvitesFromSecondPage(): void
+    {
+        $users = User::factory(50)->create();
+
+        Friendship::factory(13)->create([
+            'friend_id' => $this->user->id,
+            'user_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
+            'status' => FriendshipStatus::PENDING,
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->invitesRoute.'?page=2');
+
+        $response->assertOk()->assertJsonCount(3);
+    }
 }
