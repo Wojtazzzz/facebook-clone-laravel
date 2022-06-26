@@ -33,7 +33,7 @@ class MarkAsReadTest extends TestCase
     public function testCanUseAsAuthorized(): void
     {
         $response = $this->actingAs($this->user)->putJson($this->notificationsRoute);
-        $response->assertOk();
+        $response->assertNoContent();
     }
 
     public function testCanMarkAsReadAllNotifications(): void
@@ -42,7 +42,7 @@ class MarkAsReadTest extends TestCase
 
         $response = $this->actingAs($this->user)->putJson($this->notificationsRoute);
 
-        $response->assertOk();
+        $response->assertNoContent();
         $this->assertDatabaseMissing($this->notificationsTable, [
             'read_at' => null,
         ]);
@@ -51,6 +51,6 @@ class MarkAsReadTest extends TestCase
     public function testWorksWhenUserHasNotNotifications(): void
     {
         $response = $this->actingAs($this->user)->putJson($this->notificationsRoute);
-        $response->assertOk();
+        $response->assertNoContent();
     }
 }

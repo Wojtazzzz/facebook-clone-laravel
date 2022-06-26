@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
+use App\Notifications\FriendshipRequestAccepted;
 use Illuminate\Foundation\Testing\WithFaker;
 
 class TestController extends Controller
@@ -18,8 +18,8 @@ class TestController extends Controller
 
     public function __invoke(mixed $int)
     {
-        $class = Post::class;
+        $user = User::firstWhere('last_name', 'Witas');
 
-        return $class;
+        $user->notify(new FriendshipRequestAccepted());
     }
 }

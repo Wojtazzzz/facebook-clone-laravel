@@ -68,7 +68,7 @@ class FriendshipController extends Controller
             'status' => FriendshipStatus::PENDING,
         ]);
 
-        $friend->notify(new FriendshipRequestSent());
+        $friend->notify(new FriendshipRequestSent($data['friend_id']));
 
         return response()->json(new UserResource($friend), 201);
     }
@@ -85,7 +85,7 @@ class FriendshipController extends Controller
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
-        $friend->notify(new FriendshipRequestAccepted());
+        $friend->notify(new FriendshipRequestAccepted($data['friend_id']));
 
         return response()->json(new UserResource($friend));
     }

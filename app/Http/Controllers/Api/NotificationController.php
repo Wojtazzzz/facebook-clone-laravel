@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\NotificationResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class NotificationController extends Controller
 {
@@ -18,15 +19,11 @@ class NotificationController extends Controller
         return response()->json(NotificationResource::collection($notifications));
     }
 
-    public function markAsRead(Request $request): JsonResponse
+    public function markAsRead(Request $request): Response
     {
         $notifications = $request->user()->notifications;
-
         $notifications->markAsRead();
 
-        return response()->json([
-            'data' => NotificationResource::collection($notifications),
-            'message' => 'All notifications marked as read',
-        ]);
+        return response()->noContent();
     }
 }

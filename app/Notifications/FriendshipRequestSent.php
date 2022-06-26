@@ -11,13 +11,24 @@ class FriendshipRequestSent extends Notification
 {
     use Queueable;
 
-    public function via($notifiable): array
+    private int $friendId;
+
+    public function __construct(int $friendId)
+    {
+        $this->friendId = $friendId;
+    }
+
+    public function via(): array
     {
         return ['database'];
     }
 
-    public function toArray($notifiable): array
+    public function toArray(): array
     {
-        return [];
+        return [
+            'friendId' => $this->friendId,
+            'message' => 'Sent you a friendship invitation',
+            'link' => '/friends/invites',
+        ];
     }
 }

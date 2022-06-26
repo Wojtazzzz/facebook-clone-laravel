@@ -33,6 +33,8 @@ class DatabaseSeeder extends Seeder
             'email' => 'marcin.witas72@gmail.com',
         ]);
 
+        // $user = User::firstWhere('last_name', 'Witas');
+
         $this->call(PostSeeder::class, parameters: [
             'user' => $user,
             'count' => 30,
@@ -65,7 +67,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call(NotificationSeeder::class, parameters: [
             'user' => $user,
-            'count' => 50,
+            'count' => 25,
         ]);
     }
 
