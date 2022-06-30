@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fd922efd97af5772d6343bf23f84d4ee",
+    "content-hash": "d47e37cfa5fc77cabf91148500900bea",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -6268,6 +6268,59 @@
                 }
             ],
             "time": "2022-03-03T13:19:32+00:00"
+        },
+        {
+            "name": "noeldemartin/laravel-cypress",
+            "version": "v0.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/NoelDeMartin/laravel-cypress.git",
+                "reference": "091b8e4209bbd802521bde76dadd573f6afa9ca8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NoelDeMartin/laravel-cypress/zipball/091b8e4209bbd802521bde76dadd573f6afa9ca8",
+                "reference": "091b8e4209bbd802521bde76dadd573f6afa9ca8",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": ">=5.5.0",
+                "php": ">=7.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "NoelDeMartin\\LaravelCypress\\CypressServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "NoelDeMartin\\LaravelCypress\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Noel De Martin",
+                    "email": "noeldemartin@gmail.com"
+                }
+            ],
+            "description": "Laravel package used for running tests with Cypress.",
+            "keywords": [
+                "cypress",
+                "laravel",
+                "testing"
+            ],
+            "support": {
+                "issues": "https://github.com/NoelDeMartin/laravel-cypress/issues",
+                "source": "https://github.com/NoelDeMartin/laravel-cypress/tree/v0.3.1"
+            },
+            "time": "2021-07-15T07:56:56+00:00"
         },
         {
             "name": "nunomaduro/collision",
