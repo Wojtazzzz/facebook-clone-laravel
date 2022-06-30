@@ -24,6 +24,7 @@
         "laravel/sail": "^1.0.1",
         "mmo/faker-images": "^0.6.0",
         "mockery/mockery": "^1.4.4",
+        "noeldemartin/laravel-cypress": "^0.3.1",
         "nunomaduro/collision": "^6.1",
         "phpunit/phpunit": "^9.5.10",
         "spatie/laravel-ignition": "^1.0"
