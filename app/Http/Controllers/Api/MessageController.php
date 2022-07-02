@@ -42,24 +42,17 @@ class MessageController extends Controller
     {
         $user = $request->user();
 
-        $friends = collect([
-            ...$user->invitedFriends,
-            ...$user->invitedByFriends,
-        ])
-        // ->inRandomOrder()
-        ->paginate(10);
-
-        // $friends = User::query()
-        //     ->whereHas('invitedByFriends', fn (Builder $query) => $query
-        //         ->where('user_id', $user->id)
-        //         ->orWhere('friend_id', $user->id)
-        //     )
-        //     ->orWhereHas('invitedFriends', fn (Builder $query) => $query
-        //         ->where('user_id', $user->id)
-        //         ->orWhere('friend_id', $user->id)
-        //     )
-        //     ->inRandomOrder()
-        //     ->paginate(10);
+        $friends = User::query()
+            ->whereHas('invitedByFriends', fn (Builder $query) => $query
+                ->where('user_id', $user->id)
+                ->orWhere('friend_id', $user->id)
+            )
+            ->orWhereHas('invitedFriends', fn (Builder $query) => $query
+                ->where('user_id', $user->id)
+                ->orWhere('friend_id', $user->id)
+            )
+            ->whereNot('id', $user->id)
+            ->paginate(10);
 
         return response()->json(UserResource::collection($friends));
     }
