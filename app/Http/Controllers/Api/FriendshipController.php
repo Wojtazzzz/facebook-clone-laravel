@@ -61,14 +61,15 @@ class FriendshipController extends Controller
     {
         $data = $request->validated();
         $friend = User::findOrFail($data['friend_id']);
+        $userId = $request->user()->id;
 
         Friendship::create([
-            'user_id' => $request->user()->id,
+            'user_id' => $userId,
             'friend_id' => $friend->id,
             'status' => FriendshipStatus::PENDING,
         ]);
 
-        $friend->notify(new FriendshipRequestSent($data['friend_id']));
+        $friend->notify(new FriendshipRequestSent($userId));
 
         return response()->json(new UserResource($friend), 201);
     }
@@ -77,15 +78,16 @@ class FriendshipController extends Controller
     {
         $data = $request->validated();
         $friend = User::findOrFail($data['friend_id']);
+        $userId = $request->user()->id;
 
         Friendship::where([
             ['user_id', $friend->id],
-            ['friend_id', $request->user()->id],
+            ['friend_id', $userId],
         ])->update([
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
-        $friend->notify(new FriendshipRequestAccepted($data['friend_id']));
+        $friend->notify(new FriendshipRequestAccepted($userId));
 
         return response()->json(new UserResource($friend));
     }
