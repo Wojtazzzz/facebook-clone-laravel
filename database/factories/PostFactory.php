@@ -14,12 +14,10 @@ class PostFactory extends Factory
     {
         $this->faker->addProvider(new PicsumProvider($this->faker));
 
-        $users = User::pluck('id');
-
         return [
             'content' => $this->faker->text(),
             'images' => $this->getRandomImages(),
-            'author_id' => $this->faker->randomElement($users),
+            'author_id' => User::factory(),
         ];
     }
 

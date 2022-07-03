@@ -11,16 +11,12 @@ class PokeFactory extends Factory
 {
     public function definition(): array
     {
-        $users = User::pluck('id');
-
-        $userId = $this->faker->unique->randomElement($users);
-        $friendId = $this->faker->unique->randomElement($users);
-        $latestInitiatorId = $this->faker->randomElement([$userId, $friendId]);
+        $user = User::factory()->createOne();
 
         return [
-            'user_id' => $userId,
-            'friend_id' => $friendId,
-            'latest_initiator_id' => $latestInitiatorId,
+            'user_id' => $user->id,
+            'friend_id' => User::factory(),
+            'latest_initiator_id' => $user->id,
             'count' => $this->faker->numberBetween(1, 9999),
         ];
     }

@@ -12,14 +12,11 @@ class CommentFactory extends Factory
 {
     public function definition(): array
     {
-        $users = User::pluck('id');
-        $posts = Post::pluck('id');
-
         return [
             'content' => $this->faker->text(),
             'resource' => 'POST',
-            'author_id' => $this->faker->randomElement($users),
-            'resource_id' => $this->faker->randomElement($posts),
+            'author_id' => User::factory(),
+            'resource_id' => Post::factory(),
         ];
     }
 }
