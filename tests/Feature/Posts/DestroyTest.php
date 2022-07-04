@@ -61,25 +61,26 @@ class DestroyTest extends TestCase
 
     public function testCannotDeletePostWhichNotExist(): void
     {
-        $response = $this->actingAs($this->user)->deleteJson(route('api.posts.destroy', 99999));
+        $response = $this->actingAs($this->user)
+            ->deleteJson(route('api.posts.destroy', 99999));
+
         $response->assertNotFound();
     }
 
     public function testCannotDeleteSomebodysPost(): void
     {
-        $friend = User::factory()->createOne();
-        $friendPost = Post::factory()->createOne([
-            'author_id' => $friend->id,
-        ]);
+        $post = Post::factory()->createOne();
 
-        $response = $this->actingAs($this->user)->deleteJson(route('api.posts.destroy', $friendPost));
+        $response = $this->actingAs($this->user)
+            ->deleteJson(route('api.posts.destroy', $post));
 
         $response->assertForbidden();
+
         $this->assertDatabaseCount($this->postsTable, 2)
             ->assertDatabaseHas($this->postsTable, [
-                'id' => $friendPost->id,
-                'content' => $friendPost->content,
-                'author_id' => $friendPost->author_id,
+                'id' => $post->id,
+                'content' => $post->content,
+                'author_id' => $post->author_id,
             ]);
     }
 
@@ -94,7 +95,6 @@ class DestroyTest extends TestCase
 
         foreach ($files as $file) {
             $path = $file->store('posts', 'public');
-
             $paths[] = str_replace('public', '', $path);
         }
 
@@ -105,15 +105,18 @@ class DestroyTest extends TestCase
             'images' => $paths,
         ]);
 
-        $response = $this->actingAs($this->user)->deleteJson(route('api.posts.destroy', $post));
+        $response = $this->actingAs($this->user)
+            ->deleteJson(route('api.posts.destroy', $post));
 
         $response->assertNoContent();
+
         $this->assertCount(0, Storage::disk('public')->allFiles('posts'));
     }
 
     public function testDeletingPostRemovesOnlyRelevantImages(): void
     {
-        Storage::disk('public')->put('posts', new File('newTestFile.png', tmpfile()));
+        Storage::disk('public')
+            ->put('posts', new File('newTestFile.png', tmpfile()));
 
         $files = [
             new File('test.gif', tmpfile()),
@@ -124,7 +127,6 @@ class DestroyTest extends TestCase
 
         foreach ($files as $file) {
             $path = $file->store('posts', 'public');
-
             $paths[] = str_replace('public', '', $path);
         }
 
@@ -135,9 +137,11 @@ class DestroyTest extends TestCase
             'images' => $paths,
         ]);
 
-        $response = $this->actingAs($this->user)->deleteJson(route('api.posts.destroy', $post));
+        $response = $this->actingAs($this->user)
+            ->deleteJson(route('api.posts.destroy', $post));
 
         $response->assertNoContent();
+
         $this->assertCount(1, Storage::disk('public')->allFiles('posts'));
     }
 }

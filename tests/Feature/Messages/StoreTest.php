@@ -12,7 +12,6 @@ use Tests\TestCase;
 class StoreTest extends TestCase
 {
     private User $user;
-    private User $friend;
 
     private string $messagesStoreRoute;
 
@@ -23,7 +22,6 @@ class StoreTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->friend = User::factory()->createOne();
         $this->messagesStoreRoute = route('api.messages.store');
     }
 
@@ -41,57 +39,74 @@ class StoreTest extends TestCase
 
     public function testCannotCreateMessageWithEmptyText(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->messagesStoreRoute, [
-            'receiver_id' => $this->friend->id,
+        $friendship = Friendship::factory()->create([
+            'user_id' => $this->user->id,
+            'status' => FriendshipStatus::CONFIRMED,
         ]);
+
+        $response = $this->actingAs($this->user)
+            ->postJson($this->messagesStoreRoute, [
+                'receiver_id' => $friendship->friend_id,
+            ]);
 
         $response->assertJsonValidationErrorFor('text');
     }
 
     public function testCannotCreateTooLongMessage(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->messagesStoreRoute, [
-            'text' => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-            'receiver_id' => $this->friend->id,
+        $friendship = Friendship::factory()->create([
+            'user_id' => $this->user->id,
+            'status' => FriendshipStatus::CONFIRMED,
         ]);
+
+        $response = $this->actingAs($this->user)
+            ->postJson($this->messagesStoreRoute, [
+                'text' => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+                'receiver_id' => $friendship->friend_id,
+            ]);
 
         $response->assertJsonValidationErrorFor('text');
     }
 
     public function testCannotCreateMessageWithoutSpecificReceiver(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->messagesStoreRoute, [
-            'text' => 'Simple message',
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->messagesStoreRoute, [
+                'text' => 'Simple message',
+            ]);
 
         $response->assertJsonValidationErrorFor('receiver_id');
     }
 
     public function testCannotCreateMessageForReceiverWhichNotExist(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->messagesStoreRoute, [
-            'text' => 'Simple message',
-            'receiver_id' => 99999,
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->messagesStoreRoute, [
+                'text' => 'Simple message',
+                'receiver_id' => 99999,
+            ]);
 
         $response->assertJsonValidationErrorFor('receiver_id');
     }
 
     public function testCannotCreateMessageForSelf(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->messagesStoreRoute, [
-            'text' => 'Simple message',
-            'receiver_id' => $this->user->id,
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->messagesStoreRoute, [
+                'text' => 'Simple message',
+                'receiver_id' => $this->user->id,
+            ]);
 
         $response->assertJsonValidationErrorFor('receiver_id');
     }
 
     public function testCannotCreateMessageForReceiverWhichIsNotFriend(): void
     {
+        $friend = User::factory()->createOne();
+
         $response = $this->actingAs($this->user)->postJson($this->messagesStoreRoute, [
             'text' => 'Simple message',
-            'receiver_id' => $this->friend->id,
+            'receiver_id' => $friend->id,
         ]);
 
         $response->assertJsonValidationErrorFor('receiver_id');
@@ -99,50 +114,67 @@ class StoreTest extends TestCase
 
     public function testCannotCreateMessageForReceiverWhichRequestIsPending(): void
     {
-        $this->generateFriendship(FriendshipStatus::PENDING);
-
-        $response = $this->actingAs($this->user)->postJson($this->messagesStoreRoute, [
-            'text' => 'Simple message',
-            'receiver_id' => $this->friend->id,
+        $friendship = Friendship::factory()->create([
+            'user_id' => $this->user->id,
+            'status' => FriendshipStatus::PENDING,
         ]);
+
+        $response = $this->actingAs($this->user)
+            ->postJson($this->messagesStoreRoute, [
+                'text' => 'Simple message',
+                'receiver_id' => $friendship->friend_id,
+            ]);
 
         $response->assertJsonValidationErrorFor('receiver_id');
     }
 
     public function testCannotCreateMessageForReceiverWhichRequestIsBlocked(): void
     {
-        $this->generateFriendship(FriendshipStatus::BLOCKED);
-
-        $response = $this->actingAs($this->user)->postJson($this->messagesStoreRoute, [
-            'text' => 'Simple message',
-            'receiver_id' => $this->friend->id,
+        $friendship = Friendship::factory()->create([
+            'user_id' => $this->user->id,
+            'status' => FriendshipStatus::BLOCKED,
         ]);
+
+        $response = $this->actingAs($this->user)
+            ->postJson($this->messagesStoreRoute, [
+                'text' => 'Simple message',
+                'receiver_id' => $friendship->friend_id,
+            ]);
 
         $response->assertJsonValidationErrorFor('receiver_id');
     }
 
     public function testCanCreateMessageForFriend(): void
     {
-        $this->generateFriendship(FriendshipStatus::CONFIRMED);
-
-        $response = $this->actingAs($this->user)->postJson($this->messagesStoreRoute, [
-            'text' => 'Simple message',
-            'receiver_id' => $this->friend->id,
+        $friendship = Friendship::factory()->create([
+            'user_id' => $this->user->id,
+            'status' => FriendshipStatus::CONFIRMED,
         ]);
+
+        $response = $this->actingAs($this->user)
+            ->postJson($this->messagesStoreRoute, [
+                'text' => 'Simple message',
+                'receiver_id' => $friendship->friend_id,
+            ]);
 
         $response->assertCreated();
     }
 
     public function testAutoAddingSenderIdToMessageModelDuringCreatingProcess(): void
     {
-        $this->generateFriendship(FriendshipStatus::CONFIRMED);
-
-        $response = $this->actingAs($this->user)->postJson($this->messagesStoreRoute, [
-            'text' => 'Simple message',
-            'receiver_id' => $this->friend->id,
+        $friendship = Friendship::factory()->create([
+            'user_id' => $this->user->id,
+            'status' => FriendshipStatus::CONFIRMED,
         ]);
 
+        $response = $this->actingAs($this->user)
+            ->postJson($this->messagesStoreRoute, [
+                'text' => 'Simple message',
+                'receiver_id' => $friendship->friend_id,
+            ]);
+
         $response->assertCreated();
+
         $this->assertDatabaseHas($this->messagesTable, [
             'sender_id' => $this->user->id,
         ]);
@@ -150,21 +182,13 @@ class StoreTest extends TestCase
 
     public function testPassedEmptyValuesAreTreatingAsNullValues(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->messagesStoreRoute, [
-            'text' => '',
-            'receiver_id' => '',
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->messagesStoreRoute, [
+                'text' => '',
+                'receiver_id' => '',
+            ]);
 
         $response->assertJsonValidationErrorFor('text')
             ->assertJsonValidationErrorFor('receiver_id');
-    }
-
-    private function generateFriendship(FriendshipStatus $status): void
-    {
-        Friendship::factory()->create([
-            'user_id' => $this->user->id,
-            'friend_id' => $this->friend->id,
-            'status' => $status,
-        ]);
     }
 }

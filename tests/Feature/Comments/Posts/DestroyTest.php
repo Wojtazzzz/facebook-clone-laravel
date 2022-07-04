@@ -44,7 +44,9 @@ class DestroyTest extends TestCase
 
     public function testCanUseAsAuthorized(): void
     {
-        $response = $this->actingAs($this->user)->deleteJson($this->commentsDestroyRoute);
+        $response = $this->actingAs($this->user)
+            ->deleteJson($this->commentsDestroyRoute);
+
         $response->assertNoContent();
     }
 
@@ -52,18 +54,17 @@ class DestroyTest extends TestCase
     {
         $this->assertDatabaseCount($this->commentsTable, 1);
 
-        $response = $this->actingAs($this->user)->deleteJson($this->commentsDestroyRoute);
+        $response = $this->actingAs($this->user)
+            ->deleteJson($this->commentsDestroyRoute);
 
         $response->assertNoContent();
+
         $this->assertDatabaseCount($this->commentsTable, 0);
     }
 
     public function testCannotDestroySomebodysComment(): void
     {
-        $friend = User::factory()->createOne();
-        $comment = Comment::factory()->createOne([
-            'author_id' => $friend->id,
-        ]);
+        $comment = Comment::factory()->createOne();
 
         $route = route('api.comments.posts.destroy', [
             'resourceId' => $this->post->id,
@@ -73,6 +74,7 @@ class DestroyTest extends TestCase
         $response = $this->actingAs($this->user)->deleteJson($route);
 
         $response->assertForbidden();
+
         $this->assertDatabaseCount($this->commentsTable, 2);
     }
 
@@ -84,7 +86,6 @@ class DestroyTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->deleteJson($route);
-
         $response->assertNotFound();
     }
 }

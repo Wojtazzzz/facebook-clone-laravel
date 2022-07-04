@@ -38,7 +38,7 @@ class MessengerTest extends TestCase
 
     public function testCanMaxFetchTenUsers(): void
     {
-        $this->generateFriends(30);
+        $this->generateFriends(12);
 
         $response = $this->actingAs($this->user)->getJson($this->messengerRoute);
         $response->assertOk()
@@ -47,11 +47,11 @@ class MessengerTest extends TestCase
 
     public function testCanFetchMoreOneSecondPage(): void
     {
-        $this->generateFriends(30);
+        $this->generateFriends(14);
 
         $response = $this->actingAs($this->user)->getJson($this->messengerRoute.'?page=2');
         $response->assertOk()
-            ->assertJsonCount(10);
+            ->assertJsonCount(4);
     }
 
     public function testReturnEmptyResponseWhenNoFriends(): void

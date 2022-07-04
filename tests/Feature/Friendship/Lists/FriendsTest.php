@@ -37,87 +37,62 @@ class FriendsTest extends TestCase
 
     public function testReturnFriendsInvitedAndWhichSendInvites(): void
     {
-        $users = User::factory(50)->create();
+        Friendship::factory(4)->create([
+            'user_id' => $this->user->id,
+            'status' => FriendshipStatus::CONFIRMED,
+        ]);
 
-        Friendship::factory(4)
-            ->create([
-                'user_id' => $this->user->id,
-                'friend_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
-                'status' => FriendshipStatus::CONFIRMED,
-            ]);
-
-        Friendship::factory(4)
-            ->create([
-                'user_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
-                'friend_id' => $this->user->id,
-                'status' => FriendshipStatus::CONFIRMED,
-            ]);
+        Friendship::factory(4)->create([
+            'friend_id' => $this->user->id,
+            'status' => FriendshipStatus::CONFIRMED,
+        ]);
 
         $response = $this->actingAs($this->user)->getJson($this->friendsRoute);
-
         $response->assertOk()->assertJsonCount(8);
     }
 
     public function testReturnFriendsWhenUserHasOnlyInvitedFriends(): void
     {
-        $users = User::factory(50)->create();
-
-        Friendship::factory(9)
-            ->create([
-                'user_id' => $this->user->id,
-                'friend_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
-                'status' => FriendshipStatus::CONFIRMED,
-            ]);
+        Friendship::factory(9)->create([
+            'user_id' => $this->user->id,
+            'status' => FriendshipStatus::CONFIRMED,
+        ]);
 
         $response = $this->actingAs($this->user)->getJson($this->friendsRoute);
-
         $response->assertOk()->assertJsonCount(9);
     }
 
     public function testReturnFriendsWhenUserHasOnlyFriendsWhichInvite(): void
     {
-        $users = User::factory(50)->create();
-
-        Friendship::factory(4)
-            ->create([
-                'user_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
-                'friend_id' => $this->user->id,
-                'status' => FriendshipStatus::CONFIRMED,
-            ]);
+        Friendship::factory(4)->create([
+            'friend_id' => $this->user->id,
+            'status' => FriendshipStatus::CONFIRMED,
+        ]);
 
         $response = $this->actingAs($this->user)->getJson($this->friendsRoute);
-
         $response->assertOk()->assertJsonCount(4);
     }
 
     public function testMaxReturnTenFriends(): void
     {
-        $users = User::factory(50)->create();
-
-        Friendship::factory(12)
-            ->create([
-                'user_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
-                'friend_id' => $this->user->id,
-                'status' => FriendshipStatus::CONFIRMED,
-            ]);
+        Friendship::factory(12)->create([
+            'friend_id' => $this->user->id,
+            'status' => FriendshipStatus::CONFIRMED,
+        ]);
 
         $response = $this->actingAs($this->user)->getJson($this->friendsRoute);
-
         $response->assertOk()->assertJsonCount(10);
     }
 
     public function testCanFetchMoreFriendsFromSecondPage(): void
     {
-        $users = User::factory(50)->create();
+        Friendship::factory(16)->create([
+            'friend_id' => $this->user->id,
+            'status' => FriendshipStatus::CONFIRMED,
+        ]);
 
-        Friendship::factory(16)
-            ->create([
-                'user_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
-                'friend_id' => $this->user->id,
-                'status' => FriendshipStatus::CONFIRMED,
-            ]);
-
-        $response = $this->actingAs($this->user)->getJson($this->friendsRoute.'?page=2');
+        $response = $this->actingAs($this->user)
+            ->getJson($this->friendsRoute.'?page=2');
 
         $response->assertOk()->assertJsonCount(6);
     }

@@ -42,9 +42,10 @@ class StoreTest extends TestCase
 
     public function testCanUseAsAuthorized(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute, [
-            'content' => 'Simple post',
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->postsStoreRoute, [
+                'content' => 'Simple post',
+            ]);
 
         $response->assertCreated();
     }
@@ -52,18 +53,20 @@ class StoreTest extends TestCase
     public function testCannotCreatePostWithoutData(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute);
+        $response->assertUnprocessable();
 
         $this->assertDatabaseCount($this->postsTable, 0);
-        $response->assertUnprocessable();
     }
 
     public function testCanCreatePostWithOnlyContent(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute, [
-            'content' => 'Simple post',
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->postsStoreRoute, [
+                'content' => 'Simple post',
+            ]);
 
         $response->assertCreated();
+
         $this->assertDatabaseCount($this->postsTable, 1)
             ->assertDatabaseHas($this->postsTable, [
                 'content' => 'Simple post',
@@ -74,31 +77,32 @@ class StoreTest extends TestCase
 
     public function testPostContentMustBeAtLeastTwoCharactersLong(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute, [
-            'content' => 'S',
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->postsStoreRoute, [
+                'content' => 'S',
+            ]);
 
         $response->assertJsonValidationErrorFor('content');
     }
 
     public function testPostContentCannotBeToLong(): void
     {
-        $content = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
-
-        $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute, [
-            'content' => $content,
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->postsStoreRoute, [
+                'content' => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+            ]);
 
         $response->assertJsonValidationErrorFor('content');
     }
 
     public function testCanCreatePostWithOnlyImages(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute, [
-            'images' => [
-                new File('test.jpg', tmpfile()),
-            ],
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->postsStoreRoute, [
+                'images' => [
+                    new File('test.jpg', tmpfile()),
+                ],
+            ]);
 
         $response->assertCreated()
             ->assertJsonCount(1, 'data.images');
@@ -112,16 +116,17 @@ class StoreTest extends TestCase
 
     public function testCanCreatePostWithManyImages(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute, [
-            'images' => [
-                new File('test.jpg', tmpfile()),
-                new File('test.jpg', tmpfile()),
-                new File('test.jpg', tmpfile()),
-                new File('test.jpg', tmpfile()),
-                new File('test.jpg', tmpfile()),
-                new File('test.jpg', tmpfile()),
-            ],
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->postsStoreRoute, [
+                'images' => [
+                    new File('test.jpg', tmpfile()),
+                    new File('test.jpg', tmpfile()),
+                    new File('test.jpg', tmpfile()),
+                    new File('test.jpg', tmpfile()),
+                    new File('test.jpg', tmpfile()),
+                    new File('test.jpg', tmpfile()),
+                ],
+            ]);
 
         $response->assertCreated()
             ->assertJsonCount(6, 'data.images');
@@ -129,17 +134,18 @@ class StoreTest extends TestCase
 
     public function testCanPassOnlyFilesWithSpecifiedTypes(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute, [
-            'images' => [
-                new File('test.jpg', tmpfile()),
-                new File('test.jpeg', tmpfile()),
-                new File('test.png', tmpfile()),
-                new File('test.bmp', tmpfile()),
-                new File('test.gif', tmpfile()),
-                new File('test.svg', tmpfile()),
-                new File('test.webp', tmpfile()),
-            ],
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->postsStoreRoute, [
+                'images' => [
+                    new File('test.jpg', tmpfile()),
+                    new File('test.jpeg', tmpfile()),
+                    new File('test.png', tmpfile()),
+                    new File('test.bmp', tmpfile()),
+                    new File('test.gif', tmpfile()),
+                    new File('test.svg', tmpfile()),
+                    new File('test.webp', tmpfile()),
+                ],
+            ]);
 
         $response->assertCreated()
             ->assertJsonCount(7, 'data.images');
@@ -158,20 +164,23 @@ class StoreTest extends TestCase
 
     public function testCannotPassEmptyArrayAsImages(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute, [
-            'images' => [],
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->postsStoreRoute, [
+                'images' => [],
+            ]);
 
         $response->assertJsonValidationErrorFor('images');
     }
 
     public function testModelAutoFillAuthorIdWithUserId(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute, [
-            'content' => 'Simple post',
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->postsStoreRoute, [
+                'content' => 'Simple post',
+            ]);
 
         $response->assertCreated();
+
         $this->assertDatabaseCount($this->postsTable, 1)
             ->assertDatabaseHas($this->postsTable, [
                 'content' => 'Simple post',
@@ -181,29 +190,33 @@ class StoreTest extends TestCase
 
     public function testCanCreatePostWithOnlyImagesWhenPassedImagesAndEmptyContent(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute, [
-            'content' => '',
-            'images' => [
-                new File('test.gif', tmpfile()),
-                new File('test.svg', tmpfile()),
-            ],
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->postsStoreRoute, [
+                'content' => '',
+                'images' => [
+                    new File('test.gif', tmpfile()),
+                    new File('test.svg', tmpfile()),
+                ],
+            ]);
 
         $response->assertCreated();
+
         $this->assertDatabaseCount($this->postsTable, 1);
     }
 
     public function testPassedImagesAreStoreInStorage(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute, [
-            'images' => [
-                new File('test.gif', tmpfile()),
-                new File('test.jpg', tmpfile()),
-                new File('test.svg', tmpfile()),
-            ],
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->postsStoreRoute, [
+                'images' => [
+                    new File('test.gif', tmpfile()),
+                    new File('test.jpg', tmpfile()),
+                    new File('test.svg', tmpfile()),
+                ],
+            ]);
 
         $response->assertCreated();
+
         $this->assertCount(3, Storage::disk('public')->allFiles('posts'));
     }
 }

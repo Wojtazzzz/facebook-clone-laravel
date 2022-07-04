@@ -12,7 +12,6 @@ use Tests\TestCase;
 class DestroyTest extends TestCase
 {
     private User $user;
-    private User $friend;
 
     private string $destroyRoute;
 
@@ -24,7 +23,6 @@ class DestroyTest extends TestCase
 
         $this->user = User::factory()->createOne();
         $this->destroyRoute = route('api.friendship.destroy');
-        $this->friend = User::factory()->createOne();
     }
 
     public function testCannotUseWhenNotAuthorized(): void
@@ -35,39 +33,41 @@ class DestroyTest extends TestCase
 
     public function testCanDestroyFriendshipWhichUserInitialize(): void
     {
-        Friendship::factory()->createOne([
+        $friendship = Friendship::factory()->createOne([
             'user_id' => $this->user->id,
-            'friend_id' => $this->friend->id,
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson($this->destroyRoute, [
-            'friend_id' => $this->friend->id,
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->destroyRoute, [
+                'friend_id' => $friendship->friend_id,
+            ]);
 
         $response->assertOk();
+
         $this->assertDatabaseMissing($this->friendshipsTable, [
             'user_id' => $this->user->id,
-            'friend_id' => $this->friend->id,
+            'friend_id' => $friendship->friend_id,
             'status' => FriendshipStatus::CONFIRMED,
         ]);
     }
 
     public function testCanDestroyFriendshipWhichFriendInitialize(): void
     {
-        Friendship::factory()->createOne([
-            'user_id' => $this->friend->id,
+        $friendship = Friendship::factory()->createOne([
             'friend_id' => $this->user->id,
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson($this->destroyRoute, [
-            'friend_id' => $this->friend->id,
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->destroyRoute, [
+                'friend_id' => $friendship->user_id,
+            ]);
 
         $response->assertOk();
+
         $this->assertDatabaseMissing($this->friendshipsTable, [
-            'user_id' => $this->friend->id,
+            'user_id' => $friendship->user_id,
             'friend_id' => $this->user->id,
             'status' => FriendshipStatus::CONFIRMED,
         ]);
@@ -75,15 +75,18 @@ class DestroyTest extends TestCase
 
     public function testErrorMessageWhenNoIdPassed(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->destroyRoute);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->destroyRoute);
+
         $response->assertJsonValidationErrorFor('friend_id');
     }
 
     public function testPassedEmptyStringValueIsTreatingAsNullValue(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->destroyRoute, [
-            'friend_id' => '',
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->destroyRoute, [
+                'friend_id' => '',
+            ]);
 
         $response->assertJsonValidationErrorFor('friend_id');
     }
@@ -96,33 +99,37 @@ class DestroyTest extends TestCase
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson($this->destroyRoute, [
-            'friend_id' => 25,
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->destroyRoute, [
+                'friend_id' => 25,
+            ]);
 
         $response->assertUnprocessable();
     }
 
     public function testCannotDestroyFriendshipWhichNotExists(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->destroyRoute, [
-            'friend_id' => $this->friend->id,
-        ]);
+        $friend = User::factory()->createOne();
+
+        $response = $this->actingAs($this->user)
+            ->postJson($this->destroyRoute, [
+                'friend_id' => $friend->id,
+            ]);
 
         $response->assertUnprocessable();
     }
 
     public function testCannotDestroyFriendshipWhichIsPending(): void
     {
-        Friendship::factory()->createOne([
+        $friendship = Friendship::factory()->createOne([
             'user_id' => $this->user->id,
-            'friend_id' => $this->friend->id,
             'status' => FriendshipStatus::PENDING,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson($this->destroyRoute, [
-            'friend_id' => $this->friend->id,
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->destroyRoute, [
+                'friend_id' => $friendship->friend_id,
+            ]);
 
         $response->assertUnprocessable();
     }

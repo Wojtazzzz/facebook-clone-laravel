@@ -43,64 +43,55 @@ class SuggestsTest extends TestCase
 
     public function testNotFetchUserFriends(): void
     {
-        $users = User::factory(12)->create();
+        User::factory()->createOne();
 
         Friendship::factory(2)->create([
             'user_id' => $this->user->id,
-            'friend_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
         Friendship::factory(2)->create([
-            'user_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
             'friend_id' => $this->user->id,
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->suggestsRoute);
-
-        $response->assertOk()->assertJsonCount(8);
+        $response->assertOk()->assertJsonCount(1);
     }
 
     public function testNotFetchUsersWhereRequestIsPending(): void
     {
-        $users = User::factory(12)->create();
+        User::factory(3)->create();
 
         Friendship::factory(2)->create([
             'user_id' => $this->user->id,
-            'friend_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
             'status' => FriendshipStatus::PENDING,
         ]);
 
         Friendship::factory(2)->create([
-            'user_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
             'friend_id' => $this->user->id,
             'status' => FriendshipStatus::PENDING,
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->suggestsRoute);
-
-        $response->assertOk()->assertJsonCount(8);
+        $response->assertOk()->assertJsonCount(3);
     }
 
     public function testNotFetchBlockedUsers(): void
     {
-        $users = User::factory(12)->create();
+        User::factory(8)->create();
 
         Friendship::factory(2)->create([
             'user_id' => $this->user->id,
-            'friend_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
             'status' => FriendshipStatus::BLOCKED,
         ]);
 
         Friendship::factory(2)->create([
-            'user_id' => fn () => $this->faker->unique->randomElement($users->pluck('id')),
             'friend_id' => $this->user->id,
             'status' => FriendshipStatus::BLOCKED,
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->suggestsRoute);
-
         $response->assertOk()->assertJsonCount(8);
     }
 
@@ -109,7 +100,6 @@ class SuggestsTest extends TestCase
         User::factory(18)->create();
 
         $response = $this->actingAs($this->user)->getJson($this->suggestsRoute);
-
         $response->assertOk()->assertJsonCount(10);
     }
 
@@ -118,7 +108,6 @@ class SuggestsTest extends TestCase
         User::factory(17)->create();
 
         $response = $this->actingAs($this->user)->getJson($this->suggestsRoute.'?page=2');
-
         $response->assertOk()->assertJsonCount(7);
     }
 }

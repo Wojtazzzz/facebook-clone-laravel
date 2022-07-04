@@ -12,7 +12,6 @@ class UsersTest extends TestCase
     private string $usersRoute;
 
     private string $usersTable = 'users';
-    private int $usersCount = 20;
 
     public function setUp(): void
     {
@@ -23,18 +22,16 @@ class UsersTest extends TestCase
 
     public function testResponseReturnProperlyUsers(): void
     {
-        User::factory($this->usersCount)->create();
-
+        User::factory(16)->create();
         $users = User::latest()->get('id');
 
         $response = $this->getJson($this->usersRoute);
-
-        $this->assertDatabaseCount($this->usersTable, $this->usersCount);
-
         $response->assertOk()
-            ->assertJsonCount($this->usersCount, 'users')
+            ->assertJsonCount(16, 'users')
             ->assertJsonFragment([
                 'users' => $users,
             ]);
+
+        $this->assertDatabaseCount($this->usersTable, 16);
     }
 }

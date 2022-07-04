@@ -38,7 +38,6 @@ class UserTest extends TestCase
         $resource = new UserResource($this->user);
 
         $response = $this->actingAs($this->user)->getJson($this->userRoute);
-
         $response->assertJson($resource->response()->getData(true));
     }
 }

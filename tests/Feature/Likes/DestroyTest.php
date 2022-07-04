@@ -46,8 +46,8 @@ class DestroyTest extends TestCase
         $this->generateLike();
 
         $response = $this->actingAs($this->user)->deleteJson($this->likesDestroyRoute);
-
         $response->assertOk();
+
         $this->assertDatabaseCount($this->likesTable, 0);
     }
 
@@ -58,16 +58,16 @@ class DestroyTest extends TestCase
         $this->generateLike($friend->id);
 
         $response = $this->actingAs($this->user)->deleteJson($this->likesDestroyRoute);
-
         $response->assertNotFound();
+
         $this->assertDatabaseCount($this->likesTable, 1);
     }
 
     public function testCannotDeleteLikeWhichNotExists(): void
     {
         $response = $this->actingAs($this->user)->deleteJson($this->likesDestroyRoute);
-
         $response->assertNotFound();
+
         $this->assertDatabaseCount($this->likesTable, 0);
     }
 
@@ -80,7 +80,6 @@ class DestroyTest extends TestCase
         $this->generateLike();
 
         $response = $this->actingAs($this->user)->deleteJson($this->likesDestroyRoute);
-
         $response->assertOk()
             ->assertJsonFragment([
                 'data' => [

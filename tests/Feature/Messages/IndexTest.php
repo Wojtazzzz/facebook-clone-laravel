@@ -44,9 +44,7 @@ class IndexTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->messagesIndexRoute);
-
-        $response->assertOk()
-            ->assertJsonCount(15);
+        $response->assertOk()->assertJsonCount(15);
     }
 
     public function testCanReturnOnlyReceivedMessages(): void
@@ -57,9 +55,7 @@ class IndexTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->messagesIndexRoute);
-
-        $response->assertOk()
-            ->assertJsonCount(15);
+        $response->assertOk()->assertJsonCount(15);
     }
 
     public function testCanReturnSentAndReceivedMessages(): void
@@ -67,7 +63,6 @@ class IndexTest extends TestCase
         $this->generateMessages();
 
         $response = $this->actingAs($this->user)->getJson($this->messagesIndexRoute);
-
         $response->assertOk()
             ->assertJsonFragment([
                 'isReceived' => true,
@@ -82,8 +77,7 @@ class IndexTest extends TestCase
         $this->generateMessages();
 
         $response = $this->actingAs($this->user)->getJson($this->messagesIndexRoute);
-        $response->assertOk()
-            ->assertJsonCount(15);
+        $response->assertOk()->assertJsonCount(15);
     }
 
     public function testCanFetchMoreMessagesOnSecondPage(): void
@@ -91,8 +85,7 @@ class IndexTest extends TestCase
         $this->generateMessages();
 
         $response = $this->actingAs($this->user)->getJson($this->messagesIndexRoute.'?page=2');
-        $response->assertOk()
-            ->assertJsonCount(15);
+        $response->assertOk()->assertJsonCount(15);
     }
 
     private function generateMessages(int $perUser = 15): void

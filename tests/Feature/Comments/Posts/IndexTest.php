@@ -33,13 +33,16 @@ class IndexTest extends TestCase
 
     public function testCanUseAsAuthorized(): void
     {
-        $response = $this->actingAs($this->user)->getJson($this->commentsIndexRoute);
+        $response = $this->actingAs($this->user)
+            ->getJson($this->commentsIndexRoute);
+
         $response->assertOk();
     }
 
     public function testReturnEmptyResponseWhenPostHasNoComments(): void
     {
-        $response = $this->actingAs($this->user)->getJson($this->commentsIndexRoute);
+        $response = $this->actingAs($this->user)
+            ->getJson($this->commentsIndexRoute);
 
         $response->assertOk()
             ->assertJsonCount(0);
@@ -49,7 +52,8 @@ class IndexTest extends TestCase
     {
         $this->generateComments(1);
 
-        $response = $this->actingAs($this->user)->getJson($this->commentsIndexRoute);
+        $response = $this->actingAs($this->user)
+            ->getJson($this->commentsIndexRoute);
 
         $response->assertOk()
             ->assertJsonCount(1);
@@ -59,7 +63,8 @@ class IndexTest extends TestCase
     {
         $this->generateComments(5);
 
-        $response = $this->actingAs($this->user)->getJson($this->commentsIndexRoute);
+        $response = $this->actingAs($this->user)
+            ->getJson($this->commentsIndexRoute);
 
         $response->assertOk()
             ->assertJsonCount(5);
@@ -71,7 +76,8 @@ class IndexTest extends TestCase
 
         $this->generateComments(8, $friend->id);
 
-        $response = $this->actingAs($this->user)->getJson($this->commentsIndexRoute);
+        $response = $this->actingAs($this->user)
+            ->getJson($this->commentsIndexRoute);
 
         $response->assertOk()
             ->assertJsonCount(8);
@@ -83,7 +89,8 @@ class IndexTest extends TestCase
 
         $this->generateComments(12, postId: $anotherPost->id);
 
-        $response = $this->actingAs($this->user)->getJson($this->commentsIndexRoute);
+        $response = $this->actingAs($this->user)
+            ->getJson($this->commentsIndexRoute);
 
         $response->assertOk()
             ->assertJsonCount(0);
@@ -93,7 +100,8 @@ class IndexTest extends TestCase
     {
         $this->generateComments(14);
 
-        $response = $this->actingAs($this->user)->getJson($this->commentsIndexRoute);
+        $response = $this->actingAs($this->user)
+            ->getJson($this->commentsIndexRoute);
 
         $response->assertOk()
             ->assertJsonCount(10);
@@ -104,7 +112,6 @@ class IndexTest extends TestCase
         $this->generateComments(14);
 
         $response = $this->actingAs($this->user)->getJson($this->commentsIndexRoute.'?page=2');
-
         $response->assertOk()
             ->assertJsonCount(4);
     }
@@ -113,7 +120,8 @@ class IndexTest extends TestCase
     {
         $this->generateComments(8, postId: 99999);
 
-        $response = $this->actingAs($this->user)->getJson(route('api.comments.posts.index', 999999));
+        $response = $this->actingAs($this->user)
+            ->getJson(route('api.comments.posts.index', 999999));
 
         $response->assertNotFound();
     }

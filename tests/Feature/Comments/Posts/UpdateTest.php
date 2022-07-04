@@ -45,21 +45,25 @@ class UpdateTest extends TestCase
 
     public function testCanUseAsAuthorized(): void
     {
-        $response = $this->actingAs($this->user)->putJson($this->commentsUpdateRoute, [
-            'content' => 'Simple comment',
-        ]);
+        $response = $this->actingAs($this->user)
+            ->putJson($this->commentsUpdateRoute, [
+                'content' => 'Simple comment',
+            ]);
 
         $response->assertOk();
+
         $this->assertDatabaseCount($this->commentsTable, 1);
     }
 
     public function testCanUpdateOwnComment(): void
     {
-        $response = $this->actingAs($this->user)->putJson($this->commentsUpdateRoute, [
-            'content' => 'Simple updated comment',
-        ]);
+        $response = $this->actingAs($this->user)
+            ->putJson($this->commentsUpdateRoute, [
+                'content' => 'Simple updated comment',
+            ]);
 
         $response->assertOk();
+
         $this->assertDatabaseCount($this->commentsTable, 1)
             ->assertDatabaseHas($this->commentsTable, [
                 'content' => 'Simple updated comment',
@@ -79,11 +83,13 @@ class UpdateTest extends TestCase
             'comment' => $comment,
         ]);
 
-        $response = $this->actingAs($this->user)->putJson($route, [
-            'content' => 'Simple updated comment',
-        ]);
+        $response = $this->actingAs($this->user)
+            ->putJson($route, [
+                'content' => 'Simple updated comment',
+            ]);
 
         $response->assertForbidden();
+
         $this->assertDatabaseMissing($this->commentsTable, [
                 'content' => 'Simple updated comment',
                 'author_id' => $this->user->id,
@@ -92,33 +98,38 @@ class UpdateTest extends TestCase
 
     public function testCannotUpdateCommentWithoutPassingContent(): void
     {
-        $response = $this->actingAs($this->user)->putJson($this->commentsUpdateRoute);
+        $response = $this->actingAs($this->user)
+            ->putJson($this->commentsUpdateRoute);
+
         $response->assertJsonValidationErrorFor('content');
     }
 
     public function testCannotUpdateCommentWithSingleLetterLengthContent(): void
     {
-        $response = $this->actingAs($this->user)->putJson($this->commentsUpdateRoute, [
-            'content' => 'S',
-        ]);
+        $response = $this->actingAs($this->user)
+            ->putJson($this->commentsUpdateRoute, [
+                'content' => 'S',
+            ]);
 
         $response->assertJsonValidationErrorFor('content');
     }
 
     public function testCannotUpdateCommentWithTooLongContent(): void
     {
-        $response = $this->actingAs($this->user)->putJson($this->commentsUpdateRoute, [
-            'content' => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-        ]);
+        $response = $this->actingAs($this->user)
+            ->putJson($this->commentsUpdateRoute, [
+                'content' => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+            ]);
 
         $response->assertJsonValidationErrorFor('content');
     }
 
     public function testResponseIncludesUpdatedComment(): void
     {
-        $response = $this->actingAs($this->user)->putJson($this->commentsUpdateRoute, [
-            'content' => 'Simple updated comment',
-        ]);
+        $response = $this->actingAs($this->user)
+            ->putJson($this->commentsUpdateRoute, [
+                'content' => 'Simple updated comment',
+            ]);
 
         $response->assertOk()
             ->assertJsonFragment([
@@ -128,9 +139,10 @@ class UpdateTest extends TestCase
 
     public function testPassedEmptyStringValueIsTreatingAsNullValue(): void
     {
-        $response = $this->actingAs($this->user)->putJson($this->commentsUpdateRoute, [
-            'content' => '',
-        ]);
+        $response = $this->actingAs($this->user)
+            ->putJson($this->commentsUpdateRoute, [
+                'content' => '',
+            ]);
 
         $response->assertJsonValidationErrorFor('content');
     }
@@ -142,9 +154,10 @@ class UpdateTest extends TestCase
             'comment' => 99999,
         ]);
 
-        $response = $this->actingAs($this->user)->putJson($route, [
-            'content' => 'Simple updated comment',
-        ]);
+        $response = $this->actingAs($this->user)
+            ->putJson($route, [
+                'content' => 'Simple updated comment',
+            ]);
 
         $response->assertNotFound();
     }

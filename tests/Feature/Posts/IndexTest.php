@@ -4,19 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Posts;
 
-use App\Enums\FriendshipStatus;
 use App\Models\Comment;
-use App\Models\Friendship;
 use App\Models\Like;
 use App\Models\Post;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Collection;
 use Tests\TestCase;
 
 class IndexTest extends TestCase
 {
     private User $user;
-    private Collection $friends;
 
     private string $postsIndexRoute;
 
@@ -40,9 +36,11 @@ class IndexTest extends TestCase
         $response->assertOk();
     }
 
-    public function testCanReturnPosts(): void
+    public function testCanReturnProperlyAmountOfPosts(): void
     {
-        Post::factory(6)->create();
+        Post::factory(6)->create([
+            'author_id' => $this->user->id,
+        ]);
 
         $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute);
 
@@ -52,7 +50,9 @@ class IndexTest extends TestCase
 
     public function testCanReturnMaxTenPosts(): void
     {
-        Post::factory(17)->create();
+        Post::factory(12)->create([
+            'author_id' => $this->user->id,
+        ]);
 
         $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute);
 
@@ -62,17 +62,21 @@ class IndexTest extends TestCase
 
     public function testCanFetchMorePostsOnSecondPage(): void
     {
-        Post::factory(17)->create();
+        Post::factory(13)->create([
+            'author_id' => $this->user->id,
+        ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute.'?page=2');
+        $response = $this->actingAs($this->user)
+            ->getJson($this->postsIndexRoute.'?page=2');
 
         $response->assertOk()
-            ->assertJsonCount(7);
+            ->assertJsonCount(3);
     }
 
     public function testCanReturnEmptyResponseWhenNoPosts(): void
     {
-        $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute.'?page=2');
+        $response = $this->actingAs($this->user)
+            ->getJson($this->postsIndexRoute.'?page=2');
 
         $response->assertOk()
             ->assertJsonCount(0);
@@ -80,24 +84,21 @@ class IndexTest extends TestCase
 
     public function testReturnProperlyLikesAndCommentsStats(): void
     {
-        $this->friends = User::factory(20)->create();
-
-        $posts = Post::factory(2)->create([
+        $post = Post::factory()->create([
             'author_id' => $this->user->id,
         ]);
+
         $comments = Comment::factory(7)->create([
             'resource' => 'POST',
-            'resource_id' => $posts[1]->id,
+            'resource_id' => $post->id,
         ]);
+
         $likes = Like::factory(5)->create([
-            'user_id' => fn () => $this->faker->unique()->randomElement($this->friends->pluck('id')),
-            'post_id' => $posts[1]->id,
+            'post_id' => $post->id,
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute);
-
         $response->assertOk()
-            ->assertJsonCount(2)
             ->assertJsonFragment([
                 'likes_count' => $likes->count(),
                 'comments_count' => $comments->count(),
@@ -116,7 +117,6 @@ class IndexTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute);
-
         $response->assertOk()
             ->assertJsonFragment([
                 'isLiked' => true,
@@ -130,7 +130,6 @@ class IndexTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute);
-
         $response->assertOk()
             ->assertJsonFragment([
                 'isLiked' => false,
@@ -144,47 +143,26 @@ class IndexTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute);
-
         $response->assertOk()
             ->assertJsonCount(3);
     }
 
-    public function testCannotReturnUsersPostsWhichAreNotFriends(): void
+    public function testCannotReturnPostsWhichAuthorsAreNotFriends(): void
     {
-        $this->friends = User::factory(5)->create();
-
-        Post::factory(3)->create([
-            'author_id' => fn () => $this->faker->unique->randomElement($this->friends->pluck('id')),
-        ]);
+        Post::factory(3)->create();
 
         $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute);
-
         $response->assertOk()
             ->assertJsonCount(0);
     }
 
-    public function testCanReturnUsersPostsWhichAreFriends(): void
+    public function testCanReturnPostsWhichAuthorsAreFriends(): void
     {
-        $this->friends = User::factory(10)->create();
-
-        Friendship::factory()->createOne([
-            'user_id' => $this->user->id,
-            'friend_id' => $this->friends[0],
-            'status' => FriendshipStatus::CONFIRMED,
-        ]);
-
-        Friendship::factory()->createOne([
-            'user_id' => $this->user->id,
-            'friend_id' => $this->friends[1],
-            'status' => FriendshipStatus::CONFIRMED,
-        ]);
-
-        Post::factory(5)->create([
-            'author_id' => fn () => $this->faker->randomElement([$this->friends[0]->id, $this->friends[1]->id]),
-        ]);
+        Post::factory(5)
+            ->friendsAuthors($this->user->id)
+            ->create();
 
         $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute);
-
         $response->assertOk()
             ->assertJsonCount(5);
     }

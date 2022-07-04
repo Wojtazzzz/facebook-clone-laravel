@@ -20,16 +20,19 @@ class MessageFactory extends Factory
         ];
     }
 
-    public function configure()
+    public function configure(): static
     {
         return $this->afterCreating(function (Message $message) {
-            $friendshipExists = Friendship::where([
-                'user_id' => $message->sender_id,
-                'friend_id' => $message->receiver_id,
-            ])->orWhere([
-                'user_id' => $message->receiver_id,
-                'friend_id' => $message->sender_id,
-            ])->exists();
+            $friendshipExists = Friendship::query()
+                ->where([
+                    'user_id' => $message->sender_id,
+                    'friend_id' => $message->receiver_id,
+                ])
+                ->orWhere([
+                    'user_id' => $message->receiver_id,
+                    'friend_id' => $message->sender_id,
+                ])
+                ->exists();
 
             if ($friendshipExists) {
                 return;

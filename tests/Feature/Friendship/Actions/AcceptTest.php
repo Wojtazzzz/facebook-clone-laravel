@@ -13,7 +13,6 @@ use Tests\TestCase;
 class AcceptTest extends TestCase
 {
     private User $user;
-    private User $friend;
 
     private string $acceptRoute;
 
@@ -26,7 +25,6 @@ class AcceptTest extends TestCase
 
         $this->user = User::factory()->createOne();
         $this->acceptRoute = route('api.friendship.accept');
-        $this->friend = User::factory()->createOne();
     }
 
     public function testCannotUseWhenNotAuthorized(): void
@@ -37,20 +35,21 @@ class AcceptTest extends TestCase
 
     public function testCanAcceptInvitation(): void
     {
-        Friendship::factory()->createOne([
-            'user_id' => $this->friend->id,
+        $friendship = Friendship::factory()->createOne([
             'friend_id' => $this->user->id,
             'status' => FriendshipStatus::PENDING,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson($this->acceptRoute, [
-            'friend_id' => $this->friend->id,
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->acceptRoute, [
+                'friend_id' => $friendship->user_id,
+            ]);
 
         $response->assertOk();
+
         $this->assertDatabaseCount($this->friendshipsTable, 1);
         $this->assertDatabaseHas($this->friendshipsTable, [
-            'user_id' => $this->friend->id,
+            'user_id' => $friendship->user_id,
             'friend_id' => $this->user->id,
             'status' => FriendshipStatus::CONFIRMED,
         ]);
@@ -58,83 +57,89 @@ class AcceptTest extends TestCase
 
     public function testAcceptInvitationSendsNotification(): void
     {
-        Friendship::factory()->createOne([
-            'user_id' => $this->friend->id,
+        $friendship = Friendship::factory()->createOne([
             'friend_id' => $this->user->id,
             'status' => FriendshipStatus::PENDING,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson($this->acceptRoute, [
-            'friend_id' => $this->friend->id,
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->acceptRoute, [
+                'friend_id' => $friendship->user_id,
+            ]);
 
         $response->assertOk();
-        $this->assertDatabaseCount($this->notificationsTable, 1);
-        $this->assertDatabaseHas($this->notificationsTable, [
-            'type' => FriendshipRequestAccepted::class,
-            'notifiable_id' => $this->friend->id,
-        ]);
+
+        $this->assertDatabaseCount($this->notificationsTable, 1)
+            ->assertDatabaseHas($this->notificationsTable, [
+                'type' => FriendshipRequestAccepted::class,
+                'notifiable_id' => $friendship->user_id,
+            ]);
     }
 
     public function testPassedEmptyStringValueIsTreatingAsNullValue(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->acceptRoute, [
-            'friend_id' => '',
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->acceptRoute, [
+                'friend_id' => '',
+            ]);
 
         $response->assertJsonValidationErrorFor('friend_id');
     }
 
     public function testCannotAcceptInvitationWhichNotExists(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->acceptRoute, [
-            'friend_id' => $this->friend->id,
-        ]);
+        $friend = User::factory()->createOne();
+
+        $response = $this->actingAs($this->user)
+            ->postJson($this->acceptRoute, [
+                'friend_id' => $friend->id,
+            ]);
 
         $response->assertUnprocessable();
     }
 
     public function testCannotAcceptOwn(): void
     {
-        Friendship::factory()->createOne([
+        $friendship = Friendship::factory()->createOne([
             'user_id' => $this->user->id,
-            'friend_id' => $this->friend->id,
             'status' => FriendshipStatus::PENDING,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson($this->acceptRoute, [
-            'friend_id' => $this->friend->id,
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->acceptRoute, [
+                'friend_id' => $friendship->friend_id,
+            ]);
 
         $response->assertUnprocessable();
     }
 
     public function testCannotAcceptInvitationWhichIsAlreadyConfirmed(): void
     {
-        Friendship::factory()->createOne([
+        $friendship = Friendship::factory()->createOne([
             'user_id' => $this->user->id,
-            'friend_id' => $this->friend->id,
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson($this->acceptRoute, [
-            'friend_id' => $this->friend->id,
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->acceptRoute, [
+                'friend_id' => $friendship->friend_id,
+            ]);
 
         $response->assertUnprocessable();
     }
 
     public function testCannotAcceptInvitationWhenInviterNotExistsNow(): void
     {
-        Friendship::factory()->createOne([
+        $friendship = Friendship::factory()->createOne([
             'user_id' => 99999,
             'friend_id' => $this->user->id,
             'status' => FriendshipStatus::PENDING,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson($this->acceptRoute, [
-            'friend_id' => 99999,
-        ]);
+        $response = $this->actingAs($this->user)
+            ->postJson($this->acceptRoute, [
+                'friend_id' => $friendship->user_id,
+            ]);
 
         $response->assertJsonValidationErrorFor('friend_id');
     }

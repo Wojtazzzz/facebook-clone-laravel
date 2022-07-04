@@ -14,7 +14,6 @@ use Tests\TestCase;
 class IndexTest extends TestCase
 {
     private User $user;
-    private User $friend;
 
     private string $notificationsRoute;
 
@@ -23,7 +22,6 @@ class IndexTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->friend = User::factory()->createOne();
         $this->notificationsRoute = route('api.notifications.index');
     }
 
@@ -39,7 +37,7 @@ class IndexTest extends TestCase
         $response->assertOk();
     }
 
-    public function testReturnProperlyNotificationsNumber(): void
+    public function testReturnProperlyNotificationsAmount(): void
     {
         Notification::factory(8)->create([
             'notifiable_id' => $this->user->id,
@@ -52,7 +50,7 @@ class IndexTest extends TestCase
 
     public function testReturnMaxTenNotifications(): void
     {
-        Notification::factory(12)->create([
+        Notification::factory(11)->create([
             'notifiable_id' => $this->user->id,
         ]);
 
@@ -81,43 +79,43 @@ class IndexTest extends TestCase
 
     public function testFriendshipRequestAcceptedReturnProperlyData(): void
     {
-        $this->user->notify(new FriendshipRequestAccepted($this->friend->id));
+        $friend = User::factory()->createOne();
+
+        $this->user->notify(new FriendshipRequestAccepted($friend->id));
 
         $response = $this->actingAs($this->user)->getJson($this->notificationsRoute);
-
         $response->assertOk()
             ->assertJsonCount(1)
             ->assertJsonFragment([
                 'message' => 'Accepted your friendship invitation',
                 'friend' => [
-                    'background_image' => $this->friend->background_image,
-                    'first_name' => $this->friend->first_name,
-                    'id' => $this->friend->id,
-                    'name' => "{$this->friend->first_name} {$this->friend->last_name}",
-                    'profile_image' => $this->friend->profile_image,
+                    'background_image' => $friend->background_image,
+                    'first_name' => $friend->first_name,
+                    'id' => $friend->id,
+                    'name' => "{$friend->first_name} {$friend->last_name}",
+                    'profile_image' => $friend->profile_image,
                 ],
-                'link' => "/profile/{$this->friend->id}",
+                'link' => "/profile/{$friend->id}",
             ]);
     }
 
     public function testFriendshipRequestSentReturnProperlyData(): void
     {
-        $this->user->notify(new FriendshipRequestSent($this->friend->id));
+        $friend = User::factory()->createOne();
 
-        // $this->user->notify(new Poked($this->user->id, 50));
+        $this->user->notify(new FriendshipRequestSent($friend->id));
 
         $response = $this->actingAs($this->user)->getJson($this->notificationsRoute);
-
         $response->assertOk()
             ->assertJsonCount(1)
             ->assertJsonFragment([
                 'message' => 'Sent you a friendship invitation',
                 'friend' => [
-                    'background_image' => $this->friend->background_image,
-                    'first_name' => $this->friend->first_name,
-                    'id' => $this->friend->id,
-                    'name' => "{$this->friend->first_name} {$this->friend->last_name}",
-                    'profile_image' => $this->friend->profile_image,
+                    'background_image' => $friend->background_image,
+                    'first_name' => $friend->first_name,
+                    'id' => $friend->id,
+                    'name' => "{$friend->first_name} {$friend->last_name}",
+                    'profile_image' => $friend->profile_image,
                 ],
                 'link' => '/friends/invites',
             ]);
@@ -125,20 +123,21 @@ class IndexTest extends TestCase
 
     public function testPokedNotificationReturnProperlyData(): void
     {
-        $this->user->notify(new Poked($this->friend->id, 50));
+        $friend = User::factory()->createOne();
+
+        $this->user->notify(new Poked($friend->id, 50));
 
         $response = $this->actingAs($this->user)->getJson($this->notificationsRoute);
-
         $response->assertOk()
             ->assertJsonCount(1)
             ->assertJsonFragment([
                 'message' => 'Poked you 50 times in a row',
                 'friend' => [
-                    'background_image' => $this->friend->background_image,
-                    'first_name' => $this->friend->first_name,
-                    'id' => $this->friend->id,
-                    'name' => "{$this->friend->first_name} {$this->friend->last_name}",
-                    'profile_image' => $this->friend->profile_image,
+                    'background_image' => $friend->background_image,
+                    'first_name' => $friend->first_name,
+                    'id' => $friend->id,
+                    'name' => "{$friend->first_name} {$friend->last_name}",
+                    'profile_image' => $friend->profile_image,
                 ],
                 'link' => '/friends/pokes',
             ]);

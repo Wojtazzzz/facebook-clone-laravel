@@ -38,11 +38,13 @@ class MarkAsReadTest extends TestCase
 
     public function testCanMarkAsReadAllNotifications(): void
     {
-        Notification::factory(50)->create();
+        Notification::factory(50)->create([
+            'notifiable_id' => $this->user->id,
+        ]);
 
         $response = $this->actingAs($this->user)->putJson($this->notificationsRoute);
-
         $response->assertNoContent();
+
         $this->assertDatabaseMissing($this->notificationsTable, [
             'read_at' => null,
         ]);
