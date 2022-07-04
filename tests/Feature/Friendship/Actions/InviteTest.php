@@ -68,7 +68,7 @@ class InviteTest extends TestCase
                 'friend_id' => $this->user->id,
             ]);
 
-        $response->assertUnprocessable();
+        $response->assertJsonValidationErrorFor('friend_id');
     }
 
     public function testInvitationCreatesNotification(): void
@@ -99,7 +99,7 @@ class InviteTest extends TestCase
                 'friend_id' => $friendship->friend_id,
             ]);
 
-        $response->assertUnprocessable();
+        $response->assertJsonValidationErrorFor('friend_id');
 
         $this->assertDatabaseCount($this->friendshipsTable, 1);
     }
@@ -116,7 +116,7 @@ class InviteTest extends TestCase
                 'friend_id' => $friendship->user_id,
             ]);
 
-        $response->assertUnprocessable();
+        $response->assertJsonValidationErrorFor('friend_id');
 
         $this->assertDatabaseCount($this->friendshipsTable, 1);
     }
@@ -133,7 +133,7 @@ class InviteTest extends TestCase
                 'friend_id' => $friendship->friend_id,
             ]);
 
-        $response->assertUnprocessable();
+        $response->assertJsonValidationErrorFor('friend_id');
 
         $this->assertDatabaseCount($this->friendshipsTable, 1);
     }
@@ -150,7 +150,7 @@ class InviteTest extends TestCase
                 'friend_id' => $friendship->user_id,
             ]);
 
-        $response->assertUnprocessable();
+        $response->assertJsonValidationErrorFor('friend_id');
 
         $this->assertDatabaseCount($this->friendshipsTable, 1);
     }
@@ -162,6 +162,6 @@ class InviteTest extends TestCase
                 'friend_id' => 99999,
             ]);
 
-        $response->assertUnprocessable();
+        $response->assertJsonValidationErrorFor('friend_id');
     }
 }

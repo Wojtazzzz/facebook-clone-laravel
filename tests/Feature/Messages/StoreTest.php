@@ -34,7 +34,8 @@ class StoreTest extends TestCase
     public function testCanUseAsAuthorized(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->messagesStoreRoute);
-        $response->assertUnprocessable();
+        $response->assertJsonValidationErrorFor('receiver_id')
+            ->assertJsonValidationErrorFor('text');
     }
 
     public function testCannotCreateMessageWithEmptyText(): void

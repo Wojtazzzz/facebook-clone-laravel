@@ -60,7 +60,7 @@ class StoreTest extends TestCase
                 'post_id' => 99999,
             ]);
 
-        $response->assertUnprocessable();
+        $response->assertJsonValidationErrorFor('post_id');
 
         $this->assertDatabaseCount($this->likesTable, 0);
     }
@@ -110,7 +110,7 @@ class StoreTest extends TestCase
         Like::factory(2)->create([
             'post_id' => $post->id,
         ]);
-        
+
         $response = $this->actingAs($this->user)
             ->postJson($this->likesStoreRoute, [
                 'post_id' => $post->id,

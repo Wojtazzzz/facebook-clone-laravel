@@ -48,11 +48,12 @@ class PokeTest extends TestCase
         $response->assertCreated();
     }
 
-    public function testCannotPassNoUserId(): void
+    public function testCannotPassNoFriendId(): void
     {
         $response = $this->actingAs($this->user)
             ->postJson($this->pokeRoute);
-        $response->assertUnprocessable();
+
+        $response->assertJsonValidationErrorFor('friend_id');
     }
 
     public function testPassedEmptyStringIsTreatingAsNullValue(): void
@@ -65,7 +66,7 @@ class PokeTest extends TestCase
         $response->assertJsonValidationErrorFor('friend_id');
     }
 
-    public function testCannotPassUserIdWhichIsNotYourFriend(): void
+    public function testCannotPassFriendIdWhichIsNotYourFriend(): void
     {
         $friend = User::factory()->createOne();
 
@@ -74,17 +75,17 @@ class PokeTest extends TestCase
                 'friend_id' => $friend->id,
             ]);
 
-        $response->assertUnprocessable();
+        $response->assertJsonValidationErrorFor('friend_id');
     }
 
-    public function testCannotPassUserIdWhichNotExist(): void
+    public function testCannotPassFriendIdWhichNotExist(): void
     {
         $response = $this->actingAs($this->user)
             ->postJson($this->pokeRoute, [
                 'friend_id' => 99999,
             ]);
 
-        $response->assertUnprocessable();
+        $response->assertJsonValidationErrorFor('friend_id');
     }
 
     public function testCannotPassOwnId(): void
@@ -94,7 +95,7 @@ class PokeTest extends TestCase
                 'friend_id' => $this->user->id,
             ]);
 
-        $response->assertUnprocessable();
+        $response->assertJsonValidationErrorFor('friend_id');
     }
 
     public function testCreateNewPokeWhenNoPokesWithSameFriendYet(): void
@@ -135,7 +136,7 @@ class PokeTest extends TestCase
         $this->assertDatabaseCount($this->pokesTable, 1);
     }
 
-    public function testCannotPokeUserWhoseRequestIsPending(): void
+    public function testCannotPokeFriendWhoseRequestIsPending(): void
     {
         $friendship = Friendship::factory()->createOne([
             'user_id' => $this->user->id,
@@ -147,10 +148,10 @@ class PokeTest extends TestCase
                 'friend_id' => $friendship->friend_id,
             ]);
 
-        $response->assertUnprocessable();
+        $response->assertJsonValidationErrorFor('friend_id');
     }
 
-    public function testCannotPokeUserWhoseRequestIsBlocked(): void
+    public function testCannotPokeFriendWhoseRequestIsBlocked(): void
     {
         $friendship = Friendship::factory()->createOne([
             'user_id' => $this->user->id,
@@ -162,7 +163,7 @@ class PokeTest extends TestCase
                 'friend_id' => $friendship->friend_id,
             ]);
 
-        $response->assertUnprocessable();
+        $response->assertJsonValidationErrorFor('friend_id');
     }
 
     public function testUpdateOldPokeWhenAlreadyHasPokesWithSameFriend(): void
@@ -213,7 +214,7 @@ class PokeTest extends TestCase
                 'friend_id' => $friendship->friend_id,
             ]);
 
-        $response->assertUnprocessable();
+        $response->assertJsonValidationErrorFor('friend_id');
 
         $this->assertDatabaseCount($this->pokesTable, 1);
     }

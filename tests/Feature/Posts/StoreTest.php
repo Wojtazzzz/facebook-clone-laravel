@@ -53,7 +53,8 @@ class StoreTest extends TestCase
     public function testCannotCreatePostWithoutData(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute);
-        $response->assertUnprocessable();
+        $response->assertJsonValidationErrorFor('content')
+            ->assertJsonValidationErrorFor('images');
 
         $this->assertDatabaseCount($this->postsTable, 0);
     }
@@ -159,7 +160,10 @@ class StoreTest extends TestCase
             ],
         ]);
 
-        $response->assertUnprocessable();
+        $response->assertJsonValidationErrorFor('images.0')
+            ->assertJsonValidationErrorFor('images.1')
+            ->assertJsonValidationErrorFor('images.2')
+            ->assertJsonValidationErrorFor('images.3');
     }
 
     public function testCannotPassEmptyArrayAsImages(): void

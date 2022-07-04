@@ -95,7 +95,7 @@ class AcceptTest extends TestCase
                 'friend_id' => $friend->id,
             ]);
 
-        $response->assertUnprocessable();
+        $response->assertJsonValidationErrorFor('friend_id');
     }
 
     public function testCannotAcceptOwn(): void
@@ -110,7 +110,7 @@ class AcceptTest extends TestCase
                 'friend_id' => $friendship->friend_id,
             ]);
 
-        $response->assertUnprocessable();
+        $response->assertJsonValidationErrorFor('friend_id');
     }
 
     public function testCannotAcceptInvitationWhichIsAlreadyConfirmed(): void
@@ -125,7 +125,7 @@ class AcceptTest extends TestCase
                 'friend_id' => $friendship->friend_id,
             ]);
 
-        $response->assertUnprocessable();
+        $response->assertJsonValidationErrorFor('friend_id');
     }
 
     public function testCannotAcceptInvitationWhenInviterNotExistsNow(): void

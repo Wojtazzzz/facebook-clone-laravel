@@ -104,7 +104,7 @@ class DestroyTest extends TestCase
                 'friend_id' => 25,
             ]);
 
-        $response->assertUnprocessable();
+        $response->assertJsonValidationErrorFor('friend_id');
     }
 
     public function testCannotDestroyFriendshipWhichNotExists(): void
@@ -116,7 +116,7 @@ class DestroyTest extends TestCase
                 'friend_id' => $friend->id,
             ]);
 
-        $response->assertUnprocessable();
+        $response->assertJsonValidationErrorFor('friend_id');
     }
 
     public function testCannotDestroyFriendshipWhichIsPending(): void
@@ -131,6 +131,6 @@ class DestroyTest extends TestCase
                 'friend_id' => $friendship->friend_id,
             ]);
 
-        $response->assertUnprocessable();
+        $response->assertJsonValidationErrorFor('friend_id');
     }
 }
