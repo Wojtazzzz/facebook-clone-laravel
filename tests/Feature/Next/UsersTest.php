@@ -23,14 +23,10 @@ class UsersTest extends TestCase
     public function testResponseReturnProperlyUsers(): void
     {
         User::factory(16)->create();
-        $users = User::latest()->get('id');
 
         $response = $this->getJson($this->usersRoute);
         $response->assertOk()
-            ->assertJsonCount(16, 'users')
-            ->assertJsonFragment([
-                'users' => $users,
-            ]);
+            ->assertJsonCount(16, 'users');
 
         $this->assertDatabaseCount($this->usersTable, 16);
     }

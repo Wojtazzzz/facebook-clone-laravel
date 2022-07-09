@@ -88,7 +88,7 @@ class StoreTest extends TestCase
         $this->assertDatabaseCount($this->commentsTable, 0);
     }
 
-    public function testPassedEmptyStringValuesAreTreatingAsNulLValues(): void
+    public function testPassedEmptyStringValuesAreTreatingAsNullValues(): void
     {
         $response = $this->actingAs($this->user)
             ->postJson($this->commentsStoreRoute, [
