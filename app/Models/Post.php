@@ -33,6 +33,10 @@ class Post extends Model
                 return;
             }
 
+            if (isset($post->author_id)) {
+                return;
+            }
+
             $post->author_id = Auth::user()->id;
         });
     }
