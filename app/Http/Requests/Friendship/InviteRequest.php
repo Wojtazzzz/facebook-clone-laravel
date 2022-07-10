@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Requests\Friendship;
 
 use App\Rules\FriendshipUnique;
+use App\Rules\NotSelfId;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 
 class InviteRequest extends FormRequest
 {
@@ -23,7 +23,7 @@ class InviteRequest extends FormRequest
                 'required',
                 'integer',
                 'exists:users,id',
-                Rule::notIn([$this->user()->id]),
+                new NotSelfId(),
                 new FriendshipUnique(),
             ],
         ];

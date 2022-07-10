@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Friendship;
 
+use App\Rules\NotSelfId;
 use App\Rules\RequestReceived;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -22,6 +23,7 @@ class RejectRequest extends FormRequest
                 'required',
                 'integer',
                 'exists:users,id',
+                new NotSelfId(),
                 new RequestReceived(),
             ],
         ];

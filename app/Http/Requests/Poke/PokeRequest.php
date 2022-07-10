@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Http\Requests\Poke;
 
 use App\Rules\Friend;
+use App\Rules\NotSelfId;
 use App\Rules\PokeInitiator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 
 class PokeRequest extends FormRequest
 {
@@ -24,7 +24,7 @@ class PokeRequest extends FormRequest
                 'required',
                 'integer',
                 'exists:users,id',
-                Rule::notIn([$this->user()->id]),
+                new NotSelfId(),
                 new Friend(),
                 new PokeInitiator(),
             ],
