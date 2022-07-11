@@ -12,7 +12,7 @@ class FriendshipFactory extends Factory
 {
     public function definition(): array
     {
-        $status = [
+        $statuses = [
             FriendshipStatus::CONFIRMED,
             FriendshipStatus::PENDING,
             FriendshipStatus::BLOCKED,
@@ -21,9 +21,7 @@ class FriendshipFactory extends Factory
         return [
             'user_id' => User::factory(),
             'friend_id' => User::factory(),
-            'status' => $this->faker->randomElement($status),
+            'status' => $this->faker->randomElement($statuses),
         ];
     }
-
-    
 }

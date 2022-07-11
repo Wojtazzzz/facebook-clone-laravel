@@ -14,15 +14,8 @@ class Friend implements Rule
     public function passes($attribute, $value): bool
     {
         return Friendship::query()
+            ->relation(Auth::user()->id, $value)
             ->where('status', FriendshipStatus::CONFIRMED)
-            ->where([
-                ['user_id', Auth::user()->id],
-                ['friend_id', $value],
-            ])
-            ->orWhere([
-                ['user_id', $value],
-                ['friend_id', Auth::user()->id],
-            ])
             ->exists();
     }
 

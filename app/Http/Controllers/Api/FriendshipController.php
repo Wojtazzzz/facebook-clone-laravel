@@ -111,18 +111,13 @@ class FriendshipController extends Controller
     {
         $data = $request->validated();
         $friend = User::findOrFail($data['friend_id']);
+        $userId = $request->user()->id;
 
-        Friendship::where([
-            ['user_id', $friend->id],
-            ['friend_id', $request->user()->id],
-        ])
-        ->orWhere([
-            ['user_id', $request->user()->id],
-            ['friend_id', $friend->id],
-        ])
-        ->where('status', FriendshipStatus::CONFIRMED)
-        ->firstOrFail()
-        ->delete();
+        Friendship::query()
+            ->relation($userId, $friend->id)
+            ->where('status', FriendshipStatus::CONFIRMED)
+            ->firstOrFail()
+            ->delete();
 
         return response()->json(new UserResource($friend));
     }

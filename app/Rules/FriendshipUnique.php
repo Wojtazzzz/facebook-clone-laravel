@@ -12,15 +12,9 @@ class FriendshipUnique implements Rule
 {
     public function passes($attribute, $value): bool
     {
-        return !Friendship::where([
-            ['user_id', Auth::user()->id],
-            ['friend_id', $value],
-        ])
-        ->orWhere([
-            ['user_id', $value],
-            ['friend_id', Auth::user()->id],
-        ])
-        ->exists();
+        return !Friendship::query()
+            ->relation(Auth::user()->id, $value)
+            ->exists();
     }
 
     public function message(): string

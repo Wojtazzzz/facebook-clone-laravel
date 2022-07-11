@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Enums\FriendshipStatus;
 use App\Models\Friendship;
 use App\Models\Message;
 use App\Models\User;
@@ -24,14 +25,7 @@ class MessageFactory extends Factory
     {
         return $this->afterCreating(function (Message $message) {
             $friendshipExists = Friendship::query()
-                ->where([
-                    'user_id' => $message->sender_id,
-                    'friend_id' => $message->receiver_id,
-                ])
-                ->orWhere([
-                    'user_id' => $message->receiver_id,
-                    'friend_id' => $message->sender_id,
-                ])
+                ->relation($message->sender_id, $message->receiver_id)
                 ->exists();
 
             if ($friendshipExists) {
@@ -41,7 +35,7 @@ class MessageFactory extends Factory
             Friendship::create([
                 'user_id' => $message->sender_id,
                 'friend_id' => $message->receiver_id,
-                'status' => 'CONFIRMED',
+                'status' => FriendshipStatus::CONFIRMED,
             ]);
         });
     }
