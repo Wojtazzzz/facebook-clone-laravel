@@ -29,12 +29,16 @@ class Comment extends Model
     {
         parent::boot();
 
-        self::creating(function (Comment $model) {
+        self::creating(function (Comment $comment) {
             if (!Auth::check()) {
                 return;
             }
 
-            $model->author_id = Auth::user()->id;
+            if (isset($comment->author_id)) {
+                return;
+            }
+
+            $comment->author_id = Auth::user()->id;
         });
     }
 }
