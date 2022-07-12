@@ -13,8 +13,7 @@ class RejectTest extends TestCase
 {
     private User $user;
 
-    private string $rejectRoute;
-
+    private string $route;
     private string $friendshipsTable = 'friendships';
     private string $notificationsTable = 'notifications';
 
@@ -23,12 +22,12 @@ class RejectTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->rejectRoute = route('api.friendship.reject');
+        $this->route = route('api.friendship.reject');
     }
 
     public function testCannotUseWhenNotAuthorized(): void
     {
-        $response = $this->postJson($this->rejectRoute);
+        $response = $this->postJson($this->route);
         $response->assertUnauthorized();
     }
 
@@ -40,7 +39,7 @@ class RejectTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->rejectRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friendship->user_id,
             ]);
 
@@ -62,7 +61,7 @@ class RejectTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->rejectRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friendship->user_id,
             ]);
 
@@ -74,7 +73,7 @@ class RejectTest extends TestCase
     public function testPassedEmptyStringValueIsTreatingAsNullValue(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->rejectRoute, [
+            ->postJson($this->route, [
                 'friend_id' => '',
             ]);
 
@@ -86,7 +85,7 @@ class RejectTest extends TestCase
         $friend = User::factory()->createOne();
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->rejectRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friend->id,
             ]);
 
@@ -101,7 +100,7 @@ class RejectTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->rejectRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friendship->friend_id,
             ]);
 
@@ -116,7 +115,7 @@ class RejectTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->rejectRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friendship->friend_id,
             ]);
 
@@ -132,7 +131,7 @@ class RejectTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->rejectRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friendship->user_id,
             ]);
 

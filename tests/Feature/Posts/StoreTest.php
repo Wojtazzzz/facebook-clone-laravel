@@ -13,9 +13,8 @@ class StoreTest extends TestCase
 {
     private User $user;
 
-    private string $postsStoreRoute;
-
-    private string $postsTable = 'posts';
+    private string $route;
+    private string $table = 'posts';
 
     public function setUp(): void
     {
@@ -24,7 +23,7 @@ class StoreTest extends TestCase
         Storage::fake('public');
 
         $this->user = User::factory()->createOne();
-        $this->postsStoreRoute = route('api.posts.store');
+        $this->route = route('api.posts.store');
     }
 
     public function tearDown(): void
@@ -36,14 +35,14 @@ class StoreTest extends TestCase
 
     public function testCannotUseAsUnauthorized(): void
     {
-        $response = $this->postJson($this->postsStoreRoute);
+        $response = $this->postJson($this->route);
         $response->assertUnauthorized();
     }
 
     public function testCanUseAsAuthorized(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->postsStoreRoute, [
+            ->postJson($this->route, [
                 'content' => 'Simple post',
             ]);
 
@@ -52,24 +51,24 @@ class StoreTest extends TestCase
 
     public function testCannotCreatePostWithoutData(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute);
+        $response = $this->actingAs($this->user)->postJson($this->route);
         $response->assertJsonValidationErrorFor('content')
             ->assertJsonValidationErrorFor('images');
 
-        $this->assertDatabaseCount($this->postsTable, 0);
+        $this->assertDatabaseCount($this->table, 0);
     }
 
     public function testCanCreatePostWithOnlyContent(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->postsStoreRoute, [
+            ->postJson($this->route, [
                 'content' => 'Simple post',
             ]);
 
         $response->assertCreated();
 
-        $this->assertDatabaseCount($this->postsTable, 1)
-            ->assertDatabaseHas($this->postsTable, [
+        $this->assertDatabaseCount($this->table, 1)
+            ->assertDatabaseHas($this->table, [
                 'content' => 'Simple post',
                 'author_id' => $this->user->id,
                 'images' => '[]',
@@ -79,7 +78,7 @@ class StoreTest extends TestCase
     public function testPostContentMustBeAtLeastTwoCharactersLong(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->postsStoreRoute, [
+            ->postJson($this->route, [
                 'content' => 'S',
             ]);
 
@@ -89,7 +88,7 @@ class StoreTest extends TestCase
     public function testPostContentCannotBeToLong(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->postsStoreRoute, [
+            ->postJson($this->route, [
                 'content' => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
             ]);
 
@@ -99,7 +98,7 @@ class StoreTest extends TestCase
     public function testCanCreatePostWithOnlyImages(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->postsStoreRoute, [
+            ->postJson($this->route, [
                 'images' => [
                     new File('test.jpg', tmpfile()),
                 ],
@@ -108,8 +107,8 @@ class StoreTest extends TestCase
         $response->assertCreated()
             ->assertJsonCount(1, 'data.images');
 
-        $this->assertDatabaseCount($this->postsTable, 1)
-            ->assertDatabaseHas($this->postsTable, [
+        $this->assertDatabaseCount($this->table, 1)
+            ->assertDatabaseHas($this->table, [
                 'content' => null,
                 'author_id' => $this->user->id,
             ]);
@@ -118,7 +117,7 @@ class StoreTest extends TestCase
     public function testCanCreatePostWithManyImages(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->postsStoreRoute, [
+            ->postJson($this->route, [
                 'images' => [
                     new File('test.jpg', tmpfile()),
                     new File('test.jpg', tmpfile()),
@@ -136,7 +135,7 @@ class StoreTest extends TestCase
     public function testCanPassOnlyFilesWithSpecifiedTypes(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->postsStoreRoute, [
+            ->postJson($this->route, [
                 'images' => [
                     new File('test.jpg', tmpfile()),
                     new File('test.jpeg', tmpfile()),
@@ -151,7 +150,7 @@ class StoreTest extends TestCase
         $response->assertCreated()
             ->assertJsonCount(7, 'data.images');
 
-        $response = $this->actingAs($this->user)->postJson($this->postsStoreRoute, [
+        $response = $this->actingAs($this->user)->postJson($this->route, [
             'images' => [
                 new File('test.exe', tmpfile()),
                 new File('test.txt', tmpfile()),
@@ -169,7 +168,7 @@ class StoreTest extends TestCase
     public function testCannotPassEmptyArrayAsImages(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->postsStoreRoute, [
+            ->postJson($this->route, [
                 'images' => [],
             ]);
 
@@ -179,14 +178,14 @@ class StoreTest extends TestCase
     public function testModelAutoFillAuthorIdWithUserId(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->postsStoreRoute, [
+            ->postJson($this->route, [
                 'content' => 'Simple post',
             ]);
 
         $response->assertCreated();
 
-        $this->assertDatabaseCount($this->postsTable, 1)
-            ->assertDatabaseHas($this->postsTable, [
+        $this->assertDatabaseCount($this->table, 1)
+            ->assertDatabaseHas($this->table, [
                 'content' => 'Simple post',
                 'author_id' => $this->user->id,
             ]);
@@ -195,7 +194,7 @@ class StoreTest extends TestCase
     public function testCanCreatePostWithOnlyImagesWhenPassedImagesAndEmptyContent(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->postsStoreRoute, [
+            ->postJson($this->route, [
                 'content' => '',
                 'images' => [
                     new File('test.gif', tmpfile()),
@@ -205,13 +204,13 @@ class StoreTest extends TestCase
 
         $response->assertCreated();
 
-        $this->assertDatabaseCount($this->postsTable, 1);
+        $this->assertDatabaseCount($this->table, 1);
     }
 
     public function testPassedImagesAreStoreInStorage(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->postsStoreRoute, [
+            ->postJson($this->route, [
                 'images' => [
                     new File('test.gif', tmpfile()),
                     new File('test.jpg', tmpfile()),

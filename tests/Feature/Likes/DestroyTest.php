@@ -14,9 +14,8 @@ class DestroyTest extends TestCase
     private User $user;
     private Post $post;
 
-    private string $likesDestroyRoute;
-
-    private string $likesTable = 'likes';
+    private string $route;
+    private string $table = 'likes';
 
     public function setUp(): void
     {
@@ -24,12 +23,12 @@ class DestroyTest extends TestCase
 
         $this->user = User::factory()->createOne();
         $this->post = Post::factory()->createOne();
-        $this->likesDestroyRoute = route('api.likes.destroy', $this->post->id);
+        $this->route = route('api.likes.destroy', $this->post->id);
     }
 
     public function testCannotUseAsUnauthorized(): void
     {
-        $response = $this->deleteJson($this->likesDestroyRoute);
+        $response = $this->deleteJson($this->route);
         $response->assertUnauthorized();
     }
 
@@ -37,7 +36,7 @@ class DestroyTest extends TestCase
     {
         $this->generateLike();
 
-        $response = $this->actingAs($this->user)->deleteJson($this->likesDestroyRoute);
+        $response = $this->actingAs($this->user)->deleteJson($this->route);
         $response->assertOk();
     }
 
@@ -45,10 +44,10 @@ class DestroyTest extends TestCase
     {
         $this->generateLike();
 
-        $response = $this->actingAs($this->user)->deleteJson($this->likesDestroyRoute);
+        $response = $this->actingAs($this->user)->deleteJson($this->route);
         $response->assertOk();
 
-        $this->assertDatabaseCount($this->likesTable, 0);
+        $this->assertDatabaseCount($this->table, 0);
     }
 
     public function testCannotDeleteSomebodysLike(): void
@@ -57,18 +56,18 @@ class DestroyTest extends TestCase
 
         $this->generateLike($friend->id);
 
-        $response = $this->actingAs($this->user)->deleteJson($this->likesDestroyRoute);
+        $response = $this->actingAs($this->user)->deleteJson($this->route);
         $response->assertNotFound();
 
-        $this->assertDatabaseCount($this->likesTable, 1);
+        $this->assertDatabaseCount($this->table, 1);
     }
 
     public function testCannotDeleteLikeWhichNotExists(): void
     {
-        $response = $this->actingAs($this->user)->deleteJson($this->likesDestroyRoute);
+        $response = $this->actingAs($this->user)->deleteJson($this->route);
         $response->assertNotFound();
 
-        $this->assertDatabaseCount($this->likesTable, 0);
+        $this->assertDatabaseCount($this->table, 0);
     }
 
     public function testResponseHasProperlyLikesCount(): void
@@ -79,7 +78,7 @@ class DestroyTest extends TestCase
         $this->generateLike($friends[1]->id);
         $this->generateLike();
 
-        $response = $this->actingAs($this->user)->deleteJson($this->likesDestroyRoute);
+        $response = $this->actingAs($this->user)->deleteJson($this->route);
         $response->assertOk()
             ->assertJsonFragment([
                 'data' => [

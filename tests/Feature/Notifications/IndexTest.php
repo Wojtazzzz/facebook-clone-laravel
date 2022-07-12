@@ -15,25 +15,25 @@ class IndexTest extends TestCase
 {
     private User $user;
 
-    private string $notificationsRoute;
+    private string $route;
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->notificationsRoute = route('api.notifications.index');
+        $this->route = route('api.notifications.index');
     }
 
     public function testCannotUseAsUnauthorized(): void
     {
-        $response = $this->getJson($this->notificationsRoute);
+        $response = $this->getJson($this->route);
         $response->assertUnauthorized();
     }
 
     public function testCanUseAsAuthorized(): void
     {
-        $response = $this->actingAs($this->user)->getJson($this->notificationsRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk();
     }
 
@@ -43,7 +43,7 @@ class IndexTest extends TestCase
             'notifiable_id' => $this->user->id,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->notificationsRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonCount(8);
     }
@@ -54,7 +54,7 @@ class IndexTest extends TestCase
             'notifiable_id' => $this->user->id,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->notificationsRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonCount(10);
     }
@@ -65,14 +65,14 @@ class IndexTest extends TestCase
             'notifiable_id' => $this->user->id,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->notificationsRoute.'?page=2');
+        $response = $this->actingAs($this->user)->getJson($this->route.'?page=2');
         $response->assertOk()
             ->assertJsonCount(6);
     }
 
     public function testReturnEmptyListWhenNoNotifications(): void
     {
-        $response = $this->actingAs($this->user)->getJson($this->notificationsRoute.'?page=2');
+        $response = $this->actingAs($this->user)->getJson($this->route.'?page=2');
         $response->assertOk()
             ->assertJsonCount(0);
     }
@@ -83,7 +83,7 @@ class IndexTest extends TestCase
 
         $this->user->notify(new FriendshipRequestAccepted($friend->id));
 
-        $response = $this->actingAs($this->user)->getJson($this->notificationsRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonCount(1)
             ->assertJsonFragment([
@@ -105,7 +105,7 @@ class IndexTest extends TestCase
 
         $this->user->notify(new FriendshipRequestSent($friend->id));
 
-        $response = $this->actingAs($this->user)->getJson($this->notificationsRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonCount(1)
             ->assertJsonFragment([
@@ -127,7 +127,7 @@ class IndexTest extends TestCase
 
         $this->user->notify(new Poked($friend->id, 50));
 
-        $response = $this->actingAs($this->user)->getJson($this->notificationsRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonCount(1)
             ->assertJsonFragment([

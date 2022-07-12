@@ -12,25 +12,25 @@ class IndexTest extends TestCase
 {
     private User $user;
 
-    private string $pokesRoute;
+    private string $route;
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->pokesRoute = route('api.pokes.index');
+        $this->route = route('api.pokes.index');
     }
 
     public function testCannotUseAsUnauthorized(): void
     {
-        $response = $this->getJson($this->pokesRoute);
+        $response = $this->getJson($this->route);
         $response->assertUnauthorized();
     }
 
     public function testCanUseAsAuthorized(): void
     {
-        $response = $this->actingAs($this->user)->getJson($this->pokesRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk();
     }
 
@@ -40,7 +40,7 @@ class IndexTest extends TestCase
             'friend_id' => $this->user->id,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->pokesRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonCount(10);
     }
@@ -51,7 +51,7 @@ class IndexTest extends TestCase
             'friend_id' => $this->user->id,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->pokesRoute.'?page=2');
+        $response = $this->actingAs($this->user)->getJson($this->route.'?page=2');
         $response->assertOk()
             ->assertJsonCount(4);
     }
@@ -67,14 +67,14 @@ class IndexTest extends TestCase
             'latest_initiator_id' => $this->user->id,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->pokesRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonCount(3);
     }
 
     public function testReturnEmptyResponseWhenNoPokes(): void
     {
-        $response = $this->actingAs($this->user)->getJson($this->pokesRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonCount(0);
     }

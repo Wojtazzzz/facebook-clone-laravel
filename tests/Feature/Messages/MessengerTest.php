@@ -13,7 +13,7 @@ class MessengerTest extends TestCase
 {
     private User $user;
 
-    private string $messengerRoute;
+    private string $route;
 
     public function setUp(): void
     {
@@ -21,18 +21,18 @@ class MessengerTest extends TestCase
 
         $this->user = User::factory()->createOne();
         $this->friends = User::factory(60)->create();
-        $this->messengerRoute = route('api.messages.messenger');
+        $this->route = route('api.messages.messenger');
     }
 
     public function testCannotUseAsUnauthorized(): void
     {
-        $response = $this->getJson($this->messengerRoute);
+        $response = $this->getJson($this->route);
         $response->assertUnauthorized();
     }
 
     public function testCanUseAsAuthorized(): void
     {
-        $response = $this->actingAs($this->user)->getJson($this->messengerRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk();
     }
 
@@ -40,7 +40,7 @@ class MessengerTest extends TestCase
     {
         $this->generateFriends(12);
 
-        $response = $this->actingAs($this->user)->getJson($this->messengerRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonCount(10);
     }
@@ -49,14 +49,14 @@ class MessengerTest extends TestCase
     {
         $this->generateFriends(14);
 
-        $response = $this->actingAs($this->user)->getJson($this->messengerRoute.'?page=2');
+        $response = $this->actingAs($this->user)->getJson($this->route.'?page=2');
         $response->assertOk()
             ->assertJsonCount(4);
     }
 
     public function testReturnEmptyResponseWhenNoFriends(): void
     {
-        $response = $this->actingAs($this->user)->getJson($this->messengerRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonCount(0);
     }

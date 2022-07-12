@@ -13,25 +13,25 @@ class FriendsTest extends TestCase
 {
     private User $user;
 
-    private string $friendsRoute;
+    private string $route;
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->friendsRoute = route('api.friendship.friends', $this->user->id);
+        $this->route = route('api.friendship.friends', $this->user->id);
     }
 
     public function testCannotUseWhenNotAuthorized(): void
     {
-        $response = $this->getJson($this->friendsRoute);
+        $response = $this->getJson($this->route);
         $response->assertUnauthorized();
     }
 
     public function testCanUseWhenAuthorized(): void
     {
-        $response = $this->actingAs($this->user)->getJson($this->friendsRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk();
     }
 
@@ -47,7 +47,7 @@ class FriendsTest extends TestCase
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->friendsRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()->assertJsonCount(8);
     }
 
@@ -58,7 +58,7 @@ class FriendsTest extends TestCase
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->friendsRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()->assertJsonCount(9);
     }
 
@@ -69,7 +69,7 @@ class FriendsTest extends TestCase
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->friendsRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()->assertJsonCount(4);
     }
 
@@ -80,7 +80,7 @@ class FriendsTest extends TestCase
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->friendsRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()->assertJsonCount(10);
     }
 
@@ -92,7 +92,7 @@ class FriendsTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->getJson($this->friendsRoute.'?page=2');
+            ->getJson($this->route.'?page=2');
 
         $response->assertOk()->assertJsonCount(6);
     }

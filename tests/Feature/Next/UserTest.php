@@ -11,19 +11,19 @@ class UserTest extends TestCase
 {
     private User $user;
 
-    private string $userRoute;
+    private string $route;
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->userRoute = route('api.next.user', $this->user->id);
+        $this->route = route('api.next.user', $this->user->id);
     }
 
     public function testResponseReturnProperlyUser(): void
     {
-        $response = $this->getJson($this->userRoute);
+        $response = $this->getJson($this->route);
         $response->assertOk();
     }
 }

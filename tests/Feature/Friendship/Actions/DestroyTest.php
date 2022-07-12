@@ -13,21 +13,20 @@ class DestroyTest extends TestCase
 {
     private User $user;
 
-    private string $destroyRoute;
-
-    private string $friendshipsTable = 'friendships';
+    private string $route;
+    private string $table = 'friendships';
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->destroyRoute = route('api.friendship.destroy');
+        $this->route = route('api.friendship.destroy');
     }
 
     public function testCannotUseWhenNotAuthorized(): void
     {
-        $response = $this->postJson($this->destroyRoute);
+        $response = $this->postJson($this->route);
         $response->assertUnauthorized();
     }
 
@@ -39,13 +38,13 @@ class DestroyTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->destroyRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friendship->friend_id,
             ]);
 
         $response->assertOk();
 
-        $this->assertDatabaseMissing($this->friendshipsTable, [
+        $this->assertDatabaseMissing($this->table, [
             'user_id' => $this->user->id,
             'friend_id' => $friendship->friend_id,
             'status' => FriendshipStatus::CONFIRMED,
@@ -60,13 +59,13 @@ class DestroyTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->destroyRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friendship->user_id,
             ]);
 
         $response->assertOk();
 
-        $this->assertDatabaseMissing($this->friendshipsTable, [
+        $this->assertDatabaseMissing($this->table, [
             'user_id' => $friendship->user_id,
             'friend_id' => $this->user->id,
             'status' => FriendshipStatus::CONFIRMED,
@@ -76,7 +75,7 @@ class DestroyTest extends TestCase
     public function testErrorMessageWhenNoIdPassed(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->destroyRoute);
+            ->postJson($this->route);
 
         $response->assertJsonValidationErrorFor('friend_id');
     }
@@ -84,7 +83,7 @@ class DestroyTest extends TestCase
     public function testPassedEmptyStringValueIsTreatingAsNullValue(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->destroyRoute, [
+            ->postJson($this->route, [
                 'friend_id' => '',
             ]);
 
@@ -100,7 +99,7 @@ class DestroyTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->destroyRoute, [
+            ->postJson($this->route, [
                 'friend_id' => 25,
             ]);
 
@@ -112,7 +111,7 @@ class DestroyTest extends TestCase
         $friend = User::factory()->createOne();
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->destroyRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friend->id,
             ]);
 
@@ -127,7 +126,7 @@ class DestroyTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->destroyRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friendship->friend_id,
             ]);
 

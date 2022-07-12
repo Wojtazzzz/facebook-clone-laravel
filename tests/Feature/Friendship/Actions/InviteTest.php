@@ -14,8 +14,7 @@ class InviteTest extends TestCase
 {
     private User $user;
 
-    private string $inviteRoute;
-
+    private string $route;
     private string $friendshipsTable = 'friendships';
     private string $notificationsTable = 'notifications';
 
@@ -24,12 +23,12 @@ class InviteTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->inviteRoute = route('api.friendship.invite', $this->user->id);
+        $this->route = route('api.friendship.invite', $this->user->id);
     }
 
     public function testCannotUseWhenNotAuthorized(): void
     {
-        $response = $this->postJson($this->inviteRoute);
+        $response = $this->postJson($this->route);
         $response->assertUnauthorized();
     }
 
@@ -38,7 +37,7 @@ class InviteTest extends TestCase
         $friend = User::factory()->createOne();
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->inviteRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friend->id,
             ]);
 
@@ -54,7 +53,7 @@ class InviteTest extends TestCase
     public function testPassedEmptyStringValueIsTreatingAsNullValue(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->inviteRoute, [
+            ->postJson($this->route, [
                 'friend_id' => '',
             ]);
 
@@ -64,7 +63,7 @@ class InviteTest extends TestCase
     public function testCannotInviteSelf(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->inviteRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $this->user->id,
             ]);
 
@@ -76,7 +75,7 @@ class InviteTest extends TestCase
         $friend = User::factory()->createOne();
 
         $this->actingAs($this->user)
-            ->postJson($this->inviteRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friend->id,
             ]);
 
@@ -95,7 +94,7 @@ class InviteTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->inviteRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friendship->friend_id,
             ]);
 
@@ -112,7 +111,7 @@ class InviteTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->inviteRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friendship->user_id,
             ]);
 
@@ -129,7 +128,7 @@ class InviteTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->inviteRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friendship->friend_id,
             ]);
 
@@ -146,7 +145,7 @@ class InviteTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->inviteRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friendship->user_id,
             ]);
 
@@ -158,7 +157,7 @@ class InviteTest extends TestCase
     public function testCannotInviteUserWhichNotExists(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->inviteRoute, [
+            ->postJson($this->route, [
                 'friend_id' => 99999,
             ]);
 

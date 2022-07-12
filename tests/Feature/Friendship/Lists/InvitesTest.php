@@ -13,25 +13,25 @@ class InvitesTest extends TestCase
 {
     private User $user;
 
-    private string $invitesRoute;
+    private string $route;
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->invitesRoute = route('api.friendship.invites');
+        $this->route = route('api.friendship.invites');
     }
 
     public function testCannotUseWhenNotAuthorized(): void
     {
-        $response = $this->getJson($this->invitesRoute);
+        $response = $this->getJson($this->route);
         $response->assertUnauthorized();
     }
 
     public function testCanUseWhenAuthorized(): void
     {
-        $response = $this->actingAs($this->user)->getJson($this->invitesRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk();
     }
 
@@ -42,7 +42,7 @@ class InvitesTest extends TestCase
             'status' => FriendshipStatus::PENDING,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->invitesRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()->assertJsonCount(5);
     }
 
@@ -53,7 +53,7 @@ class InvitesTest extends TestCase
             'status' => FriendshipStatus::PENDING,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->invitesRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()->assertJsonCount(0);
     }
 
@@ -64,7 +64,7 @@ class InvitesTest extends TestCase
             'status' => FriendshipStatus::PENDING,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->invitesRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()->assertJsonCount(10);
     }
 
@@ -75,7 +75,7 @@ class InvitesTest extends TestCase
             'status' => FriendshipStatus::PENDING,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->invitesRoute.'?page=2');
+        $response = $this->actingAs($this->user)->getJson($this->route.'?page=2');
         $response->assertOk()->assertJsonCount(3);
     }
 }

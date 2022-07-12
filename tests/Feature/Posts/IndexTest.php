@@ -16,25 +16,25 @@ class IndexTest extends TestCase
 {
     private User $user;
 
-    private string $postsIndexRoute;
+    private string $route;
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->postsIndexRoute = route('api.posts.index');
+        $this->route = route('api.posts.index');
     }
 
     public function testCannotUseAsUnauthorized(): void
     {
-        $response = $this->getJson($this->postsIndexRoute);
+        $response = $this->getJson($this->route);
         $response->assertUnauthorized();
     }
 
     public function testCanUseAsAuthorized(): void
     {
-        $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk();
     }
 
@@ -44,7 +44,7 @@ class IndexTest extends TestCase
             'author_id' => $this->user->id,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
 
         $response->assertOk()
             ->assertJsonCount(6);
@@ -56,7 +56,7 @@ class IndexTest extends TestCase
             'author_id' => $this->user->id,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
 
         $response->assertOk()
             ->assertJsonCount(10);
@@ -69,7 +69,7 @@ class IndexTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->getJson($this->postsIndexRoute.'?page=2');
+            ->getJson($this->route.'?page=2');
 
         $response->assertOk()
             ->assertJsonCount(3);
@@ -78,7 +78,7 @@ class IndexTest extends TestCase
     public function testCanReturnEmptyResponseWhenNoPosts(): void
     {
         $response = $this->actingAs($this->user)
-            ->getJson($this->postsIndexRoute.'?page=2');
+            ->getJson($this->route.'?page=2');
 
         $response->assertOk()
             ->assertJsonCount(0);
@@ -99,7 +99,7 @@ class IndexTest extends TestCase
             'post_id' => $post->id,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonFragment([
                 'likes_count' => $likes->count(),
@@ -118,7 +118,7 @@ class IndexTest extends TestCase
             'post_id' => $post->id,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonFragment([
                 'isLiked' => true,
@@ -131,7 +131,7 @@ class IndexTest extends TestCase
             'author_id' => $this->user->id,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonFragment([
                 'isLiked' => false,
@@ -144,7 +144,7 @@ class IndexTest extends TestCase
             'author_id' => $this->user->id,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonCount(3);
     }
@@ -153,7 +153,7 @@ class IndexTest extends TestCase
     {
         Post::factory(3)->create();
 
-        $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonCount(0);
     }
@@ -164,7 +164,7 @@ class IndexTest extends TestCase
             ->friendsAuthors($this->user->id)
             ->create();
 
-        $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonCount(5);
     }
@@ -180,7 +180,7 @@ class IndexTest extends TestCase
             'post_id' => $posts[0]->id,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonCount(1)
             ->assertJsonFragment([
@@ -206,7 +206,7 @@ class IndexTest extends TestCase
             'post_id' => $post->id,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonCount(1);
     }

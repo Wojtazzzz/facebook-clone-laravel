@@ -15,9 +15,8 @@ class DestroyTest extends TestCase
     private User $user;
     private Post $post;
 
-    private string $postsDestroyRoute;
-
-    private string $postsTable = 'posts';
+    private string $route;
+    private string $table = 'posts';
 
     public function setUp(): void
     {
@@ -29,7 +28,7 @@ class DestroyTest extends TestCase
         $this->post = Post::factory()->createOne([
             'author_id' => $this->user->id,
         ]);
-        $this->postsDestroyRoute = route('api.posts.destroy', $this->post);
+        $this->route = route('api.posts.destroy', $this->post);
     }
 
     public function tearDown(): void
@@ -41,22 +40,22 @@ class DestroyTest extends TestCase
 
     public function testCannotUseAsUnauthorized(): void
     {
-        $response = $this->deleteJson($this->postsDestroyRoute);
+        $response = $this->deleteJson($this->route);
         $response->assertUnauthorized();
     }
 
     public function testCanUseAsAuthorized(): void
     {
-        $response = $this->actingAs($this->user)->deleteJson($this->postsDestroyRoute);
+        $response = $this->actingAs($this->user)->deleteJson($this->route);
         $response->assertNoContent();
     }
 
     public function testCanDeleteOwnPost(): void
     {
-        $response = $this->actingAs($this->user)->deleteJson($this->postsDestroyRoute);
+        $response = $this->actingAs($this->user)->deleteJson($this->route);
 
         $response->assertNoContent();
-        $this->assertDatabaseCount($this->postsTable, 0);
+        $this->assertDatabaseCount($this->table, 0);
     }
 
     public function testCannotDeletePostWhichNotExist(): void
@@ -76,8 +75,8 @@ class DestroyTest extends TestCase
 
         $response->assertForbidden();
 
-        $this->assertDatabaseCount($this->postsTable, 2)
-            ->assertDatabaseHas($this->postsTable, [
+        $this->assertDatabaseCount($this->table, 2)
+            ->assertDatabaseHas($this->table, [
                 'id' => $post->id,
                 'content' => $post->content,
                 'author_id' => $post->author_id,

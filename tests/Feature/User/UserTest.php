@@ -11,25 +11,25 @@ use Tests\TestCase;
 class UserTest extends TestCase
 {
     private User $user;
-    private string $userRoute;
+    private string $route;
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->userRoute = route('api.user');
+        $this->route = route('api.user');
     }
 
     public function testCanNotUserGetOwnDataAsUnauthorized(): void
     {
-        $response = $this->getJson($this->userRoute);
+        $response = $this->getJson($this->route);
         $response->assertUnauthorized();
     }
 
     public function testCanUserGetOwnDataAsAuthorized(): void
     {
-        $response = $this->actingAs($this->user)->getJson($this->userRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk();
     }
 
@@ -37,7 +37,7 @@ class UserTest extends TestCase
     {
         $resource = new UserResource($this->user);
 
-        $response = $this->actingAs($this->user)->getJson($this->userRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertJson($resource->response()->getData(true));
     }
 }

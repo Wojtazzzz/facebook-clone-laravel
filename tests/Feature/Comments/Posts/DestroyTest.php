@@ -15,9 +15,8 @@ class DestroyTest extends TestCase
     private Post $post;
     private Comment $comment;
 
-    private string $commentsDestroyRoute;
-
-    private string $commentsTable = 'comments';
+    private string $route;
+    private string $table = 'comments';
 
     public function setUp(): void
     {
@@ -30,7 +29,7 @@ class DestroyTest extends TestCase
             'resource_id' => $this->post->id,
         ]);
 
-        $this->commentsDestroyRoute = route('api.comments.posts.destroy', [
+        $this->route = route('api.comments.posts.destroy', [
             'resourceId' => $this->post->id,
             'comment' => $this->comment,
         ]);
@@ -38,28 +37,28 @@ class DestroyTest extends TestCase
 
     public function testCannotUseAsUnauthorized(): void
     {
-        $response = $this->deleteJson($this->commentsDestroyRoute);
+        $response = $this->deleteJson($this->route);
         $response->assertUnauthorized();
     }
 
     public function testCanUseAsAuthorized(): void
     {
         $response = $this->actingAs($this->user)
-            ->deleteJson($this->commentsDestroyRoute);
+            ->deleteJson($this->route);
 
         $response->assertNoContent();
     }
 
     public function testCanDestroyOwnComment(): void
     {
-        $this->assertDatabaseCount($this->commentsTable, 1);
+        $this->assertDatabaseCount($this->table, 1);
 
         $response = $this->actingAs($this->user)
-            ->deleteJson($this->commentsDestroyRoute);
+            ->deleteJson($this->route);
 
         $response->assertNoContent();
 
-        $this->assertDatabaseCount($this->commentsTable, 0);
+        $this->assertDatabaseCount($this->table, 0);
     }
 
     public function testCannotDestroySomebodysComment(): void
@@ -75,7 +74,7 @@ class DestroyTest extends TestCase
 
         $response->assertForbidden();
 
-        $this->assertDatabaseCount($this->commentsTable, 2);
+        $this->assertDatabaseCount($this->table, 2);
     }
 
     public function testCannotDestroyCommentWhichNotExists(): void

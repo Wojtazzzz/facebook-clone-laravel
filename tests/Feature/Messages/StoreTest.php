@@ -13,27 +13,26 @@ class StoreTest extends TestCase
 {
     private User $user;
 
-    private string $messagesStoreRoute;
-
-    private string $messagesTable = 'messages';
+    private string $route;
+    private string $table = 'messages';
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->messagesStoreRoute = route('api.messages.store');
+        $this->route = route('api.messages.store');
     }
 
     public function testCannotUseAsUnauthorized(): void
     {
-        $response = $this->postJson($this->messagesStoreRoute);
+        $response = $this->postJson($this->route);
         $response->assertUnauthorized();
     }
 
     public function testCanUseAsAuthorized(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->messagesStoreRoute);
+        $response = $this->actingAs($this->user)->postJson($this->route);
         $response->assertJsonValidationErrorFor('receiver_id')
             ->assertJsonValidationErrorFor('text');
     }
@@ -46,7 +45,7 @@ class StoreTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->messagesStoreRoute, [
+            ->postJson($this->route, [
                 'receiver_id' => $friendship->friend_id,
             ]);
 
@@ -61,7 +60,7 @@ class StoreTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->messagesStoreRoute, [
+            ->postJson($this->route, [
                 'text' => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
                 'receiver_id' => $friendship->friend_id,
             ]);
@@ -72,7 +71,7 @@ class StoreTest extends TestCase
     public function testCannotCreateMessageWithoutSpecificReceiver(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->messagesStoreRoute, [
+            ->postJson($this->route, [
                 'text' => 'Simple message',
             ]);
 
@@ -82,7 +81,7 @@ class StoreTest extends TestCase
     public function testCannotCreateMessageForReceiverWhichNotExist(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->messagesStoreRoute, [
+            ->postJson($this->route, [
                 'text' => 'Simple message',
                 'receiver_id' => 99999,
             ]);
@@ -93,7 +92,7 @@ class StoreTest extends TestCase
     public function testCannotCreateMessageForSelf(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->messagesStoreRoute, [
+            ->postJson($this->route, [
                 'text' => 'Simple message',
                 'receiver_id' => $this->user->id,
             ]);
@@ -105,7 +104,7 @@ class StoreTest extends TestCase
     {
         $friend = User::factory()->createOne();
 
-        $response = $this->actingAs($this->user)->postJson($this->messagesStoreRoute, [
+        $response = $this->actingAs($this->user)->postJson($this->route, [
             'text' => 'Simple message',
             'receiver_id' => $friend->id,
         ]);
@@ -121,7 +120,7 @@ class StoreTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->messagesStoreRoute, [
+            ->postJson($this->route, [
                 'text' => 'Simple message',
                 'receiver_id' => $friendship->friend_id,
             ]);
@@ -137,7 +136,7 @@ class StoreTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->messagesStoreRoute, [
+            ->postJson($this->route, [
                 'text' => 'Simple message',
                 'receiver_id' => $friendship->friend_id,
             ]);
@@ -153,7 +152,7 @@ class StoreTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->messagesStoreRoute, [
+            ->postJson($this->route, [
                 'text' => 'Simple message',
                 'receiver_id' => $friendship->friend_id,
             ]);
@@ -169,14 +168,14 @@ class StoreTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->messagesStoreRoute, [
+            ->postJson($this->route, [
                 'text' => 'Simple message',
                 'receiver_id' => $friendship->friend_id,
             ]);
 
         $response->assertCreated();
 
-        $this->assertDatabaseHas($this->messagesTable, [
+        $this->assertDatabaseHas($this->table, [
             'sender_id' => $this->user->id,
         ]);
     }
@@ -184,7 +183,7 @@ class StoreTest extends TestCase
     public function testPassedEmptyValuesAreTreatingAsNullValues(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->messagesStoreRoute, [
+            ->postJson($this->route, [
                 'text' => '',
                 'receiver_id' => '',
             ]);

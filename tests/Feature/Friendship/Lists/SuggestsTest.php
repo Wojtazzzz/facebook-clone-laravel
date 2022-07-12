@@ -13,31 +13,31 @@ class SuggestsTest extends TestCase
 {
     private User $user;
 
-    private string $suggestsRoute;
+    private string $route;
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->suggestsRoute = route('api.friendship.suggests');
+        $this->route = route('api.friendship.suggests');
     }
 
     public function testCannotUseWhenNotAuthorized(): void
     {
-        $response = $this->getJson($this->suggestsRoute);
+        $response = $this->getJson($this->route);
         $response->assertUnauthorized();
     }
 
     public function testCanUseWhenAuthorized(): void
     {
-        $response = $this->actingAs($this->user)->getJson($this->suggestsRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk();
     }
 
     public function testNotFetchLoggedUser(): void
     {
-        $response = $this->actingAs($this->user)->getJson($this->suggestsRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()->assertJsonCount(0);
     }
 
@@ -55,7 +55,7 @@ class SuggestsTest extends TestCase
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->suggestsRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()->assertJsonCount(1);
     }
 
@@ -73,7 +73,7 @@ class SuggestsTest extends TestCase
             'status' => FriendshipStatus::PENDING,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->suggestsRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()->assertJsonCount(3);
     }
 
@@ -91,7 +91,7 @@ class SuggestsTest extends TestCase
             'status' => FriendshipStatus::BLOCKED,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->suggestsRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()->assertJsonCount(8);
     }
 
@@ -99,7 +99,7 @@ class SuggestsTest extends TestCase
     {
         User::factory(18)->create();
 
-        $response = $this->actingAs($this->user)->getJson($this->suggestsRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()->assertJsonCount(10);
     }
 
@@ -107,7 +107,7 @@ class SuggestsTest extends TestCase
     {
         User::factory(17)->create();
 
-        $response = $this->actingAs($this->user)->getJson($this->suggestsRoute.'?page=2');
+        $response = $this->actingAs($this->user)->getJson($this->route.'?page=2');
         $response->assertOk()->assertJsonCount(7);
     }
 }

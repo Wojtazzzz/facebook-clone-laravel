@@ -13,21 +13,20 @@ class StoreTest extends TestCase
 {
     private User $user;
 
-    private string $likesStoreRoute;
-
-    private string $likesTable = 'likes';
+    private string $route;
+    private string $table = 'likes';
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->likesStoreRoute = route('api.likes.store');
+        $this->route = route('api.likes.store');
     }
 
     public function testCannotUseAsUnauthorized(): void
     {
-        $response = $this->postJson($this->likesStoreRoute);
+        $response = $this->postJson($this->route);
         $response->assertUnauthorized();
     }
 
@@ -36,7 +35,7 @@ class StoreTest extends TestCase
         $post = Post::factory()->createOne();
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->likesStoreRoute, [
+            ->postJson($this->route, [
                 'post_id' => $post->id,
             ]);
 
@@ -46,7 +45,7 @@ class StoreTest extends TestCase
     public function testPassedEmptyValueIsTreatingAsNullValue(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->likesStoreRoute, [
+            ->postJson($this->route, [
                 'post_id' => '',
             ]);
 
@@ -56,13 +55,13 @@ class StoreTest extends TestCase
     public function testCannotCreateLikeForPostWhichNotExists(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->likesStoreRoute, [
+            ->postJson($this->route, [
                 'post_id' => 99999,
             ]);
 
         $response->assertJsonValidationErrorFor('post_id');
 
-        $this->assertDatabaseCount($this->likesTable, 0);
+        $this->assertDatabaseCount($this->table, 0);
     }
 
     public function testCannotCreateLikeForPostWhichIsAlreadyLikedByLoggedUser(): void
@@ -74,13 +73,13 @@ class StoreTest extends TestCase
             'post_id' => $post->id,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson($this->likesStoreRoute, [
+        $response = $this->actingAs($this->user)->postJson($this->route, [
             'post_id' => $post->id,
         ]);
 
         $response->assertJsonValidationErrorFor('post_id');
 
-        $this->assertDatabaseCount($this->likesTable, 1);
+        $this->assertDatabaseCount($this->table, 1);
     }
 
     public function testCanCreateLike(): void
@@ -88,18 +87,18 @@ class StoreTest extends TestCase
         $post = Post::factory()->createOne();
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->likesStoreRoute, [
+            ->postJson($this->route, [
                 'post_id' => $post->id,
             ]);
 
         $response->assertCreated();
 
-        $this->assertDatabaseCount($this->likesTable, 1);
+        $this->assertDatabaseCount($this->table, 1);
     }
 
     public function testCannotPassNoPostId(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->likesStoreRoute);
+        $response = $this->actingAs($this->user)->postJson($this->route);
         $response->assertJsonValidationErrorFor('post_id');
     }
 
@@ -112,7 +111,7 @@ class StoreTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->likesStoreRoute, [
+            ->postJson($this->route, [
                 'post_id' => $post->id,
             ]);
 
@@ -128,7 +127,7 @@ class StoreTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->likesStoreRoute, [
+            ->postJson($this->route, [
                 'post_id' => $post->id,
             ]);
 

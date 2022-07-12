@@ -8,18 +8,18 @@ use Tests\TestCase;
 
 class RegistrationTest extends TestCase
 {
-    private string $registerPath;
+    private string $route;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->registerPath = route('api.auth.register');
+        $this->route = route('api.auth.register');
     }
 
     public function testUserCanRegister(): void
     {
-        $response = $this->postJson($this->registerPath);
+        $response = $this->postJson($this->route);
 
         $response->assertNoContent();
         $this->assertAuthenticated();

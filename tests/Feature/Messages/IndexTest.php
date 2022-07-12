@@ -13,7 +13,7 @@ class IndexTest extends TestCase
     private User $user;
     private User $friend;
 
-    private string $messagesIndexRoute;
+    private string $route;
 
     public function setUp(): void
     {
@@ -21,18 +21,18 @@ class IndexTest extends TestCase
 
         $this->user = User::factory()->createOne();
         $this->friend = User::factory()->createOne();
-        $this->messagesIndexRoute = route('api.messages.index', $this->friend);
+        $this->route = route('api.messages.index', $this->friend);
     }
 
     public function testCannotUseAsUnauthorized(): void
     {
-        $response = $this->getJson($this->messagesIndexRoute);
+        $response = $this->getJson($this->route);
         $response->assertUnauthorized();
     }
 
     public function testCanUseAsAuthorized(): void
     {
-        $response = $this->actingAs($this->user)->getJson($this->messagesIndexRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk();
     }
 
@@ -43,7 +43,7 @@ class IndexTest extends TestCase
             'receiver_id' => $this->friend->id,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->messagesIndexRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()->assertJsonCount(15);
     }
 
@@ -54,7 +54,7 @@ class IndexTest extends TestCase
             'receiver_id' => $this->user->id,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($this->messagesIndexRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()->assertJsonCount(15);
     }
 
@@ -62,7 +62,7 @@ class IndexTest extends TestCase
     {
         $this->generateMessages();
 
-        $response = $this->actingAs($this->user)->getJson($this->messagesIndexRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonFragment([
                 'isReceived' => true,
@@ -76,7 +76,7 @@ class IndexTest extends TestCase
     {
         $this->generateMessages();
 
-        $response = $this->actingAs($this->user)->getJson($this->messagesIndexRoute);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()->assertJsonCount(15);
     }
 
@@ -84,7 +84,7 @@ class IndexTest extends TestCase
     {
         $this->generateMessages();
 
-        $response = $this->actingAs($this->user)->getJson($this->messagesIndexRoute.'?page=2');
+        $response = $this->actingAs($this->user)->getJson($this->route.'?page=2');
         $response->assertOk()->assertJsonCount(15);
     }
 

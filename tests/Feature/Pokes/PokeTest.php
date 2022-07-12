@@ -14,22 +14,21 @@ class PokeTest extends TestCase
 {
     private User $user;
 
-    private string $pokeRoute;
-
+    private string $route;
     private string $pokesTable = 'pokes';
-    private string $notificationsTable = 'notifications';
+    private string $table = 'notifications';
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->pokeRoute = route('api.pokes.poke');
+        $this->route = route('api.pokes.poke');
     }
 
     public function testCannotUseAsUnauthorized(): void
     {
-        $response = $this->postJson($this->pokeRoute);
+        $response = $this->postJson($this->route);
         $response->assertUnauthorized();
     }
 
@@ -41,7 +40,7 @@ class PokeTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->pokeRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friendship->friend_id,
             ]);
 
@@ -51,7 +50,7 @@ class PokeTest extends TestCase
     public function testCannotPassNoFriendId(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->pokeRoute);
+            ->postJson($this->route);
 
         $response->assertJsonValidationErrorFor('friend_id');
     }
@@ -59,7 +58,7 @@ class PokeTest extends TestCase
     public function testPassedEmptyStringIsTreatingAsNullValue(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->pokeRoute, [
+            ->postJson($this->route, [
                 'friend_id' => '',
             ]);
 
@@ -71,7 +70,7 @@ class PokeTest extends TestCase
         $friend = User::factory()->createOne();
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->pokeRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friend->id,
             ]);
 
@@ -81,7 +80,7 @@ class PokeTest extends TestCase
     public function testCannotPassFriendIdWhichNotExist(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->pokeRoute, [
+            ->postJson($this->route, [
                 'friend_id' => 99999,
             ]);
 
@@ -91,7 +90,7 @@ class PokeTest extends TestCase
     public function testCannotPassOwnId(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->pokeRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $this->user->id,
             ]);
 
@@ -108,7 +107,7 @@ class PokeTest extends TestCase
         $this->assertDatabaseCount($this->pokesTable, 0);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->pokeRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friendship->friend_id,
             ]);
 
@@ -127,7 +126,7 @@ class PokeTest extends TestCase
         $this->assertDatabaseCount($this->pokesTable, 0);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->pokeRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friendship->user_id,
             ]);
 
@@ -144,7 +143,7 @@ class PokeTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->pokeRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friendship->friend_id,
             ]);
 
@@ -159,7 +158,7 @@ class PokeTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->pokeRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friendship->friend_id,
             ]);
 
@@ -184,7 +183,7 @@ class PokeTest extends TestCase
         $this->assertDatabaseCount($this->pokesTable, 1);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->pokeRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friendship->friend_id,
             ]);
 
@@ -210,7 +209,7 @@ class PokeTest extends TestCase
         $this->assertDatabaseCount($this->pokesTable, 1);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->pokeRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friendship->friend_id,
             ]);
 
@@ -242,7 +241,7 @@ class PokeTest extends TestCase
         Poke::create($dataForSecondPoke);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->pokeRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friendships[0]->friend_id,
             ]);
 
@@ -260,13 +259,13 @@ class PokeTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->pokeRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friendship->friend_id,
             ]);
 
         $response->assertCreated();
 
-        $this->assertDatabaseCount($this->notificationsTable, 1);
+        $this->assertDatabaseCount($this->table, 1);
     }
 
     public function testCreatedNotificationHasProperlyFirstPokeMessageFriendIdAndLink(): void
@@ -277,14 +276,14 @@ class PokeTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->pokeRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friendship->friend_id,
             ]);
 
         $response->assertCreated();
 
-        $this->assertDatabaseCount($this->notificationsTable, 1)
-            ->assertDatabaseHas($this->notificationsTable, [
+        $this->assertDatabaseCount($this->table, 1)
+            ->assertDatabaseHas($this->table, [
                 'notifiable_id' => $friendship->friend_id,
                 'data' => json_encode([
                     'friendId' => $this->user->id,
@@ -309,14 +308,14 @@ class PokeTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->postJson($this->pokeRoute, [
+            ->postJson($this->route, [
                 'friend_id' => $friendship->friend_id,
             ]);
 
         $response->assertCreated();
 
-        $this->assertDatabaseCount($this->notificationsTable, 1)
-            ->assertDatabaseHas($this->notificationsTable, [
+        $this->assertDatabaseCount($this->table, 1)
+            ->assertDatabaseHas($this->table, [
                 'notifiable_id' => $friendship->friend_id,
                 'data' => json_encode([
                     'friendId' => $this->user->id,

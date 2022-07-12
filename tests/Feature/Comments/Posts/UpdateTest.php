@@ -15,9 +15,8 @@ class UpdateTest extends TestCase
     private Post $post;
     private Comment $comment;
 
-    private string $commentsUpdateRoute;
-
-    private string $commentsTable = 'comments';
+    private string $route;
+    private string $table = 'comments';
 
     public function setUp(): void
     {
@@ -31,7 +30,7 @@ class UpdateTest extends TestCase
             'resource_id' => $this->post->id,
         ]);
 
-        $this->commentsUpdateRoute = route('api.comments.posts.update', [
+        $this->route = route('api.comments.posts.update', [
             'resourceId' => $this->post->id,
             'comment' => $this->comment,
         ]);
@@ -39,33 +38,33 @@ class UpdateTest extends TestCase
 
     public function testCannotUseAsUnauthorized(): void
     {
-        $response = $this->putJson($this->commentsUpdateRoute);
+        $response = $this->putJson($this->route);
         $response->assertUnauthorized();
     }
 
     public function testCanUseAsAuthorized(): void
     {
         $response = $this->actingAs($this->user)
-            ->putJson($this->commentsUpdateRoute, [
+            ->putJson($this->route, [
                 'content' => 'Simple comment',
             ]);
 
         $response->assertOk();
 
-        $this->assertDatabaseCount($this->commentsTable, 1);
+        $this->assertDatabaseCount($this->table, 1);
     }
 
     public function testCanUpdateOwnComment(): void
     {
         $response = $this->actingAs($this->user)
-            ->putJson($this->commentsUpdateRoute, [
+            ->putJson($this->route, [
                 'content' => 'Simple updated comment',
             ]);
 
         $response->assertOk();
 
-        $this->assertDatabaseCount($this->commentsTable, 1)
-            ->assertDatabaseHas($this->commentsTable, [
+        $this->assertDatabaseCount($this->table, 1)
+            ->assertDatabaseHas($this->table, [
                 'content' => 'Simple updated comment',
                 'author_id' => $this->user->id,
             ]);
@@ -90,7 +89,7 @@ class UpdateTest extends TestCase
 
         $response->assertForbidden();
 
-        $this->assertDatabaseMissing($this->commentsTable, [
+        $this->assertDatabaseMissing($this->table, [
                 'content' => 'Simple updated comment',
                 'author_id' => $this->user->id,
             ]);
@@ -99,7 +98,7 @@ class UpdateTest extends TestCase
     public function testCannotUpdateCommentWithoutPassingContent(): void
     {
         $response = $this->actingAs($this->user)
-            ->putJson($this->commentsUpdateRoute);
+            ->putJson($this->route);
 
         $response->assertJsonValidationErrorFor('content');
     }
@@ -107,7 +106,7 @@ class UpdateTest extends TestCase
     public function testCannotUpdateCommentWithSingleLetterLengthContent(): void
     {
         $response = $this->actingAs($this->user)
-            ->putJson($this->commentsUpdateRoute, [
+            ->putJson($this->route, [
                 'content' => 'S',
             ]);
 
@@ -117,7 +116,7 @@ class UpdateTest extends TestCase
     public function testCannotUpdateCommentWithTooLongContent(): void
     {
         $response = $this->actingAs($this->user)
-            ->putJson($this->commentsUpdateRoute, [
+            ->putJson($this->route, [
                 'content' => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
             ]);
 
@@ -127,7 +126,7 @@ class UpdateTest extends TestCase
     public function testResponseIncludesUpdatedComment(): void
     {
         $response = $this->actingAs($this->user)
-            ->putJson($this->commentsUpdateRoute, [
+            ->putJson($this->route, [
                 'content' => 'Simple updated comment',
             ]);
 
@@ -140,7 +139,7 @@ class UpdateTest extends TestCase
     public function testPassedEmptyStringValueIsTreatingAsNullValue(): void
     {
         $response = $this->actingAs($this->user)
-            ->putJson($this->commentsUpdateRoute, [
+            ->putJson($this->route, [
                 'content' => '',
             ]);
 

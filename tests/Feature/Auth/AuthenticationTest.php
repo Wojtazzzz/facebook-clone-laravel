@@ -10,19 +10,20 @@ use Tests\TestCase;
 class AuthenticationTest extends TestCase
 {
     private User $user;
-    private string $loginRoute;
+
+    private string $route;
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->loginRoute = route('api.auth.login');
+        $this->route = route('api.auth.login');
     }
 
     public function testUserCanAuthenticate(): void
     {
-        $response = $this->postJson($this->loginRoute, [
+        $response = $this->postJson($this->route, [
             'email' => $this->user->email,
             'password' => 'password',
         ]);
@@ -33,7 +34,7 @@ class AuthenticationTest extends TestCase
 
     public function testUserMustAuthenticateWithProperlyEmail(): void
     {
-        $response = $this->postJson($this->loginRoute, [
+        $response = $this->postJson($this->route, [
             'email' => 'not_email',
             'password' => 'password',
         ]);
@@ -46,7 +47,7 @@ class AuthenticationTest extends TestCase
 
     public function testUserCanNotAuthenticateWithInvalidPassword(): void
     {
-        $this->postJson($this->loginRoute, [
+        $this->postJson($this->route, [
             'email' => $this->user->email,
             'password' => 'wrong-password',
         ]);
@@ -56,7 +57,7 @@ class AuthenticationTest extends TestCase
 
     public function testUserCanNotAuthenticateWithoutPassword(): void
     {
-        $this->postJson($this->loginRoute, [
+        $this->postJson($this->route, [
             'email' => $this->user->email,
         ]);
 
@@ -65,7 +66,7 @@ class AuthenticationTest extends TestCase
 
     public function testUserCanNotAuthenticateWithoutEmail(): void
     {
-        $this->postJson($this->loginRoute, [
+        $this->postJson($this->route, [
             'password' => 'password',
         ]);
 
@@ -74,13 +75,13 @@ class AuthenticationTest extends TestCase
 
     public function testUserCanNotAuthenticateWithoutAnyData(): void
     {
-        $this->postJson($this->loginRoute);
+        $this->postJson($this->route);
         $this->assertGuest();
     }
 
     public function testPassedEmptyStringValuesAreTreatingAsNullValues(): void
     {
-        $response = $this->postJson($this->loginRoute, [
+        $response = $this->postJson($this->route, [
             'email' => '',
             'password' => '',
         ]);
