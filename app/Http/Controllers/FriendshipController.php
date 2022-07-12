@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
 use App\Enums\FriendshipStatus;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Friendship\AcceptRequest;
 use App\Http\Requests\Friendship\DestroyRequest;
 use App\Http\Requests\Friendship\InviteRequest;

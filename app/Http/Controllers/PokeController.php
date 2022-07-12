@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Poke\PokeRequest;
 use App\Http\Resources\PokeResource;
 use App\Models\Poke;

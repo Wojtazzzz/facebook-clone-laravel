@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Api\CommentController;
-use App\Http\Controllers\Api\FriendshipController;
-use App\Http\Controllers\Api\HiddenPostController;
-use App\Http\Controllers\Api\LikeController;
-use App\Http\Controllers\Api\MessageController;
-use App\Http\Controllers\Api\NotificationController;
-use App\Http\Controllers\Api\PokeController;
-use App\Http\Controllers\Api\PostController;
-use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FriendshipController;
+use App\Http\Controllers\HiddenPostController;
+use App\Http\Controllers\LikeController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PokeController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 

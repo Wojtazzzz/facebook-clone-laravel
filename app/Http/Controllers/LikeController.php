@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Like\StoreRequest;
 use App\Http\Resources\LikeResource;
 use App\Models\Like;

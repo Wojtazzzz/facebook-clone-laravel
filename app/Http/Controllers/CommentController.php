@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Comment\StoreRequest;
 use App\Http\Requests\Comment\UpdateRequest;
 use App\Http\Resources\CommentResource;
