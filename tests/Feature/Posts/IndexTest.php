@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tests\Feature\Posts;
 
 use App\Models\Comment;
+use App\Models\Friendship;
+use App\Models\HiddenPost;
 use App\Models\Like;
 use App\Models\Post;
 use App\Models\User;
@@ -165,5 +167,47 @@ class IndexTest extends TestCase
         $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute);
         $response->assertOk()
             ->assertJsonCount(5);
+    }
+
+    public function testCannotReturnHiddenPosts(): void
+    {
+        $posts = Post::factory(2)
+            ->friendsAuthors($this->user->id)
+            ->create();
+
+        HiddenPost::factory()->createOne([
+            'user_id' => $this->user->id,
+            'post_id' => $posts[0]->id,
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute);
+        $response->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonFragment([
+                'id' => $posts[1]->id,
+            ])
+            ->assertJsonMissing([
+                'id' => $posts[0]->id,
+            ]);
+    }
+
+    public function testCanReturnPostsWhichHideFriend(): void
+    {
+        $friendship = Friendship::factory()->createOne([
+            'user_id' => $this->user->id,
+        ]);
+
+        $post = Post::factory()->createOne([
+            'author_id' => $this->user->id,
+        ]);
+
+        HiddenPost::factory()->createOne([
+            'user_id' => $friendship->friend_id,
+            'post_id' => $post->id,
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->postsIndexRoute);
+        $response->assertOk()
+            ->assertJsonCount(1);
     }
 }

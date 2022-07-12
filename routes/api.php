@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\FriendshipController;
+use App\Http\Controllers\Api\HiddenPostController;
 use App\Http\Controllers\Api\LikeController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\NotificationController;
@@ -67,6 +68,19 @@ Route::middleware('auth:sanctum')
                 Route::get('/', 'index')->name('index');
                 Route::post('/', 'store')->name('store');
                 Route::delete('/{post}', 'destroy')->name('destroy');
+            });
+
+        Route::name('hidden.')
+            ->prefix('/hidden')
+            ->group(function () {
+                Route::controller(HiddenPostController::class)
+                    ->name('posts.')
+                    ->prefix('/posts')
+                    ->group(function () {
+                        Route::get('/', 'index')->name('index');
+                        Route::post('/', 'store')->name('store');
+                        Route::delete('/{post}', 'destroy')->name('destroy');
+                    });
             });
 
         Route::controller(LikeController::class)

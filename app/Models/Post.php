@@ -55,4 +55,9 @@ class Post extends Model
     {
         return $this->hasMany(Comment::class, 'resource_id', 'id');
     }
+
+    public function hidden(): HasMany
+    {
+        return $this->hasMany(HiddenPost::class, 'post_id', 'id');
+    }
 }

@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Post\StoreRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -28,10 +29,11 @@ class PostController extends Controller
             ->with('author:id,first_name,last_name,profile_image,background_image')
             ->withCount([
                 'likes',
-                'comments' => fn ($query) => $query->where('resource', 'POST'),
-                'likes as isLiked' => fn ($query) => $query->where('user_id', $user->id),
+                'comments' => fn (Builder $query) => $query->where('resource', 'POST'),
+                'likes as isLiked' => fn (Builder $query) => $query->where('user_id', $user->id),
             ])
             ->whereIn('author_id', $authorsId)
+            ->whereDoesntHave('hidden', fn (Builder $query) => $query->where('user_id', $user->id))
             ->latest()
             ->paginate(10, [
                 'id',

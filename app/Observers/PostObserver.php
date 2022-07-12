@@ -11,6 +11,12 @@ class PostObserver
 {
     public function deleted(Post $post): void
     {
+        $this->deleteImages($post);
+        $this->deleteFromHiddenTable($post);
+    }
+
+    private function deleteImages(Post $post): void
+    {
         if (!$post->images) {
             return;
         }
@@ -20,5 +26,10 @@ class PostObserver
         }
 
         Storage::disk('public')->delete(...$post->images);
+    }
+
+    private function deleteFromHiddenTable(Post $post): void
+    {
+        $post->hidden()->delete();
     }
 }
