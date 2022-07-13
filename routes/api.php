@@ -10,6 +10,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PokeController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\SavedPostController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
@@ -74,6 +75,19 @@ Route::middleware('auth:sanctum')
             ->prefix('/hidden')
             ->group(function () {
                 Route::controller(HiddenPostController::class)
+                    ->name('posts.')
+                    ->prefix('/posts')
+                    ->group(function () {
+                        Route::get('/', 'index')->name('index');
+                        Route::post('/', 'store')->name('store');
+                        Route::delete('/{post}', 'destroy')->name('destroy');
+                    });
+            });
+
+        Route::name('saved.')
+            ->prefix('/saved')
+            ->group(function () {
+                Route::controller(SavedPostController::class)
                     ->name('posts.')
                     ->prefix('/posts')
                     ->group(function () {

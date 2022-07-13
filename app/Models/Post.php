@@ -60,4 +60,11 @@ class Post extends Model
     {
         return $this->hasMany(HiddenPost::class, 'post_id', 'id');
     }
+
+    // Method 'App\Models\Post::saved()' is not compatible with method 'Illuminate\Database\Eloquent\Model::saved()',
+    // so it's called stored
+    public function stored(): HasMany
+    {
+        return $this->hasMany(SavedPost::class, 'post_id', 'id');
+    }
 }

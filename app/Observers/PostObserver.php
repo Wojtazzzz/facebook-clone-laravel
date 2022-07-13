@@ -12,7 +12,8 @@ class PostObserver
     public function deleted(Post $post): void
     {
         $this->deleteImages($post);
-        $this->deleteFromHiddenTable($post);
+        $this->deleteFromHiddenPostsTable($post);
+        $this->deleteFromSavedPostsTable($post);
     }
 
     private function deleteImages(Post $post): void
@@ -28,8 +29,13 @@ class PostObserver
         Storage::disk('public')->delete(...$post->images);
     }
 
-    private function deleteFromHiddenTable(Post $post): void
+    private function deleteFromHiddenPostsTable(Post $post): void
     {
         $post->hidden()->delete();
+    }
+
+    private function deleteFromSavedPostsTable(Post $post): void
+    {
+        $post->stored()->delete();
     }
 }
