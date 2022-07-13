@@ -17,8 +17,14 @@ class PokeController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
+        $userId = $request->user()->id;
+
         $pokes = Poke::with('initiator')
-            ->whereNot('latest_initiator_id', $request->user()->id)
+            ->where(function ($query) use ($userId) {
+                $query->where('user_id', $userId)
+                    ->orWhere('friend_id', $userId);
+            })
+            ->whereNot('latest_initiator_id', $userId)
             ->paginate(10, [
                 'id',
                 'user_id',
