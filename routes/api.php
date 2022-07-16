@@ -7,6 +7,7 @@ use App\Http\Controllers\FriendshipController;
 use App\Http\Controllers\HiddenPostController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\NextController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PokeController;
 use App\Http\Controllers\PostController;
@@ -119,7 +120,13 @@ Route::middleware('auth:sanctum')
             });
 
         Broadcast::routes();
-    });
 
-Route::get('/users', [UserController::class, 'index'])->name('api.next.users');
-Route::get('/users/{user}', [UserController::class, 'show'])->name('api.next.user');
+        Route::controller(NextController::class)
+            ->withoutMiddleware('auth:sanctum')
+            ->name('next.')
+            ->prefix('/next')
+            ->group(function () {
+                Route::get('/profiles/{user}', 'profile')->name('profile');
+                Route::get('/profiles', 'profiles')->name('profiles');
+            });
+    });
