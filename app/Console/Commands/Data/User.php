@@ -16,31 +16,25 @@ class User extends Command
     private string $last_name = 'Witas';
     private string $email = 'marcin.witas72@gmail.com';
 
-    public function __construct()
+    public function handle(): void
     {
-        parent::__construct();
-    }
+        UserModel::when(
+            UserModel::where('email', $this->email)->exists(),
 
-    public function handle(): int
-    {
-        $isExists = UserModel::where('email', $this->email)->exists();
+            function () {
+                $this->info('');
+                $this->error('User already exists');
+            },
 
-        if ($isExists) {
-            $this->info('');
-            $this->error('User already exists');
+            function () {
+                UserModel::factory()->createOne([
+                    'first_name' => $this->first_name,
+                    'last_name' => $this->last_name,
+                    'email' => $this->email,
+                ]);
 
-            return 0;
-        }
-
-        UserModel::factory()->createOne([
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
-            'email' => $this->email,
-        ]);
-
-        $this->info('');
-        $this->info('User created successfully');
-
-        return 0;
+                $this->info('');
+                $this->info('User created successfully');
+            });
     }
 }
