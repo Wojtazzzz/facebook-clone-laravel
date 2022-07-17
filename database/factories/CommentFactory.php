@@ -13,7 +13,7 @@ class CommentFactory extends Factory
     public function definition(): array
     {
         return [
-            'content' => $this->faker->text(),
+            'content' => $this->faker->text,
             'resource' => 'POST',
             'author_id' => User::factory(),
             'resource_id' => Post::factory(),

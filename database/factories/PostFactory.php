@@ -14,7 +14,7 @@ class PostFactory extends Factory
     public function definition(): array
     {
         return [
-            'content' => $this->faker->text(),
+            'content' => $this->faker->text,
             'images' => $this->getRandomImages(),
             'author_id' => User::factory()->createOne()->id,
         ];
@@ -39,8 +39,6 @@ class PostFactory extends Factory
                 'friend_id' => $attributes['author_id'],
                 'status' => FriendshipStatus::CONFIRMED,
             ]);
-
-            return [];
         });
     }
 }

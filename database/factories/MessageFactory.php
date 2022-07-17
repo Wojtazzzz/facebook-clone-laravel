@@ -15,7 +15,7 @@ class MessageFactory extends Factory
     public function definition(): array
     {
         return [
-            'text' => $this->faker->text(),
+            'text' => $this->faker->text,
             'sender_id' => User::factory(),
             'receiver_id' => User::factory(),
         ];

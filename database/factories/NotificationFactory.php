@@ -28,7 +28,7 @@ class NotificationFactory extends Factory
         $friend = User::factory()->createOne();
 
         return [
-            'id' => $this->faker->unique->uuid(),
+            'id' => $this->faker->unique->uuid,
             'type' => $type,
             'notifiable_type' => User::class,
             'notifiable_id' => $user->id,
