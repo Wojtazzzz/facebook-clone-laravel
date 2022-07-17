@@ -8,14 +8,11 @@ use App\Enums\FriendshipStatus;
 use App\Models\Friendship;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Mmo\Faker\PicsumProvider;
 
 class PostFactory extends Factory
 {
     public function definition(): array
     {
-        $this->faker->addProvider(new PicsumProvider($this->faker));
-
         return [
             'content' => $this->faker->text(),
             'images' => $this->getRandomImages(),

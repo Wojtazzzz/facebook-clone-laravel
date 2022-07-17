@@ -5,18 +5,13 @@ declare(strict_types=1);
 namespace Database\Factories;
 
 use App\Enums\MaritalStatus;
-use Bezhanov\Faker\Provider\Educator;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
-use Mmo\Faker\PicsumProvider;
 
 class UserFactory extends Factory
 {
     public function definition(): array
     {
-        $this->faker->addProvider(new PicsumProvider($this->faker));
-        $this->faker->addProvider(new Educator($this->faker));
-
         return [
             'first_name' => $this->faker->firstName(),
             'last_name' => $this->faker->lastName(),
