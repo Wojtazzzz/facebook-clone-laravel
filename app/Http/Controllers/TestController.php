@@ -6,7 +6,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Foundation\Testing\WithFaker;
-use Mmo\Faker\PicsumProvider;
 
 class TestController extends Controller
 {
@@ -15,8 +14,6 @@ class TestController extends Controller
     public function __construct()
     {
         $this->setUpFaker();
-
-        $this->faker->addProvider(new PicsumProvider($this->faker));
     }
 
     public function __invoke()
