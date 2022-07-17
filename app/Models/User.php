@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use MaritalStatus;
 
 class User extends Authenticatable
 {
@@ -21,9 +22,14 @@ class User extends Authenticatable
         'first_name',
         'last_name',
         'email',
+        'password',
         'profile_image',
         'background_image',
-        'password',
+        'works_at',
+        'went_to',
+        'lives_in',
+        'from',
+        'marital_status',
     ];
 
     protected $hidden = [
@@ -36,6 +42,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
+        'marital_statsu' => MaritalStatus::class,
     ];
 
     public function pokedUsers(): HasMany

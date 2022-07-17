@@ -32,20 +32,36 @@ class ShowTest extends TestCase
         ]);
 
         $response = $this->getJson($this->route);
+
         $response->assertOk()
             ->assertJsonFragment([
                 'user' => [
                     'background_image' => $this->user->background_image,
+                    'created_at' => $this->user->created_at->format('F Y'),
                     'first_name' => $this->user->first_name,
+                    'from' => $this->user->from,
                     'id' => $this->user->id,
+                    'lives_in' => $this->user->lives_in,
+                    'marital_status' => $this->user->marital_status,
                     'name' => "{$this->user->first_name} {$this->user->last_name}",
                     'profile_image' => $this->user->profile_image,
+                    'went_to' => $this->user->went_to,
+                    'works_at' => $this->user->works_at,
                 ],
             ])
             ->assertJsonFragment([
                 'amount' => 12,
             ])
             ->assertJsonCount(12, 'friends.list');
+
+        $data = $response->json('friends.list');
+
+        $this->assertArrayNotHasKey('created_at', $data);
+        $this->assertArrayNotHasKey('from', $data);
+        $this->assertArrayNotHasKey('lives_in', $data);
+        $this->assertArrayNotHasKey('marital_status', $data);
+        $this->assertArrayNotHasKey('went_to', $data);
+        $this->assertArrayNotHasKey('works_at', $data);
     }
 
     public function testResponseCanReturnEmptyFriendsListWhenUserHasNoFriends(): void

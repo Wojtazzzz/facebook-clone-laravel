@@ -1,0 +1,106 @@
+[
+    {
+        "friends": {
+            "amount": 12,
+            "list": [
+                {
+                    "background_image": "https://picsum.photos/seed/62d39ea3c8191/850/350",
+                    "first_name": "Xavier",
+                    "id": 2,
+                    "name": "Xavier McGlynn",
+                    "profile_image": "https://picsum.photos/seed/62d39ea3c8187/168/168"
+                },
+                {
+                    "background_image": "https://picsum.photos/seed/62d39ea55439c/850/350",
+                    "first_name": "Terry",
+                    "id": 3,
+                    "name": "Terry Torphy",
+                    "profile_image": "https://picsum.photos/seed/62d39ea554396/168/168"
+                },
+                {
+                    "background_image": "https://picsum.photos/seed/62d39ea5c7313/850/350",
+                    "first_name": "Eliezer",
+                    "id": 4,
+                    "name": "Eliezer Berge",
+                    "profile_image": "https://picsum.photos/seed/62d39ea5c730e/168/168"
+                },
+                {
+                    "background_image": "https://picsum.photos/seed/62d39ea6811eb/850/350",
+                    "first_name": "Corene",
+                    "id": 5,
+                    "name": "Corene Howell",
+                    "profile_image": "https://picsum.photos/seed/62d39ea6811e2/168/168"
+                },
+                {
+                    "background_image": "https://picsum.photos/seed/62d39ea6d372a/850/350",
+                    "first_name": "Miles",
+                    "id": 6,
+                    "name": "Miles Ferry",
+                    "profile_image": "https://picsum.photos/seed/62d39ea6d3724/168/168"
+                },
+                {
+                    "background_image": "https://picsum.photos/seed/62d39ea7918d1/850/350",
+                    "first_name": "Jacey",
+                    "id": 7,
+                    "name": "Jacey Daugherty",
+                    "profile_image": "https://picsum.photos/seed/62d39ea7918cb/168/168"
+                },
+                {
+                    "background_image": "https://picsum.photos/seed/62d39ea84d467/850/350",
+                    "first_name": "Lonie",
+                    "id": 8,
+                    "name": "Lonie Hansen",
+                    "profile_image": "https://picsum.photos/seed/62d39ea84d45f/168/168"
+                },
+                {
+                    "background_image": "https://picsum.photos/seed/62d39ea8da66b/850/350",
+                    "first_name": "Grace",
+                    "id": 9,
+                    "name": "Grace Parker",
+                    "profile_image": "https://picsum.photos/seed/62d39ea8da666/168/168"
+                },
+                {
+                    "background_image": "https://picsum.photos/seed/62d39ea9510e8/850/350",
+                    "first_name": "Arvid",
+                    "id": 10,
+                    "name": "Arvid Crooks",
+                    "profile_image": "https://picsum.photos/seed/62d39ea9510e2/168/168"
+                },
+                {
+                    "background_image": "https://picsum.photos/seed/62d39eaa90609/850/350",
+                    "first_name": "Rupert",
+                    "id": 11,
+                    "name": "Rupert Cassin",
+                    "profile_image": "https://picsum.photos/seed/62d39eaa90603/168/168"
+                },
+                {
+                    "background_image": "https://picsum.photos/seed/62d39eaae125c/850/350",
+                    "first_name": "Cora",
+                    "id": 12,
+                    "name": "Cora Quitzon",
+                    "profile_image": "https://picsum.photos/seed/62d39eaae1255/168/168"
+                },
+                {
+                    "background_image": "https://picsum.photos/seed/62d39eaca5378/850/350",
+                    "first_name": "Timmothy",
+                    "id": 13,
+                    "name": "Timmothy Monahan",
+                    "profile_image": "https://picsum.photos/seed/62d39eaca5372/168/168"
+                }
+            ]
+        },
+        "user": {
+            "background_image": "https://picsum.photos/seed/62d39ea29d29c/850/350",
+            "created_at": "July 2022",
+            "first_name": "Jamil",
+            "from": null,
+            "id": 1,
+            "lives_in": null,
+            "marital_status": "Married",
+            "name": "Jamil Wilkinson",
+            "profile_image": "https://picsum.photos/seed/62d39ea29d295/168/168",
+            "went_to": null,
+            "works_at": null
+        }
+    }
+]
