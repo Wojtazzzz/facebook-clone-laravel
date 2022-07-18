@@ -9,11 +9,8 @@ class PokeResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->initiator->id,
-            'name' => $this->initiator->first_name.' '.$this->initiator->last_name,
-            'first_name' => $this->initiator->first_name,
-            'profile_image' => $this->initiator->profile_image,
-            'poke_info' => [
+            'friend' => new UserResource($this->initiator),
+            'data' => [
                 'id' => $this->id,
                 'count' => $this->count,
                 'updated_at' => $this->updated_at->format('Y-m-d H:i'),

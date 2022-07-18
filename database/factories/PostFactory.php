@@ -39,6 +39,8 @@ class PostFactory extends Factory
                 'friend_id' => $attributes['author_id'],
                 'status' => FriendshipStatus::CONFIRMED,
             ]);
+
+            return [];
         });
     }
 }

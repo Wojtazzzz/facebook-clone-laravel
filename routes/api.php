@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FriendController;
 use App\Http\Controllers\FriendshipController;
 use App\Http\Controllers\HiddenPostController;
 use App\Http\Controllers\LikeController;
@@ -24,14 +25,20 @@ Route::middleware('auth:sanctum')
                 Route::get('/user', 'user')->name('user');
             });
 
+        Route::controller(FriendController::class)
+            ->name('friends.')
+            ->prefix('/friends')
+            ->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/suggests', 'suggests')->name('suggests');
+                Route::get('/invites', 'invites')->name('invites');
+                Route::get('/contacts', 'contacts')->name('contacts');
+            });
+
         Route::controller(FriendshipController::class)
             ->name('friendship.')
             ->prefix('/friendship')
             ->group(function () {
-                Route::get('/friends/{user}', 'friends')->name('friends');
-                Route::get('/suggests', 'suggests')->name('suggests');
-                Route::get('/invites', 'invites')->name('invites');
-
                 Route::post('/invite', 'invite')->name('invite');
                 Route::post('/accept', 'accept')->name('accept');
                 Route::post('/reject', 'reject')->name('reject');

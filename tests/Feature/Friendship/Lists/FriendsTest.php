@@ -20,7 +20,7 @@ class FriendsTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->route = route('api.friendship.friends', $this->user->id);
+        $this->route = route('api.friends.index');
     }
 
     public function testCannotUseWhenNotAuthorized(): void

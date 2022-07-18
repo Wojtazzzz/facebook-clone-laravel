@@ -40,17 +40,17 @@ class PokeController extends Controller
     {
         $data = $request->validated();
         $user = $request->user();
+
         $friend = User::findOrFail($data['friend_id']);
 
         $pokeCount = Poke::poke($user->id, $data['friend_id'])->value('count');
 
         Poke::when(
             (bool) $pokeCount,
-            fn (Builder $query) => $query->poke($user->id, $data['friend_id'])
-                ->update([
-                    'latest_initiator_id' => $user->id,
-                    'count' => $pokeCount + 1,
-                ]),
+            fn (Builder $query) => $query->poke($user->id, $data['friend_id'])->update([
+                'latest_initiator_id' => $user->id,
+                'count' => $pokeCount + 1,
+            ]),
             fn (Builder $query) => $query->create([
                 'user_id' => $user->id,
                 'friend_id' => $friend->id,
@@ -63,7 +63,6 @@ class PokeController extends Controller
         $friend->notify(new Poked($user->id, $poke->count));
 
         return response()->json([
-            'data' => new PokeResource($poke),
             'message' => 'User poked successfully',
         ], 201);
     }

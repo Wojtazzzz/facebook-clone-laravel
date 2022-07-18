@@ -15,47 +15,9 @@ use App\Models\User;
 use App\Notifications\FriendshipRequestAccepted;
 use App\Notifications\FriendshipRequestSent;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class FriendshipController extends Controller
 {
-    public function friends(User $user): JsonResponse
-    {
-        $user->load(['invitedFriends', 'invitedByFriends']);
-
-        $friends = collect([
-            ...$user->invitedFriends,
-            ...$user->invitedByFriends,
-        ])->paginate(10);
-
-        return response()->json(UserResource::collection($friends));
-    }
-
-    public function suggests(Request $request): JsonResponse
-    {
-        $user = $request->user();
-
-        $users = User::whereNotIn('id', [
-            $user->id,
-            ...$user->invitedFriends->pluck('id'),
-            ...$user->invitedByFriends->pluck('id'),
-            ...$user->receivedInvites->pluck('id'),
-            ...$user->sendedInvites->pluck('id'),
-            ...$user->receivedBlocks->pluck('id'),
-            ...$user->sendedBlocks->pluck('id'),
-        ])->paginate(10);
-
-        return response()->json(UserResource::collection($users));
-    }
-
-    public function invites(Request $request): JsonResponse
-    {
-        $user = $request->user()->load('receivedInvites');
-        $users = $user->receivedInvites;
-
-        return response()->json(UserResource::collection($users->paginate(10)));
-    }
-
     public function invite(InviteRequest $request): JsonResponse
     {
         $data = $request->validated();
