@@ -32,7 +32,7 @@ class PostController extends Controller
                 'likes as isLiked' => fn (Builder $query) => $query->where('user_id', $user->id),
             ])
             ->whereIn('author_id', $authorsId)
-            ->whereDoesntHave('hidden', fn (Builder $query) => $query->where('user_id', $user->id))
+            ->notHidden()
             ->latest()
             ->paginate(10, [
                 'id',
@@ -57,6 +57,7 @@ class PostController extends Controller
                 'likes as isLiked' => fn (Builder $query) => $query->where('user_id', $user->id),
             ])
             ->whereRelation('author', 'author_id', $user->id)
+            ->notHidden()
             ->latest()
             ->get();
 
