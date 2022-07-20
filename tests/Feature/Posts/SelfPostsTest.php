@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Tests\Feature\Posts;
 
 use App\Models\Comment;
-use App\Models\Friendship;
 use App\Models\HiddenPost;
 use App\Models\Like;
 use App\Models\Post;
 use App\Models\User;
 use Tests\TestCase;
 
-class IndexTest extends TestCase
+class SelfPostsTest extends TestCase
 {
     private User $user;
 
@@ -23,7 +22,7 @@ class IndexTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->route = route('api.posts.index');
+        $this->route = route('api.posts.self');
     }
 
     public function testCannotUseAsUnauthorized(): void
@@ -40,14 +39,13 @@ class IndexTest extends TestCase
 
     public function testCanReturnProperlyAmountOfPosts(): void
     {
-        Post::factory(6)->create([
+        Post::factory(4)->create([
             'author_id' => $this->user->id,
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
-
         $response->assertOk()
-            ->assertJsonCount(6);
+            ->assertJsonCount(4);
     }
 
     public function testCanReturnMaxTenPosts(): void
@@ -57,7 +55,6 @@ class IndexTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
-
         $response->assertOk()
             ->assertJsonCount(10);
     }
@@ -69,7 +66,7 @@ class IndexTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->getJson($this->route.'?page=1');
+            ->getJson($this->route.'?page=2');
 
         $response->assertOk()
             ->assertJsonCount(3);
@@ -78,7 +75,7 @@ class IndexTest extends TestCase
     public function testCanReturnEmptyResponseWhenNoPosts(): void
     {
         $response = $this->actingAs($this->user)
-            ->getJson($this->route.'?page=2');
+            ->getJson($this->route.'?page=1');
 
         $response->assertOk()
             ->assertJsonCount(0);
@@ -138,18 +135,22 @@ class IndexTest extends TestCase
             ]);
     }
 
-    public function testCanReturnOwnPosts(): void
+    public function testResponseNotContainFriendsPosts(): void
     {
-        Post::factory(3)->create([
+        Post::factory(1)
+            ->friendsAuthors($this->user->id)
+            ->create();
+
+        Post::factory(2)->create([
             'author_id' => $this->user->id,
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(3);
+            ->assertJsonCount(2);
     }
 
-    public function testCannotReturnPostsWhichAuthorsAreNotFriends(): void
+    public function testResponseNotContainForeingUsersPosts(): void
     {
         Post::factory(3)->create();
 
@@ -158,56 +159,19 @@ class IndexTest extends TestCase
             ->assertJsonCount(0);
     }
 
-    public function testCanReturnPostsWhichAuthorsAreFriends(): void
-    {
-        Post::factory(5)
-            ->friendsAuthors($this->user->id)
-            ->create();
-
-        $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk()
-            ->assertJsonCount(5);
-    }
-
     public function testCannotReturnHiddenPosts(): void
     {
-        $posts = Post::factory(2)
-            ->friendsAuthors($this->user->id)
-            ->create();
-
-        HiddenPost::factory()->createOne([
-            'user_id' => $this->user->id,
-            'post_id' => $posts[0]->id,
-        ]);
-
-        $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk()
-            ->assertJsonCount(1)
-            ->assertJsonFragment([
-                'id' => $posts[1]->id,
-            ])
-            ->assertJsonMissing([
-                'id' => $posts[0]->id,
-            ]);
-    }
-
-    public function testCanReturnPostsWhichHideFriend(): void
-    {
-        $friendship = Friendship::factory()->createOne([
-            'user_id' => $this->user->id,
-        ]);
-
         $post = Post::factory()->createOne([
             'author_id' => $this->user->id,
         ]);
 
         HiddenPost::factory()->createOne([
-            'user_id' => $friendship->friend_id,
+            'user_id' => $this->user->id,
             'post_id' => $post->id,
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(1);
+            ->assertJsonCount(0);
     }
 }

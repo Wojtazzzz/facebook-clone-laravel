@@ -59,7 +59,14 @@ class PostController extends Controller
             ->whereRelation('author', 'author_id', $user->id)
             ->notHidden()
             ->latest()
-            ->get();
+            ->paginate(10, [
+                'id',
+                'content',
+                'images',
+                'author_id',
+                'created_at',
+                'updated_at',
+            ]);
 
         return response()->json(PostResource::collection($posts));
     }
