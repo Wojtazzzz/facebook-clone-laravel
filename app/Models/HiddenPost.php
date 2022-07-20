@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 
 class HiddenPost extends Model
@@ -34,5 +35,10 @@ class HiddenPost extends Model
 
             $hiddenPost->user_id = Auth::user()->id;
         });
+    }
+
+    public function hiddenBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }
