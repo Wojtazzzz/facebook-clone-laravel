@@ -46,6 +46,23 @@ class PostController extends Controller
         return response()->json(PostResource::collection($posts));
     }
 
+    public function selfPosts(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        $posts = Post::query()
+            ->withCount([
+                'likes',
+                'comments' => fn (Builder $query) => $query->where('resource', 'POST'),
+                'likes as isLiked' => fn (Builder $query) => $query->where('user_id', $user->id),
+            ])
+            ->whereRelation('author', 'author_id', $user->id)
+            ->latest()
+            ->get();
+
+        return response()->json(PostResource::collection($posts));
+    }
+
     public function store(StoreRequest $request): JsonResponse
     {
         $paths = [];

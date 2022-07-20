@@ -75,6 +75,7 @@ Route::middleware('auth:sanctum')
             ->prefix('/posts')
             ->group(function () {
                 Route::get('/', 'index')->name('index');
+                Route::get('/self', 'selfPosts')->name('self');
                 Route::post('/', 'store')->name('store');
                 Route::delete('/{post}', 'destroy')->name('destroy');
             });
