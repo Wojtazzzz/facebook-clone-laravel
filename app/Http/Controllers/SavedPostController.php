@@ -11,6 +11,7 @@ use App\Models\SavedPost;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class SavedPostController extends Controller
 {
@@ -48,7 +49,16 @@ class SavedPostController extends Controller
         ], 201);
     }
 
-    public function destroy()
+    public function destroy(Request $request, Post $post): Response
     {
+        $user = $request->user();
+
+        SavedPost::query()
+            ->where('user_id', $user->id)
+            ->where('post_id', $post->id)
+            ->firstOrFail()
+            ->delete();
+
+        return response()->noContent();
     }
 }

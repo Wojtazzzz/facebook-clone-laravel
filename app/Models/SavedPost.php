@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 
 class SavedPost extends Model
@@ -34,5 +35,10 @@ class SavedPost extends Model
 
             $savedPost->user_id = Auth::user()->id;
         });
+    }
+
+    public function post(): BelongsTo
+    {
+        return $this->belongsTo(Post::class, 'post_id', 'id');
     }
 }

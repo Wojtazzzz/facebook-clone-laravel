@@ -11,6 +11,7 @@ use App\Models\Post;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class HiddenPostController extends Controller
 {
@@ -48,7 +49,16 @@ class HiddenPostController extends Controller
         ], 201);
     }
 
-    public function destroy()
+    public function destroy(Request $request, Post $post): Response
     {
+        $user = $request->user();
+
+        HiddenPost::query()
+            ->where('user_id', $user->id)
+            ->where('post_id', $post->id)
+            ->firstOrFail()
+            ->delete();
+
+        return response()->noContent();
     }
 }
