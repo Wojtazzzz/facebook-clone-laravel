@@ -69,7 +69,7 @@ class IndexTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->getJson($this->route.'?page=1');
+            ->getJson($this->route.'?page=2');
 
         $response->assertOk()
             ->assertJsonCount(3);

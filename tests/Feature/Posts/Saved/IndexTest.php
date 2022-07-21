@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Posts\Hidden;
+namespace Tests\Feature\Posts\Saved;
 
+use App\Enums\FriendshipStatus;
 use App\Models\Comment;
-use App\Models\HiddenPost;
+use App\Models\Friendship;
 use App\Models\Like;
 use App\Models\Post;
+use App\Models\SavedPost;
 use App\Models\User;
 use Tests\TestCase;
 
@@ -22,7 +24,7 @@ class IndexTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->route = route('api.hidden.posts.index');
+        $this->route = route('api.saved.posts.index');
     }
 
     public function testCannotUseAsUnauthorized(): void
@@ -31,51 +33,34 @@ class IndexTest extends TestCase
         $response->assertUnauthorized();
     }
 
-    public function testCannotReturnUnhiddenOwnPosts(): void
+    public function testReturnOnlyOwnSavedPost(): void
     {
-        Post::factory()->createOne([
-            'author_id' => $this->user->id,
-        ]);
-
-        $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk()
-            ->assertJsonCount(0);
-    }
-
-    public function testCannotReturnUnhiddenFriendPosts(): void
-    {
-        Post::factory()
-            ->friendsAuthors($this->user->id)
-            ->createOne();
-
-        $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk()
-            ->assertJsonCount(0);
-    }
-
-    public function testCannotReturnUnhiddenForeingUsersPosts(): void
-    {
-        Post::factory()->createOne();
-
-        $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk()
-            ->assertJsonCount(0);
-    }
-
-    public function testReturnProperlyCountOfOwnHiddenPosts(): void
-    {
-        HiddenPost::factory(5)->create([
+        // Own saved posts
+        SavedPost::factory(2)->create([
             'user_id' => $this->user->id,
         ]);
 
+        // Foreing users saved posts
+        SavedPost::factory(3)->create();
+
+        // Friends saved posts
+        $friendship = Friendship::factory()->createOne([
+            'user_id' => $this->user->id,
+            'status' => FriendshipStatus::CONFIRMED,
+        ]);
+
+        SavedPost::factory()->createOne([
+            'user_id' => $friendship->friend_id,
+        ]);
+
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(5);
+            ->assertJsonCount(2);
     }
 
     public function testReturnMaxTenPosts(): void
     {
-        HiddenPost::factory(12)->create([
+        SavedPost::factory(12)->create([
             'user_id' => $this->user->id,
         ]);
 
@@ -86,7 +71,7 @@ class IndexTest extends TestCase
 
     public function testCanFetchMorePostsFromSecondPage(): void
     {
-        HiddenPost::factory(12)->create([
+        SavedPost::factory(12)->create([
             'user_id' => $this->user->id,
         ]);
 
@@ -95,38 +80,13 @@ class IndexTest extends TestCase
             ->assertJsonCount(2);
     }
 
-    public function testCannotReturnHiddenFriendsPosts(): void
-    {
-        $post = Post::factory()
-            ->createOne([
-                'author_id' => $this->user->id,
-            ]);
-
-        HiddenPost::factory()->createOne([
-            'post_id' => $post->id,
-        ]);
-
-        $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk()
-            ->assertJsonCount(0);
-    }
-
-    public function testCannotReturnHiddenForeingUsersPosts(): void
-    {
-        HiddenPost::factory()->createOne();
-
-        $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk()
-            ->assertJsonCount(0);
-    }
-
     public function testPostsInResponseContainsProperlyPostAuthor(): void
     {
-        $hiddenPost = HiddenPost::factory()->createOne([
+        $savedPost = SavedPost::factory()->createOne([
             'user_id' => $this->user->id,
         ]);
 
-        $post = Post::with('author')->findOrFail($hiddenPost->post_id);
+        $post = Post::with('author')->findOrFail($savedPost->post_id);
         $author = $post->author;
 
         $response = $this->actingAs($this->user)->getJson($this->route);
@@ -145,12 +105,12 @@ class IndexTest extends TestCase
 
     public function testPostsInResponseContainsProperlyLikesCountAndZeroCommentsCount(): void
     {
-        $hiddenPost = HiddenPost::factory()->createOne([
+        $savedPost = SavedPost::factory()->createOne([
             'user_id' => $this->user->id,
         ]);
 
         Like::factory()->createOne([
-            'post_id' => $hiddenPost->post_id,
+            'post_id' => $savedPost->post_id,
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
@@ -164,12 +124,12 @@ class IndexTest extends TestCase
 
     public function testPostsInResponseContainsProperlyCommentsCountAndZeroLikesCount(): void
     {
-        $hiddenPost = HiddenPost::factory()->createOne([
+        $savedPost = SavedPost::factory()->createOne([
             'user_id' => $this->user->id,
         ]);
 
         Comment::factory()->createOne([
-            'resource_id' => $hiddenPost->post_id,
+            'resource_id' => $savedPost->post_id,
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
@@ -183,13 +143,13 @@ class IndexTest extends TestCase
 
     public function testPostsInResponseContainsProperlyIsLikedValue(): void
     {
-        $hiddenPost = HiddenPost::factory()->createOne([
+        $savedPost = SavedPost::factory()->createOne([
             'user_id' => $this->user->id,
         ]);
 
         Like::factory()->createOne([
             'user_id' => $this->user->id,
-            'post_id' => $hiddenPost->post_id,
+            'post_id' => $savedPost->post_id,
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
