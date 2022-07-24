@@ -8,7 +8,7 @@ use App\Models\User;
 use RuntimeException;
 use Tests\TestCase;
 
-class ConversationCommandTest extends TestCase
+class ConversationTest extends TestCase
 {
     private User $user;
     private User $friend;
