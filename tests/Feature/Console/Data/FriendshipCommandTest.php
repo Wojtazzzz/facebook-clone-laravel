@@ -79,7 +79,7 @@ class FriendshipCommandTest extends TestCase
     {
         $this->artisan("data:friendship {$this->user->id} ugly_string")
             ->expectsOutput('Amount must be integer greater than 0.')
-            ->doesntExpectOutput('Friendship created successfully.');
+            ->doesntExpectOutput('Friendship(s) created successfully.');
 
         $this->assertDatabaseCount($this->table, 0);
     }
