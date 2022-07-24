@@ -32,7 +32,7 @@ class UserCommandTest extends TestCase
     public function testCommandPrintProperlyMessageWhenSuccess(): void
     {
         $this->artisan($this->command)
-            ->expectsOutput('User created successfully');
+            ->expectsOutput('User created successfully.');
     }
 
     public function testCommandCannotCreateSameUserSecondTime(): void
@@ -52,6 +52,6 @@ class UserCommandTest extends TestCase
     {
         $this->artisan($this->command);
         $this->artisan($this->command)
-            ->expectsOutput('User already exists');
+            ->expectsOutput('User already exists.');
     }
 }
