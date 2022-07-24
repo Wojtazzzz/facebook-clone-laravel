@@ -8,17 +8,18 @@ use Tests\TestCase;
 
 class UserCommandTest extends TestCase
 {
+    private string $command = 'data:user';
     private string $table = 'users';
 
     public function testCommandExecuteWithSuccess(): void
     {
-        $this->artisan('data:user')
+        $this->artisan($this->command)
             ->assertSuccessful();
     }
 
     public function testCommandCreatesNewUserInDatabase(): void
     {
-        $this->artisan('data:user');
+        $this->artisan($this->command);
 
         $this->assertDatabaseHas($this->table, [
             'first_name' => 'Marcin',
@@ -30,14 +31,14 @@ class UserCommandTest extends TestCase
 
     public function testCommandPrintProperlyMessageWhenSuccess(): void
     {
-        $this->artisan('data:user')
+        $this->artisan($this->command)
             ->expectsOutput('User created successfully');
     }
 
     public function testCommandCannotCreateSameUserSecondTime(): void
     {
-        $this->artisan('data:user');
-        $this->artisan('data:user');
+        $this->artisan($this->command);
+        $this->artisan($this->command);
 
         $this->assertDatabaseHas($this->table, [
             'first_name' => 'Marcin',
@@ -49,8 +50,8 @@ class UserCommandTest extends TestCase
 
     public function testCommandPrintProperlyMessageWhenUserAlreadyExists(): void
     {
-        $this->artisan('data:user');
-        $this->artisan('data:user')
+        $this->artisan($this->command);
+        $this->artisan($this->command)
             ->expectsOutput('User already exists');
     }
 }
