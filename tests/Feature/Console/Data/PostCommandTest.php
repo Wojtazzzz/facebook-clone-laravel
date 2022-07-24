@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Console\Data;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Tests\TestCase;
 
 class PostCommandTest extends TestCase
@@ -93,7 +94,7 @@ class PostCommandTest extends TestCase
 
     public function testCannotPassNotExistingUserAsAuthorOption(): void
     {
-        $this->expectErrorMessage('No query results for model [App\Models\User] 99999');
+        $this->expectException(ModelNotFoundException::class);
 
         $this->artisan('data:post -A 99999')
             ->doesntExpectOutput('Post(s) created successfully.');
