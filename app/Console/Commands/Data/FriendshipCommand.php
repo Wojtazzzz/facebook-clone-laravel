@@ -27,10 +27,12 @@ class FriendshipCommand extends Command
 
         $user = User::findOrFail($this->argument('user'));
         $amount = $this->argument('amount');
+
         $status = $this->getStatus();
+        $column = $this->getColumn($status);
 
         Friendship::factory($amount)->create([
-            'user_id' => $user->id,
+            $column => $user->id,
             'status' => $status,
         ]);
 
@@ -55,5 +57,10 @@ class FriendshipCommand extends Command
             'blocked' => FriendshipStatus::BLOCKED,
             default => FriendshipStatus::CONFIRMED,
         };
+    }
+
+    private function getColumn(FriendshipStatus $status): string
+    {
+        return FriendshipStatus::PENDING === $status ? 'friend_id' : 'user_id';
     }
 }

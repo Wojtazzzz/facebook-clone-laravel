@@ -102,6 +102,7 @@ class FriendshipCommandTest extends TestCase
 
         $this->assertDatabaseCount($this->table, 1)
             ->assertDatabaseHas($this->table, [
+                'user_id' => $this->user->id,
                 'status' => FriendshipStatus::CONFIRMED,
             ]);
     }
@@ -113,6 +114,7 @@ class FriendshipCommandTest extends TestCase
 
         $this->assertDatabaseCount($this->table, 1)
             ->assertDatabaseHas($this->table, [
+                'friend_id' => $this->user->id,
                 'status' => FriendshipStatus::PENDING,
             ]);
     }
@@ -124,6 +126,7 @@ class FriendshipCommandTest extends TestCase
 
         $this->assertDatabaseCount($this->table, 1)
             ->assertDatabaseHas($this->table, [
+                'user_id' => $this->user->id,
                 'status' => FriendshipStatus::BLOCKED,
             ]);
     }
