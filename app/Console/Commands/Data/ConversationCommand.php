@@ -9,7 +9,7 @@ use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Testing\WithFaker;
 
-class Conversation extends Command
+class ConversationCommand extends Command
 {
     use WithFaker;
 

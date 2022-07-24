@@ -16,7 +16,7 @@ use App\Models\SavedPost;
 use App\Models\User;
 use Illuminate\Console\Command;
 
-class Clear extends Command
+class ClearCommand extends Command
 {
     protected $signature = 'data:clear';
     protected $description = 'Clear all records from database';

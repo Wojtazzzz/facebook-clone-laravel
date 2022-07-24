@@ -6,7 +6,7 @@ namespace Tests\Feature\Console\Data;
 
 use Tests\TestCase;
 
-class ClearTest extends TestCase
+class ClearCommandTest extends TestCase
 {
     private string $command = 'data:clear';
     private array $tables = [

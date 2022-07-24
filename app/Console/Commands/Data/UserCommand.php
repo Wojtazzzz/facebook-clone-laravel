@@ -9,7 +9,7 @@ use App\Models\Friendship;
 use App\Models\User as UserModel;
 use Illuminate\Console\Command;
 
-class User extends Command
+class UserCommand extends Command
 {
     protected $signature = 'data:user {--F|friend : Whether user should have friend}';
     protected $description = 'Create root user';

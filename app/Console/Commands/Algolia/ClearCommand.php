@@ -7,7 +7,7 @@ namespace App\Console\Commands\Algolia;
 use Algolia\AlgoliaSearch\SearchClient;
 use Illuminate\Console\Command;
 
-class Clear extends Command
+class ClearCommand extends Command
 {
     protected $signature = 'algolia:clear';
     protected $description = 'Clear algolia\'s dataset';

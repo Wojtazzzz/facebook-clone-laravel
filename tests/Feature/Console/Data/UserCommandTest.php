@@ -6,7 +6,7 @@ namespace Tests\Feature\Console\Data;
 
 use Tests\TestCase;
 
-class UserTest extends TestCase
+class UserCommandTest extends TestCase
 {
     private string $command = 'data:user';
     private string $table = 'users';
