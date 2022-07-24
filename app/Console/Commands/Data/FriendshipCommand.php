@@ -11,7 +11,7 @@ use Illuminate\Console\Command;
 
 class FriendshipCommand extends Command
 {
-    protected $signature = 'data:friendship {user} {amount=1}';
+    protected $signature = 'data:friendship {user} {amount=1} {--S|status=confirmed}';
     protected $description = 'Create friendships for specific user';
 
     public function __construct()
@@ -27,10 +27,11 @@ class FriendshipCommand extends Command
 
         $user = User::findOrFail($this->argument('user'));
         $amount = $this->argument('amount');
+        $status = $this->getStatus();
 
         Friendship::factory($amount)->create([
             'user_id' => $user->id,
-            'status' => FriendshipStatus::CONFIRMED,
+            'status' => $status,
         ]);
 
         $this->info('Friendship(s) created successfully.');
@@ -45,5 +46,14 @@ class FriendshipCommand extends Command
         $this->error('Amount must be integer greater than 0.');
 
         return false;
+    }
+
+    private function getStatus(): FriendshipStatus
+    {
+        return match ($this->option('status')) {
+            'pending' => FriendshipStatus::PENDING,
+            'blocked' => FriendshipStatus::BLOCKED,
+            default => FriendshipStatus::CONFIRMED,
+        };
     }
 }

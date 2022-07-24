@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Console\Data;
 
+use App\Enums\FriendshipStatus;
 use App\Models\User;
 use RuntimeException;
 use Tests\TestCase;
@@ -81,5 +82,60 @@ class FriendshipCommandTest extends TestCase
             ->doesntExpectOutput('Friendship created successfully.');
 
         $this->assertDatabaseCount($this->table, 0);
+    }
+
+    public function testCreateWithConfirmedStatusWhenNoOptionPassed(): void
+    {
+        $this->artisan("data:friendship {$this->user->id}")
+            ->expectsOutput('Friendship(s) created successfully.');
+
+        $this->assertDatabaseCount($this->table, 1)
+            ->assertDatabaseHas($this->table, [
+                'status' => FriendshipStatus::CONFIRMED,
+            ]);
+    }
+
+    public function testCreateWithConfirmedStatusWhenPassedConfirmedOption(): void
+    {
+        $this->artisan("data:friendship {$this->user->id} --status=confirmed")
+            ->expectsOutput('Friendship(s) created successfully.');
+
+        $this->assertDatabaseCount($this->table, 1)
+            ->assertDatabaseHas($this->table, [
+                'status' => FriendshipStatus::CONFIRMED,
+            ]);
+    }
+
+    public function testCreateWithConfirmedStatusWhenPassedPendingOption(): void
+    {
+        $this->artisan("data:friendship {$this->user->id} --status=pending")
+            ->expectsOutput('Friendship(s) created successfully.');
+
+        $this->assertDatabaseCount($this->table, 1)
+            ->assertDatabaseHas($this->table, [
+                'status' => FriendshipStatus::PENDING,
+            ]);
+    }
+
+    public function testCreateWithConfirmedStatusWhenPassedBlockedOption(): void
+    {
+        $this->artisan("data:friendship {$this->user->id} --status=blocked")
+            ->expectsOutput('Friendship(s) created successfully.');
+
+        $this->assertDatabaseCount($this->table, 1)
+            ->assertDatabaseHas($this->table, [
+                'status' => FriendshipStatus::BLOCKED,
+            ]);
+    }
+
+    public function testOptionCanBeAliased(): void
+    {
+        $this->artisan("data:friendship {$this->user->id} -S pending")
+            ->expectsOutput('Friendship(s) created successfully.');
+
+        $this->assertDatabaseCount($this->table, 1)
+            ->assertDatabaseHas($this->table, [
+                'status' => FriendshipStatus::PENDING,
+            ]);
     }
 }
