@@ -11,6 +11,7 @@ use App\Models\Poke;
 use App\Models\User;
 use App\Notifications\FriendshipRequestAccepted;
 use App\Notifications\FriendshipRequestSent;
+use App\Notifications\Poked;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class NotificationFactory extends Factory
@@ -18,6 +19,7 @@ class NotificationFactory extends Factory
     private array $types = [
         FriendshipRequestAccepted::class,
         FriendshipRequestSent::class,
+        Poked::class,
     ];
 
     public function definition(): array
@@ -101,6 +103,7 @@ class NotificationFactory extends Factory
             'user_id' => $userId,
             'friend_id' => $friendId,
             'latest_initiator_id' => $userId,
+            'count' => 1,
         ]);
     }
 }
