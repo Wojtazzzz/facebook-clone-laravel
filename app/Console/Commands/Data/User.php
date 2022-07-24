@@ -22,8 +22,7 @@ class User extends Command
             UserModel::where('email', $this->email)->exists(),
 
             function () {
-                $this->info('');
-                $this->error('User already exists');
+                $this->error('User already exists.');
             },
 
             function () {
@@ -33,8 +32,7 @@ class User extends Command
                     'email' => $this->email,
                 ]);
 
-                $this->info('');
-                $this->info('User created successfully');
+                $this->info('User created successfully.');
             });
     }
 }

@@ -24,7 +24,7 @@ class Clear extends Command
 
         $res->wait();
 
-        $this->info('Algolia\'s dataset is now empty');
+        $this->info('Algolia\'s dataset is now empty.');
 
         return;
     }
