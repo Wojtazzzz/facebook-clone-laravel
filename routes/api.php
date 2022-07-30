@@ -75,9 +75,15 @@ Route::middleware('auth:sanctum')
             ->prefix('/posts')
             ->group(function () {
                 Route::get('/', 'index')->name('index');
-                Route::get('/self', 'selfPosts')->name('self');
                 Route::post('/', 'store')->name('store');
                 Route::delete('/{post}', 'destroy')->name('destroy');
+            });
+
+        Route::controller(PostController::class)
+            ->name('users.posts.')
+            ->prefix('/users/{user}/posts')
+            ->group(function () {
+                Route::get('/', 'userPosts')->name('index');
             });
 
         Route::name('hidden.')

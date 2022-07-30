@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Posts\Hidden;
 
+use App\Enums\PostType;
 use App\Models\Comment;
 use App\Models\HiddenPost;
 use App\Models\Like;
@@ -140,6 +141,20 @@ class IndexTest extends TestCase
                     'name' => "$author->first_name $author->last_name",
                     'profile_image' => $author->profile_image,
                 ],
+            ]);
+    }
+
+    public function testPostsInResponseContainsProperlyPostType(): void
+    {
+        HiddenPost::factory()->createOne([
+            'user_id' => $this->user->id,
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->route);
+        $response->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonFragment([
+                'type' => PostType::HIDDEN,
             ]);
     }
 

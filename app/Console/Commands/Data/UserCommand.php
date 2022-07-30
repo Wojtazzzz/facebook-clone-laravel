@@ -6,7 +6,7 @@ namespace App\Console\Commands\Data;
 
 use App\Enums\FriendshipStatus;
 use App\Models\Friendship;
-use App\Models\User as UserModel;
+use App\Models\User;
 use Illuminate\Console\Command;
 
 class UserCommand extends Command
@@ -21,7 +21,7 @@ class UserCommand extends Command
 
     public function handle(): void
     {
-        $isExists = UserModel::query()
+        $isExists = User::query()
             ->where('id', $this->id)
             ->orWhere('email', $this->email)
             ->exists();
@@ -32,7 +32,7 @@ class UserCommand extends Command
             return;
         }
 
-        UserModel::factory()->createOne([
+        User::factory()->createOne([
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'email' => $this->email,

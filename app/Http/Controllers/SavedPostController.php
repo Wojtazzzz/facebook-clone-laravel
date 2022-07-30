@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Saved\Post\StoreRequest;
-use App\Http\Resources\PostResource;
+use App\Http\Resources\Posts\SavedPostResource;
 use App\Models\Post;
 use App\Models\SavedPost;
 use Illuminate\Database\Eloquent\Builder;
@@ -37,7 +37,7 @@ class SavedPostController extends Controller
                 'updated_at',
             ]);
 
-        return response()->json(PostResource::collection($posts));
+        return response()->json(SavedPostResource::collection($posts));
     }
 
     public function store(StoreRequest $request): JsonResponse

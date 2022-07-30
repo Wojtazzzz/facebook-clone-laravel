@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Posts;
 
+use App\Enums\FriendshipStatus;
+use App\Enums\PostType;
 use App\Models\Comment;
 use App\Models\Friendship;
 use App\Models\HiddenPost;
@@ -78,7 +80,7 @@ class IndexTest extends TestCase
     public function testCanReturnEmptyResponseWhenNoPosts(): void
     {
         $response = $this->actingAs($this->user)
-            ->getJson($this->route.'?page=2');
+            ->getJson($this->route);
 
         $response->assertOk()
             ->assertJsonCount(0);
@@ -195,6 +197,7 @@ class IndexTest extends TestCase
     {
         $friendship = Friendship::factory()->createOne([
             'user_id' => $this->user->id,
+            'status' => FriendshipStatus::CONFIRMED,
         ]);
 
         $post = Post::factory()->createOne([
@@ -209,5 +212,38 @@ class IndexTest extends TestCase
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonCount(1);
+    }
+
+    public function testOwnPostHasOwnType(): void
+    {
+        Post::factory()->createOne([
+            'author_id' => $this->user->id,
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->route);
+        $response->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonFragment([
+                'type' => PostType::OWN,
+            ]);
+    }
+
+    public function testFriendPostHasOwnType(): void
+    {
+        $friendship = Friendship::factory()->createOne([
+            'user_id' => $this->user->id,
+            'status' => FriendshipStatus::CONFIRMED,
+        ]);
+
+        Post::factory()->createOne([
+            'author_id' => $friendship->friend_id,
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->route);
+        $response->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonFragment([
+                'type' => PostType::FRIEND,
+            ]);
     }
 }

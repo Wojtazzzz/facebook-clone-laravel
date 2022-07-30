@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Hidden\Post\StoreRequest;
-use App\Http\Resources\PostResource;
+use App\Http\Resources\Posts\HiddenPostResource;
 use App\Models\HiddenPost;
 use App\Models\Post;
 use Illuminate\Database\Eloquent\Builder;
@@ -37,7 +37,7 @@ class HiddenPostController extends Controller
                 'updated_at',
             ]);
 
-        return response()->json(PostResource::collection($posts));
+        return response()->json(HiddenPostResource::collection($posts));
     }
 
     public function store(StoreRequest $request): JsonResponse
