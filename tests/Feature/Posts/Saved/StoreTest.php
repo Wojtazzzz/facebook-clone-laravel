@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Posts\Saved;
 
+use App\Models\HiddenPost;
 use App\Models\Post;
 use App\Models\SavedPost;
 use App\Models\User;
@@ -60,6 +61,39 @@ class StoreTest extends TestCase
         ]);
 
         $response->assertJsonValidationErrorFor('post_id');
+        $this->assertDatabaseCount($this->table, 1);
+    }
+
+    public function testCannotSaveSomebodysPostWhichIsHidden(): void
+    {
+        $post = Post::factory()->createOne();
+
+        HiddenPost::factory()->createOne([
+            'user_id' => $this->user->id,
+            'post_id' => $post->id,
+        ]);
+
+        $response = $this->actingAs($this->user)->postJson($this->route, [
+            'post_id' => $post->id,
+        ]);
+
+        $response->assertJsonValidationErrorFor('post_id');
+        $this->assertDatabaseCount($this->table, 0);
+    }
+
+    public function testCanSaveSomebodysPostWhichIsHiddenByAnotherUser(): void
+    {
+        $post = Post::factory()->createOne();
+
+        HiddenPost::factory()->createOne([
+            'post_id' => $post->id,
+        ]);
+
+        $response = $this->actingAs($this->user)->postJson($this->route, [
+            'post_id' => $post->id,
+        ]);
+
+        $response->assertCreated();
         $this->assertDatabaseCount($this->table, 1);
     }
 
