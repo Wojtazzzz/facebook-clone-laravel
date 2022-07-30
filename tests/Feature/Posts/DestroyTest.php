@@ -31,13 +31,6 @@ class DestroyTest extends TestCase
         $this->route = route('api.posts.destroy', $this->post);
     }
 
-    public function tearDown(): void
-    {
-        parent::tearDown();
-
-        Storage::fake('public');
-    }
-
     public function testCannotUseAsUnauthorized(): void
     {
         $response = $this->deleteJson($this->route);

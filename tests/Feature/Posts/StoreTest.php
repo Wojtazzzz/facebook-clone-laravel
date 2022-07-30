@@ -26,13 +26,6 @@ class StoreTest extends TestCase
         $this->route = route('api.posts.store');
     }
 
-    public function tearDown(): void
-    {
-        parent::tearDown();
-
-        Storage::fake('public');
-    }
-
     public function testCannotUseAsUnauthorized(): void
     {
         $response = $this->postJson($this->route);
