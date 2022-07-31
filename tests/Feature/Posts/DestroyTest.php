@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Posts;
 
+use App\Models\HiddenPost;
 use App\Models\Post;
+use App\Models\SavedPost;
 use App\Models\User;
 use Illuminate\Http\Testing\File;
 use Illuminate\Support\Facades\Storage;
@@ -17,6 +19,8 @@ class DestroyTest extends TestCase
 
     private string $route;
     private string $table = 'posts';
+    private string $hiddenPostsTable = 'hidden_posts';
+    private string $savedPostsTable = 'saved_posts';
 
     public function setUp(): void
     {
@@ -135,5 +139,41 @@ class DestroyTest extends TestCase
         $response->assertNoContent();
 
         $this->assertCount(1, Storage::disk('public')->allFiles('posts'));
+    }
+
+    public function testDeleteAllHideRelationsAfterDelete(): void
+    {
+        HiddenPost::factory(3)->create([
+            'post_id' => $this->post->id,
+        ]);
+
+        $this->assertDatabaseCount($this->table, 1);
+        $this->assertDatabaseCount($this->hiddenPostsTable, 3);
+
+        $response = $this->actingAs($this->user)
+            ->deleteJson(route('api.posts.destroy', $this->post));
+
+        $response->assertNoContent();
+
+        $this->assertDatabaseCount($this->table, 0);
+        $this->assertDatabaseCount($this->hiddenPostsTable, 0);
+    }
+
+    public function testDeleteAllSaveRelationsAfterDelete(): void
+    {
+        SavedPost::factory(4)->create([
+            'post_id' => $this->post->id,
+        ]);
+
+        $this->assertDatabaseCount($this->table, 1);
+        $this->assertDatabaseCount($this->savedPostsTable, 4);
+
+        $response = $this->actingAs($this->user)
+            ->deleteJson(route('api.posts.destroy', $this->post));
+
+        $response->assertNoContent();
+
+        $this->assertDatabaseCount($this->table, 0);
+        $this->assertDatabaseCount($this->savedPostsTable, 0);
     }
 }
