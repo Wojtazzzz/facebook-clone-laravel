@@ -14,12 +14,10 @@ return new class() extends Migration {
         Schema::create('likes', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class);
-            $table->foreignIdFor(Post::class);
+            $table->morphs('likeable');
             $table->timestamp('created_at')
                 ->useCurrent()
                 ->useCurrentOnUpdate();
-
-            $table->unique(['user_id', 'post_id']);
         });
     }
 

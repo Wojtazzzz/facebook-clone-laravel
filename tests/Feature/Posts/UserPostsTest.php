@@ -22,54 +22,41 @@ class UserPostsTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->createOne();
+        $this->route = route('api.users.posts.index', [
+            'user' => $this->user,
+        ]);
     }
 
     public function testCannotUseAsUnauthorized(): void
     {
-        $route = route('api.users.posts.index', [
-            'user' => $this->user,
-        ]);
-
-        $response = $this->getJson($route);
+        $response = $this->getJson($this->route);
         $response->assertUnauthorized();
     }
 
     public function testCanUseAsAuthorized(): void
     {
-        $route = route('api.users.posts.index', [
-            'user' => $this->user,
-        ]);
-
-        $response = $this->actingAs($this->user)->getJson($route);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk();
     }
 
     public function testCanReturnProperlyAmountOfPosts(): void
     {
-        $route = route('api.users.posts.index', [
-            'user' => $this->user,
-        ]);
-
         Post::factory(4)->create([
             'author_id' => $this->user->id,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($route);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonCount(4);
     }
 
     public function testCanReturnMaxTenPosts(): void
     {
-        $route = route('api.users.posts.index', [
-            'user' => $this->user,
-        ]);
-
         Post::factory(12)->create([
             'author_id' => $this->user->id,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($route);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonCount(10);
     }
@@ -92,21 +79,13 @@ class UserPostsTest extends TestCase
 
     public function testCanReturnEmptyResponseWhenNoPosts(): void
     {
-        $route = route('api.users.posts.index', [
-            'user' => $this->user,
-        ]);
-
-        $response = $this->actingAs($this->user)->getJson($route);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonCount(0);
     }
 
     public function testReturnProperlyLikesAndCommentsStats(): void
     {
-        $route = route('api.users.posts.index', [
-            'user' => $this->user,
-        ]);
-
         $post = Post::factory()->create([
             'author_id' => $this->user->id,
         ]);
@@ -117,10 +96,10 @@ class UserPostsTest extends TestCase
         ]);
 
         $likes = Like::factory(5)->create([
-            'post_id' => $post->id,
+            'likeable_id' => $post->id,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($route);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonFragment([
                 'likes_count' => $likes->count(),
@@ -130,20 +109,16 @@ class UserPostsTest extends TestCase
 
     public function testReturnProperlyDataWhenPostIsLikedByLoggedUser(): void
     {
-        $route = route('api.users.posts.index', [
-            'user' => $this->user,
-        ]);
-
         $post = Post::factory()->createOne([
             'author_id' => $this->user->id,
         ]);
 
         Like::factory()->createOne([
             'user_id' => $this->user->id,
-            'post_id' => $post->id,
+            'likeable_id' => $post->id,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($route);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonFragment([
                 'isLiked' => true,
@@ -164,7 +139,7 @@ class UserPostsTest extends TestCase
 
         Like::factory()->createOne([
             'user_id' => $friend->id,
-            'post_id' => $post->id,
+            'likeable_id' => $post->id,
         ]);
 
         $response = $this->actingAs($this->user)->getJson($route);
@@ -177,15 +152,11 @@ class UserPostsTest extends TestCase
 
     public function testReturnProperlyDataWhenPostIsNotLikedByLoggedUser(): void
     {
-        $route = route('api.users.posts.index', [
-            'user' => $this->user,
-        ]);
-
         Post::factory()->createOne([
             'author_id' => $this->user->id,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($route);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonFragment([
                 'isLiked' => false,
@@ -194,10 +165,6 @@ class UserPostsTest extends TestCase
 
     public function testResponseNotContainFriendsPosts(): void
     {
-        $route = route('api.users.posts.index', [
-            'user' => $this->user,
-        ]);
-
         Post::factory(1)
             ->friendsAuthors($this->user->id)
             ->create();
@@ -206,30 +173,22 @@ class UserPostsTest extends TestCase
             'author_id' => $this->user->id,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($route);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonCount(2);
     }
 
     public function testResponseNotContainForeingUsersPosts(): void
     {
-        $route = route('api.users.posts.index', [
-            'user' => $this->user,
-        ]);
-
         Post::factory(3)->create();
 
-        $response = $this->actingAs($this->user)->getJson($route);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonCount(0);
     }
 
     public function testCannotReturnHiddenPosts(): void
     {
-        $route = route('api.users.posts.index', [
-            'user' => $this->user,
-        ]);
-
         $post = Post::factory()->createOne([
             'author_id' => $this->user->id,
         ]);
@@ -239,7 +198,7 @@ class UserPostsTest extends TestCase
             'post_id' => $post->id,
         ]);
 
-        $response = $this->actingAs($this->user)->getJson($route);
+        $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonCount(0);
     }

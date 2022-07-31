@@ -6,12 +6,12 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\FriendshipController;
 use App\Http\Controllers\HiddenPostController;
-use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NextController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PokeController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\PostLikeController;
 use App\Http\Controllers\SavedPostController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Broadcast;
@@ -79,6 +79,14 @@ Route::middleware('auth:sanctum')
                 Route::delete('/{post}', 'destroy')->name('destroy');
             });
 
+        Route::controller(PostLikeController::class)
+            ->name('posts.likes.')
+            ->prefix('/posts/{post}/likes')
+            ->group(function () {
+                Route::post('/', 'store')->name('store');
+                Route::delete('/', 'destroy')->name('destroy');
+            });
+
         Route::controller(PostController::class)
             ->name('users.posts.')
             ->prefix('/users/{user}/posts')
@@ -110,14 +118,6 @@ Route::middleware('auth:sanctum')
                         Route::post('/', 'store')->name('store');
                         Route::delete('/{post}', 'destroy')->name('destroy');
                     });
-            });
-
-        Route::controller(LikeController::class)
-            ->name('likes.')
-            ->prefix('/likes')
-            ->group(function () {
-                Route::post('/', 'store')->name('store');
-                Route::delete('/{post}', 'destroy')->name('destroy');
             });
 
         Route::controller(CommentController::class)

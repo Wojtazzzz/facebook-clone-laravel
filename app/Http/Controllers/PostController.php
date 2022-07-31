@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -49,13 +48,13 @@ class PostController extends Controller
         return response()->json(CombinedPostResource::collection($posts));
     }
 
-    public function userPosts(User $user): JsonResponse
+    public function userPosts(Request $request, User $user): JsonResponse
     {
         $posts = Post::query()
             ->withCount([
                 'likes',
                 'comments' => fn (Builder $query) => $query->where('resource', 'POST'),
-                'likes as isLiked' => fn (Builder $query) => $query->where('user_id', Auth::user()->id),
+                'likes as isLiked' => fn (Builder $query) => $query->where('user_id', $request->user()->id),
             ])
             ->whereRelation('author', 'author_id', $user->id)
             ->notHidden()
@@ -85,7 +84,9 @@ class PostController extends Controller
         }
 
         $post = Post::create([
-            'content' => $request->validated('content', null),
+            // @todo remove after BE tests
+            // 'content' => $request->validated('content', null),
+            'content' => $request->validated('content'),
             'images' => $paths,
         ]);
 

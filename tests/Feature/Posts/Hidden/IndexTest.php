@@ -165,7 +165,7 @@ class IndexTest extends TestCase
         ]);
 
         Like::factory()->createOne([
-            'post_id' => $hiddenPost->post_id,
+            'likeable_id' => $hiddenPost->post_id,
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
@@ -204,7 +204,7 @@ class IndexTest extends TestCase
 
         Like::factory()->createOne([
             'user_id' => $this->user->id,
-            'post_id' => $hiddenPost->post_id,
+            'likeable_id' => $hiddenPost->post_id,
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->route);

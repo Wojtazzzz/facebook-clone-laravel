@@ -12,9 +12,12 @@ class LikeFactory extends Factory
 {
     public function definition(): array
     {
+        $post = Post::factory()->createOne();
+
         return [
             'user_id' => User::factory(),
-            'post_id' => Post::factory(),
+            'likeable_id' => $post->id,
+            'likeable_type' => Post::class,
         ];
     }
 }

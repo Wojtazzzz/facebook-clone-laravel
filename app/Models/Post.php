@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Auth;
 
 class Post extends Model
@@ -52,10 +53,10 @@ class Post extends Model
         return $this->belongsTo(User::class, 'author_id', 'id');
     }
 
-    public function likes(): HasMany
-    {
-        return $this->hasMany(Like::class, 'post_id', 'id');
-    }
+    // public function likes(): HasMany
+    // {
+    //     return $this->hasMany(Like::class, 'post_id', 'id');
+    // }
 
     public function comments(): HasMany
     {
@@ -72,5 +73,10 @@ class Post extends Model
     public function stored(): HasMany
     {
         return $this->hasMany(SavedPost::class, 'post_id', 'id');
+    }
+
+    public function likes(): MorphMany
+    {
+        return $this->morphMany(Like::class, 'likeable');
     }
 }

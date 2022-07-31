@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Auth;
 
 class Like extends Model
@@ -39,5 +40,10 @@ class Like extends Model
             ['user_id', Auth::user()->id],
             ['post_id', $post->id],
         ]);
+    }
+
+    public function likeable(): MorphTo
+    {
+        return $this->morphTo();
     }
 }

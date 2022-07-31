@@ -45,6 +45,11 @@ class User extends Authenticatable
         'marital_statsu' => MaritalStatus::class,
     ];
 
+    public function likes(): HasMany
+    {
+        return $this->hasMany(Like::class, 'user_id', 'id');
+    }
+
     public function pokedUsers(): HasMany
     {
         return $this->hasMany(Poke::class, 'initiator_id', 'id');
