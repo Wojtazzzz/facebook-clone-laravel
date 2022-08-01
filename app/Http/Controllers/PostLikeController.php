@@ -6,8 +6,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Like\DestroyRequest;
 use App\Http\Requests\Like\StoreRequest;
+use App\Http\Resources\LikeResource;
 use App\Models\Like;
 use App\Models\Post;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 class PostLikeController extends Controller
@@ -26,5 +28,10 @@ class PostLikeController extends Controller
             ->delete();
 
         return response()->noContent();
+    }
+
+    public function index(Post $post): JsonResponse
+    {
+        return response()->json(LikeResource::collection($post->likes));
     }
 }

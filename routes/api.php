@@ -83,6 +83,7 @@ Route::middleware('auth:sanctum')
             ->name('posts.likes.')
             ->prefix('/posts/{post}/likes')
             ->group(function () {
+                Route::get('/', 'index')->name('index');
                 Route::post('/', 'store')->name('store');
                 Route::delete('/', 'destroy')->name('destroy');
             });
