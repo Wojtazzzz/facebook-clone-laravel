@@ -31,6 +31,10 @@ class Like extends Model
                 return;
             }
 
+            if (isset($like->user_id)) {
+                return;
+            }
+
             $like->user_id = Auth::user()->id;
         });
     }
