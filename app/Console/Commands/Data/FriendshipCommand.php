@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Console\Commands\data;
+namespace App\Console\Commands\Data;
 
 use App\Enums\FriendshipStatus;
 use App\Models\Friendship;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Console\Commands\data;
+namespace App\Console\Commands\Data;
 
 use App\Models\User;
 use Illuminate\Console\Command;
