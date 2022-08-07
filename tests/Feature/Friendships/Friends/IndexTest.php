@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Friendship\Lists;
+namespace Tests\Feature\Friendships\Friends;
 
 use App\Enums\FriendshipStatus;
 use App\Models\Friendship;
 use App\Models\User;
 use Tests\TestCase;
 
-class FriendsTest extends TestCase
+class IndexTest extends TestCase
 {
     private User $user;
 
@@ -48,7 +48,7 @@ class FriendsTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk()->assertJsonCount(8);
+        $response->assertOk()->assertJsonCount(8, 'data');
     }
 
     public function testReturnFriendsWhenUserHasOnlyInvitedFriends(): void
@@ -59,7 +59,7 @@ class FriendsTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk()->assertJsonCount(9);
+        $response->assertOk()->assertJsonCount(9, 'data');
     }
 
     public function testReturnFriendsWhenUserHasOnlyFriendsWhichInvite(): void
@@ -70,7 +70,7 @@ class FriendsTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk()->assertJsonCount(4);
+        $response->assertOk()->assertJsonCount(4, 'data');
     }
 
     public function testMaxReturnTenFriends(): void
@@ -81,7 +81,7 @@ class FriendsTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk()->assertJsonCount(10);
+        $response->assertOk()->assertJsonCount(10, 'data');
     }
 
     public function testCanFetchMoreFriendsFromSecondPage(): void
@@ -94,6 +94,59 @@ class FriendsTest extends TestCase
         $response = $this->actingAs($this->user)
             ->getJson($this->route.'?page=2');
 
-        $response->assertOk()->assertJsonCount(6);
+        $response->assertOk()->assertJsonCount(6, 'data');
+    }
+
+    public function testFirstPageReturnProperlyPaginationDataWhenResourceHasOnlyFirstPage(): void
+    {
+        Friendship::factory(2)->create([
+            'friend_id' => $this->user->id,
+            'status' => FriendshipStatus::CONFIRMED,
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->route);
+
+        $response->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonFragment([
+                'current_page' => 1,
+                'next_page' => null,
+                'prev_page' => null,
+            ]);
+    }
+
+    public function testFirstPageReturnProperlyPaginationDataWhenResourceHasSecondPage(): void
+    {
+        Friendship::factory(12)->create([
+            'friend_id' => $this->user->id,
+            'status' => FriendshipStatus::CONFIRMED,
+        ]);
+        $response = $this->actingAs($this->user)->getJson($this->route);
+
+        $response->assertOk()
+            ->assertJsonCount(10, 'data')
+            ->assertJsonFragment([
+                'current_page' => 1,
+                'next_page' => 2,
+                'prev_page' => null,
+            ]);
+    }
+
+    public function testSecondPageReturnProperlyPaginationData(): void
+    {
+        Friendship::factory(12)->create([
+            'friend_id' => $this->user->id,
+            'status' => FriendshipStatus::CONFIRMED,
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->route.'?page=2');
+
+        $response->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonFragment([
+                'current_page' => 2,
+                'next_page' => null,
+                'prev_page' => 1,
+            ]);
     }
 }

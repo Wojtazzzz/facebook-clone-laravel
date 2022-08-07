@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Pokes;
+namespace Tests\Feature\Friendships\Invites;
 
-use App\Models\Poke;
+use App\Enums\FriendshipStatus;
+use App\Models\Friendship;
 use App\Models\User;
 use Tests\TestCase;
 
@@ -19,70 +20,70 @@ class IndexTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->route = route('api.pokes.index');
+        $this->route = route('api.invites.index');
     }
 
-    public function testCannotUseAsUnauthorized(): void
+    public function testCannotUseWhenNotAuthorized(): void
     {
         $response = $this->getJson($this->route);
         $response->assertUnauthorized();
     }
 
-    public function testCanUseAsAuthorized(): void
+    public function testCanUseWhenAuthorized(): void
     {
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk();
     }
 
-    public function testReturnMaxTenPokes(): void
+    public function testFetchReceivedInvites(): void
     {
-        Poke::factory(13)->create([
+        Friendship::factory(5)->create([
             'friend_id' => $this->user->id,
+            'status' => FriendshipStatus::PENDING,
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk()
-            ->assertJsonCount(10, 'data');
+        $response->assertOk()->assertJsonCount(5, 'data');
     }
 
-    public function testCanFetchMorePokesFromSecondPage(): void
+    public function testNotFetchSentInvites(): void
     {
-        Poke::factory(14)->create([
+        Friendship::factory()->create([
+            'user_id' => $this->user->id,
+            'status' => FriendshipStatus::PENDING,
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->route);
+        $response->assertOk()->assertJsonCount(0, 'data');
+    }
+
+    public function testReturnMaxTenInvites(): void
+    {
+        Friendship::factory(12)->create([
             'friend_id' => $this->user->id,
+            'status' => FriendshipStatus::PENDING,
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->route);
+        $response->assertOk()->assertJsonCount(10, 'data');
+    }
+
+    public function testCanFetchMoreInvitesFromSecondPage(): void
+    {
+        Friendship::factory(13)->create([
+            'friend_id' => $this->user->id,
+            'status' => FriendshipStatus::PENDING,
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->route.'?page=2');
-        $response->assertOk()
-            ->assertJsonCount(4, 'data');
-    }
-
-    public function testReturnOnlyPokesWhereLoggedUserIsPoked(): void
-    {
-        Poke::factory(3)->create([
-            'friend_id' => $this->user->id,
-        ]);
-
-        Poke::factory(3)->create([
-            'user_id' => $this->user->id,
-            'latest_initiator_id' => $this->user->id,
-        ]);
-
-        $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk()
-            ->assertJsonCount(3, 'data');
-    }
-
-    public function testReturnEmptyResponseWhenNoPokes(): void
-    {
-        $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk()
-            ->assertJsonCount(0, 'data');
+        $response->assertOk()->assertJsonCount(3, 'data');
     }
 
     public function testFirstPageReturnProperlyPaginationDataWhenResourceHasOnlyFirstPage(): void
     {
-        Poke::factory(2)->create([
+        Friendship::factory(2)->create([
             'friend_id' => $this->user->id,
+            'status' => FriendshipStatus::PENDING,
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
@@ -98,8 +99,9 @@ class IndexTest extends TestCase
 
     public function testFirstPageReturnProperlyPaginationDataWhenResourceHasSecondPage(): void
     {
-        Poke::factory(12)->create([
+        Friendship::factory(12)->create([
             'friend_id' => $this->user->id,
+            'status' => FriendshipStatus::PENDING,
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
@@ -115,8 +117,9 @@ class IndexTest extends TestCase
 
     public function testSecondPageReturnProperlyPaginationData(): void
     {
-        Poke::factory(12)->create([
+        Friendship::factory(12)->create([
             'friend_id' => $this->user->id,
+            'status' => FriendshipStatus::PENDING,
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->route.'?page=2');

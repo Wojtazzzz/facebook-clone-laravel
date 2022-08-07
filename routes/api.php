@@ -3,9 +3,10 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\FriendController;
-use App\Http\Controllers\FriendshipController;
 use App\Http\Controllers\HiddenPostController;
+use App\Http\Controllers\InviteController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NextController;
 use App\Http\Controllers\NotificationController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\PokeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\PostLikeController;
 use App\Http\Controllers\SavedPostController;
+use App\Http\Controllers\SuggestController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
@@ -30,19 +32,28 @@ Route::middleware('auth:sanctum')
             ->prefix('/friends')
             ->group(function () {
                 Route::get('/', 'index')->name('index');
-                Route::get('/suggests', 'suggests')->name('suggests');
-                Route::get('/invites', 'invites')->name('invites');
-                Route::get('/contacts', 'contacts')->name('contacts');
+                Route::delete('/{user}', 'destroy')->name('destroy');
             });
 
-        Route::controller(FriendshipController::class)
-            ->name('friendship.')
-            ->prefix('/friendship')
+        Route::controller(InviteController::class)
+            ->name('invites.')
+            ->prefix('/invites')
             ->group(function () {
-                Route::post('/invite', 'invite')->name('invite');
-                Route::post('/accept', 'accept')->name('accept');
-                Route::post('/reject', 'reject')->name('reject');
-                Route::post('/destroy', 'destroy')->name('destroy');
+                Route::get('/', 'index')->name('index');
+                Route::post('/', 'store')->name('store');
+                Route::put('/{user}', 'update')->name('update');
+            });
+
+        Route::name('suggests.')
+            ->prefix('/suggests')
+            ->group(function () {
+                Route::get('/', SuggestController::class)->name('index');
+            });
+
+        Route::name('contacts.')
+            ->prefix('/contacts')
+            ->group(function () {
+                Route::get('/', ContactController::class)->name('index');
             });
 
         Route::controller(PokeController::class)

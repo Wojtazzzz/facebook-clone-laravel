@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Console\Commands\Data;
 
 use App\Models\Comment;
+use App\Models\Friendship;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Console\Command;

@@ -19,7 +19,7 @@ class PokeController extends Controller
     {
         $userId = $request->user()->id;
 
-        $pokes = Poke::with('initiator')
+        $pagination = Poke::with('initiator')
             ->where(function ($query) use ($userId) {
                 $query->where('user_id', $userId)
                     ->orWhere('friend_id', $userId);
@@ -33,7 +33,12 @@ class PokeController extends Controller
                 'updated_at',
             ]);
 
-        return response()->json(PokeResource::collection($pokes));
+        return response()->json([
+            'data' => PokeResource::collection($pagination),
+            'current_page' => $pagination->currentPage(),
+            'next_page' => $pagination->hasMorePages() ? $pagination->currentPage() + 1 : null,
+            'prev_page' => $pagination->onFirstPage() ? null : $pagination->currentPage() - 1,
+        ]);
     }
 
     public function poke(PokeRequest $request): JsonResponse

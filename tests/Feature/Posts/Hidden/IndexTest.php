@@ -40,7 +40,7 @@ class IndexTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(0);
+            ->assertJsonCount(0, 'data');
     }
 
     public function testCannotReturnUnhiddenFriendPosts(): void
@@ -51,7 +51,7 @@ class IndexTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(0);
+            ->assertJsonCount(0, 'data');
     }
 
     public function testCannotReturnUnhiddenForeingUsersPosts(): void
@@ -60,7 +60,7 @@ class IndexTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(0);
+            ->assertJsonCount(0, 'data');
     }
 
     public function testReturnProperlyCountOfOwnHiddenPosts(): void
@@ -71,7 +71,7 @@ class IndexTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(5);
+            ->assertJsonCount(5, 'data');
     }
 
     public function testReturnMaxTenPosts(): void
@@ -82,7 +82,7 @@ class IndexTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(10);
+            ->assertJsonCount(10, 'data');
     }
 
     public function testCanFetchMorePostsFromSecondPage(): void
@@ -93,7 +93,7 @@ class IndexTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route.'?page=2');
         $response->assertOk()
-            ->assertJsonCount(2);
+            ->assertJsonCount(2, 'data');
     }
 
     public function testCannotReturnHiddenFriendsPosts(): void
@@ -109,7 +109,7 @@ class IndexTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(0);
+            ->assertJsonCount(0, 'data');
     }
 
     public function testCannotReturnHiddenForeingUsersPosts(): void
@@ -118,7 +118,7 @@ class IndexTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(0);
+            ->assertJsonCount(0, 'data');
     }
 
     public function testPostsInResponseContainsProperlyPostAuthor(): void
@@ -132,7 +132,7 @@ class IndexTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(1)
+            ->assertJsonCount(1, 'data')
             ->assertJsonFragment([
                 'author' => [
                     'background_image' => $author->background_image,
@@ -152,7 +152,7 @@ class IndexTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(1)
+            ->assertJsonCount(1, 'data')
             ->assertJsonFragment([
                 'type' => PostType::HIDDEN,
             ]);
@@ -170,7 +170,7 @@ class IndexTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(1)
+            ->assertJsonCount(1, 'data')
             ->assertJsonFragment([
                 'likes_count' => 1,
                 'comments_count' => 0,
@@ -189,7 +189,7 @@ class IndexTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(1)
+            ->assertJsonCount(1, 'data')
             ->assertJsonFragment([
                 'comments_count' => 1,
                 'likes_count' => 0,
@@ -209,9 +209,60 @@ class IndexTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(1)
+            ->assertJsonCount(1, 'data')
             ->assertJsonFragment([
                 'isLiked' => true,
+            ]);
+    }
+
+    public function testFirstPageReturnProperlyPaginationDataWhenResourceHasOnlyFirstPage(): void
+    {
+        HiddenPost::factory(2)->create([
+            'user_id' => $this->user->id,
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->route);
+
+        $response->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonFragment([
+                'current_page' => 1,
+                'next_page' => null,
+                'prev_page' => null,
+            ]);
+    }
+
+    public function testFirstPageReturnProperlyPaginationDataWhenResourceHasSecondPage(): void
+    {
+        HiddenPost::factory(12)->create([
+            'user_id' => $this->user->id,
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->route);
+
+        $response->assertOk()
+            ->assertJsonCount(10, 'data')
+            ->assertJsonFragment([
+                'current_page' => 1,
+                'next_page' => 2,
+                'prev_page' => null,
+            ]);
+    }
+
+    public function testSecondPageReturnProperlyPaginationData(): void
+    {
+        HiddenPost::factory(12)->create([
+            'user_id' => $this->user->id,
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->route.'?page=2');
+
+        $response->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonFragment([
+                'current_page' => 2,
+                'next_page' => null,
+                'prev_page' => 1,
             ]);
     }
 }

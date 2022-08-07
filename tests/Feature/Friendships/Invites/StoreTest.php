@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Friendship\Actions;
+namespace Tests\Feature\Friendships\Invites;
+
 
 use App\Enums\FriendshipStatus;
 use App\Models\Friendship;
@@ -10,7 +11,7 @@ use App\Models\User;
 use App\Notifications\FriendshipRequestSent;
 use Tests\TestCase;
 
-class InviteTest extends TestCase
+class StoreTest extends TestCase
 {
     private User $user;
 
@@ -23,7 +24,7 @@ class InviteTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->route = route('api.friendship.invite', $this->user->id);
+        $this->route = route('api.invites.store', $this->user->id);
     }
 
     public function testCannotUseWhenNotAuthorized(): void

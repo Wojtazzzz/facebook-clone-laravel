@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Friendship\Lists;
+namespace Tests\Feature\Friendships\Suggests;
 
 use App\Enums\FriendshipStatus;
 use App\Models\Friendship;
 use App\Models\User;
 use Tests\TestCase;
 
-class SuggestsTest extends TestCase
+class IndexTest extends TestCase
 {
     private User $user;
 
@@ -20,7 +20,7 @@ class SuggestsTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->route = route('api.friends.suggests');
+        $this->route = route('api.suggests.index');
     }
 
     public function testCannotUseWhenNotAuthorized(): void
@@ -38,7 +38,7 @@ class SuggestsTest extends TestCase
     public function testNotFetchLoggedUser(): void
     {
         $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk()->assertJsonCount(0);
+        $response->assertOk()->assertJsonCount(0, 'data');
     }
 
     public function testNotFetchUserFriends(): void
@@ -56,7 +56,7 @@ class SuggestsTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk()->assertJsonCount(1);
+        $response->assertOk()->assertJsonCount(1, 'data');
     }
 
     public function testNotFetchUsersWhereRequestIsPending(): void
@@ -74,7 +74,7 @@ class SuggestsTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk()->assertJsonCount(3);
+        $response->assertOk()->assertJsonCount(3, 'data');
     }
 
     public function testNotFetchBlockedUsers(): void
@@ -92,7 +92,7 @@ class SuggestsTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk()->assertJsonCount(8);
+        $response->assertOk()->assertJsonCount(8, 'data');
     }
 
     public function testReturnMaxTenSuggests(): void
@@ -100,7 +100,7 @@ class SuggestsTest extends TestCase
         User::factory(18)->create();
 
         $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk()->assertJsonCount(10);
+        $response->assertOk()->assertJsonCount(10, 'data');
     }
 
     public function testCanFetchMoreSuggestsFromSecondPage(): void
@@ -108,6 +108,51 @@ class SuggestsTest extends TestCase
         User::factory(17)->create();
 
         $response = $this->actingAs($this->user)->getJson($this->route.'?page=2');
-        $response->assertOk()->assertJsonCount(7);
+        $response->assertOk()->assertJsonCount(7, 'data');
+    }
+
+    public function testFirstPageReturnProperlyPaginationDataWhenResourceHasOnlyFirstPage(): void
+    {
+        User::factory(2)->create();
+
+        $response = $this->actingAs($this->user)->getJson($this->route);
+
+        $response->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonFragment([
+                'current_page' => 1,
+                'next_page' => null,
+                'prev_page' => null,
+            ]);
+    }
+
+    public function testFirstPageReturnProperlyPaginationDataWhenResourceHasSecondPage(): void
+    {
+        User::factory(12)->create();
+
+        $response = $this->actingAs($this->user)->getJson($this->route);
+
+        $response->assertOk()
+            ->assertJsonCount(10, 'data')
+            ->assertJsonFragment([
+                'current_page' => 1,
+                'next_page' => 2,
+                'prev_page' => null,
+            ]);
+    }
+
+    public function testSecondPageReturnProperlyPaginationData(): void
+    {
+        User::factory(12)->create();
+
+        $response = $this->actingAs($this->user)->getJson($this->route.'?page=2');
+
+        $response->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonFragment([
+                'current_page' => 2,
+                'next_page' => null,
+                'prev_page' => 1,
+            ]);
     }
 }

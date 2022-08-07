@@ -28,9 +28,14 @@ class CommentController extends Controller
             // $comments = $sale->comments;
         }
 
-        $comments = $comments->sortByDesc('created_at')->paginate(10);
+        $pagination = $comments->sortByDesc('created_at')->paginate(10);
 
-        return response()->json(CommentResource::collection($comments));
+        return response()->json([
+            'data' => CommentResource::collection($pagination),
+            'current_page' => $pagination->currentPage(),
+            'next_page' => $pagination->hasMorePages() ? $pagination->currentPage() + 1 : null,
+            'prev_page' => $pagination->onFirstPage() ? null : $pagination->currentPage() - 1,
+        ]);
     }
 
     public function store(StoreRequest $request, int $resourceId): JsonResponse
@@ -41,8 +46,11 @@ class CommentController extends Controller
             'sales' => 'SALE',
         };
 
+        Post::findOrFail($resourceId);
+
         $comment = Comment::create($request->validated() + [
             'resource' => $resource,
+            'resource_id' => $resourceId,
         ]);
 
         return response()->json(new CommentResource($comment), 201);

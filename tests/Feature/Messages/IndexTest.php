@@ -44,7 +44,7 @@ class IndexTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk()->assertJsonCount(15);
+        $response->assertOk()->assertJsonCount(15, 'data');
     }
 
     public function testCanReturnOnlyReceivedMessages(): void
@@ -55,7 +55,7 @@ class IndexTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk()->assertJsonCount(15);
+        $response->assertOk()->assertJsonCount(15, 'data');
     }
 
     public function testCanReturnSentAndReceivedMessages(): void
@@ -77,7 +77,7 @@ class IndexTest extends TestCase
         $this->generateMessages();
 
         $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk()->assertJsonCount(15);
+        $response->assertOk()->assertJsonCount(15, 'data');
     }
 
     public function testCanFetchMoreMessagesOnSecondPage(): void
@@ -85,7 +85,49 @@ class IndexTest extends TestCase
         $this->generateMessages();
 
         $response = $this->actingAs($this->user)->getJson($this->route.'?page=2');
-        $response->assertOk()->assertJsonCount(15);
+        $response->assertOk()->assertJsonCount(15, 'data');
+    }
+
+    public function testFirstPageReturnProperlyPaginationDataWhenResourceHasOnlyFirstPage(): void
+    {
+        $this->generateMessages(2);
+
+        $response = $this->actingAs($this->user)->getJson($this->route);
+
+        $response->assertOk()
+            ->assertJsonFragment([
+                'current_page' => 1,
+                'next_page' => null,
+                'prev_page' => null,
+            ]);
+    }
+
+    public function testFirstPageReturnProperlyPaginationDataWhenResourceHasSecondPage(): void
+    {
+        $this->generateMessages();
+
+        $response = $this->actingAs($this->user)->getJson($this->route);
+
+        $response->assertOk()
+            ->assertJsonFragment([
+                'current_page' => 1,
+                'next_page' => 2,
+                'prev_page' => null,
+            ]);
+    }
+
+    public function testSecondPageReturnProperlyPaginationData(): void
+    {
+        $this->generateMessages();
+
+        $response = $this->actingAs($this->user)->getJson($this->route.'?page=2');
+
+        $response->assertOk()
+            ->assertJsonFragment([
+                'current_page' => 2,
+                'next_page' => null,
+                'prev_page' => 1,
+            ]);
     }
 
     private function generateMessages(int $perUser = 15): void

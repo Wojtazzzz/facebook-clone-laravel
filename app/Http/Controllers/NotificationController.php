@@ -13,9 +13,14 @@ class NotificationController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $notifications = $request->user()->notifications->paginate(10);
+        $pagination = $request->user()->notifications->paginate(15);
 
-        return response()->json(NotificationResource::collection($notifications));
+        return response()->json([
+            'data' => NotificationResource::collection($pagination),
+            'current_page' => $pagination->currentPage(),
+            'next_page' => $pagination->hasMorePages() ? $pagination->currentPage() + 1 : null,
+            'prev_page' => $pagination->onFirstPage() ? null : $pagination->currentPage() - 1,
+        ]);
     }
 
     public function markAsRead(Request $request): Response

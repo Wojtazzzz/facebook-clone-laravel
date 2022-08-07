@@ -47,7 +47,7 @@ class UserPostsTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(4);
+            ->assertJsonCount(4, 'data');
     }
 
     public function testCanReturnMaxTenPosts(): void
@@ -58,7 +58,7 @@ class UserPostsTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(10);
+            ->assertJsonCount(10, 'data');
     }
 
     public function testCanFetchMorePostsOnSecondPage(): void
@@ -74,14 +74,14 @@ class UserPostsTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($route);
         $response->assertOk()
-            ->assertJsonCount(3);
+            ->assertJsonCount(3, 'data');
     }
 
     public function testCanReturnEmptyResponseWhenNoPosts(): void
     {
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(0);
+            ->assertJsonCount(0, 'data');
     }
 
     public function testReturnProperlyLikesAndCommentsStats(): void
@@ -175,7 +175,7 @@ class UserPostsTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(2);
+            ->assertJsonCount(2, 'data');
     }
 
     public function testResponseNotContainForeingUsersPosts(): void
@@ -184,7 +184,7 @@ class UserPostsTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(0);
+            ->assertJsonCount(0, 'data');
     }
 
     public function testCannotReturnHiddenPosts(): void
@@ -200,6 +200,6 @@ class UserPostsTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(0);
+            ->assertJsonCount(0, 'data');
     }
 }

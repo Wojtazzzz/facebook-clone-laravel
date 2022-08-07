@@ -18,7 +18,7 @@ class MessageController extends Controller
     // $user === $friend
     public function index(Request $request, User $user): JsonResponse
     {
-        $messages = Message::query()
+        $pagination = Message::query()
             ->conversation($request->user()->id, $user->id)
             ->paginate(15, [
                 'id',
@@ -27,7 +27,12 @@ class MessageController extends Controller
                 'created_at',
             ]);
 
-        return response()->json(MessageResource::collection($messages));
+        return response()->json([
+            'data' => MessageResource::collection($pagination),
+            'current_page' => $pagination->currentPage(),
+            'next_page' => $pagination->hasMorePages() ? $pagination->currentPage() + 1 : null,
+            'prev_page' => $pagination->onFirstPage() ? null : $pagination->currentPage() - 1,
+        ]);
     }
 
     public function store(StoreRequest $request): JsonResponse
@@ -41,7 +46,7 @@ class MessageController extends Controller
     {
         $user = $request->user();
 
-        $friends = User::query()
+        $pagination = User::query()
             ->whereNot('id', $user->id)
             ->where(fn (Builder $query) => $query
                 ->whereHas('invitedByFriends', fn (Builder $query) => $query
@@ -53,8 +58,13 @@ class MessageController extends Controller
                     ->orWhere('friend_id', $user->id)
                 )
             )
-            ->paginate(10);
+            ->paginate(15);
 
-        return response()->json(UserResource::collection($friends));
+        return response()->json([
+            'data' => UserResource::collection($pagination),
+            'current_page' => $pagination->currentPage(),
+            'next_page' => $pagination->hasMorePages() ? $pagination->currentPage() + 1 : null,
+            'prev_page' => $pagination->onFirstPage() ? null : $pagination->currentPage() - 1,
+        ]);
     }
 }

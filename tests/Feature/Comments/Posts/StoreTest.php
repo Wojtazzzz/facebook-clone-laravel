@@ -6,6 +6,8 @@ namespace Tests\Feature\Comments\Posts;
 
 use App\Models\Post;
 use App\Models\User;
+use Illuminate\Routing\Exceptions\UrlGenerationException;
+use Spatie\FlareClient\Http\Exceptions\NotFound;
 use Tests\TestCase;
 
 class StoreTest extends TestCase
@@ -36,7 +38,6 @@ class StoreTest extends TestCase
         $response = $this->actingAs($this->user)
             ->postJson($this->route, [
                 'content' => 'Simple comment',
-                'resource_id' => $this->post->id,
             ]);
 
         $response->assertCreated();
@@ -49,25 +50,20 @@ class StoreTest extends TestCase
         $response = $this->actingAs($this->user)
             ->postJson($this->route, [
                 'content' => 'Simple comment',
-                'resource_id' => $this->post->id,
             ]);
 
         $response->assertCreated();
 
         $this->assertDatabaseCount($this->table, 1)
             ->assertDatabaseHas($this->table, [
-                'content' => 'Simple comment',
-                'resource_id' => $this->post->id,
-                'author_id' => $this->user->id,
+                'content' => 'Simple comment'
             ]);
     }
 
     public function testCannotCreateCommentWithoutContent(): void
     {
         $response = $this->actingAs($this->user)
-            ->postJson($this->route, [
-                'resource_id' => $this->post->id,
-            ]);
+            ->postJson($this->route);
 
         $response->assertJsonValidationErrorFor('content');
 
@@ -79,7 +75,6 @@ class StoreTest extends TestCase
         $response = $this->actingAs($this->user)
             ->postJson($this->route, [
                 'content' => 'S',
-                'resource_id' => $this->post->id,
             ]);
 
         $response->assertJsonValidationErrorFor('content');
@@ -92,11 +87,9 @@ class StoreTest extends TestCase
         $response = $this->actingAs($this->user)
             ->postJson($this->route, [
                 'content' => '',
-                'resource_id' => '',
             ]);
 
-        $response->assertJsonValidationErrorFor('content')
-            ->assertJsonValidationErrorFor('resource_id');
+        $response->assertJsonValidationErrorFor('content');
     }
 
     public function testCannotCreateCommentWithToLongContent(): void
@@ -104,7 +97,6 @@ class StoreTest extends TestCase
         $response = $this->actingAs($this->user)
             ->postJson($this->route, [
                 'content' => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-                'resource_id' => $this->post->id,
             ]);
 
         $response->assertJsonValidationErrorFor('content');
@@ -114,25 +106,28 @@ class StoreTest extends TestCase
 
     public function testCannotCreateCommentWithoutResourceId(): void
     {
+        $this->expectException(UrlGenerationException::class);
+
+        $route = route('api.comments.posts.store');
+
         $response = $this->actingAs($this->user)
-            ->postJson($this->route, [
+            ->postJson($route, [
                 'content' => 'Simple comment',
             ]);
-
-        $response->assertJsonValidationErrorFor('resource_id');
 
         $this->assertDatabaseCount($this->table, 0);
     }
 
     public function testCannotCreateCommentForPostWhichNotExists(): void
     {
+        $route = route('api.comments.posts.store', ['resourceId' => 99999]);
+
         $response = $this->actingAs($this->user)
-            ->postJson($this->route, [
-                'content' => 'Simple comment',
-                'resource_id' => 99999,
+            ->postJson($route, [
+                'content' => 'Simple comment'
             ]);
 
-        $response->assertJsonValidationErrorFor('resource_id');
+        $response->assertNotFound();
 
         $this->assertDatabaseCount($this->table, 0);
     }
@@ -141,7 +136,6 @@ class StoreTest extends TestCase
     {
         $response = $this->actingAs($this->user)->postJson($this->route, [
             'content' => 'Simple comment',
-            'resource_id' => $this->post->id,
         ]);
 
         $response->assertCreated()

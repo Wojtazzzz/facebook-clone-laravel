@@ -56,7 +56,7 @@ class IndexTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(2);
+            ->assertJsonCount(2, 'data');
     }
 
     public function testReturnMaxTenPosts(): void
@@ -67,7 +67,7 @@ class IndexTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(10);
+            ->assertJsonCount(10, 'data');
     }
 
     public function testCanFetchMorePostsFromSecondPage(): void
@@ -78,7 +78,7 @@ class IndexTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route.'?page=2');
         $response->assertOk()
-            ->assertJsonCount(2);
+            ->assertJsonCount(2, 'data');
     }
 
     public function testPostsInResponseContainsProperlyPostAuthor(): void
@@ -92,7 +92,7 @@ class IndexTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(1)
+            ->assertJsonCount(1, 'data')
             ->assertJsonFragment([
                 'author' => [
                     'background_image' => $author->background_image,
@@ -112,7 +112,7 @@ class IndexTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(1)
+            ->assertJsonCount(1, 'data')
             ->assertJsonFragment([
                 'type' => PostType::SAVED,
             ]);
@@ -130,7 +130,7 @@ class IndexTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(1)
+            ->assertJsonCount(1, 'data')
             ->assertJsonFragment([
                 'likes_count' => 1,
                 'comments_count' => 0,
@@ -149,7 +149,7 @@ class IndexTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(1)
+            ->assertJsonCount(1, 'data')
             ->assertJsonFragment([
                 'comments_count' => 1,
                 'likes_count' => 0,
@@ -169,9 +169,60 @@ class IndexTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
-            ->assertJsonCount(1)
+            ->assertJsonCount(1, 'data')
             ->assertJsonFragment([
                 'isLiked' => true,
+            ]);
+    }
+
+    public function testFirstPageReturnProperlyPaginationDataWhenResourceHasOnlyFirstPage(): void
+    {
+        SavedPost::factory(2)->create([
+            'user_id' => $this->user->id,
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->route);
+
+        $response->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonFragment([
+                'current_page' => 1,
+                'next_page' => null,
+                'prev_page' => null,
+            ]);
+    }
+
+    public function testFirstPageReturnProperlyPaginationDataWhenResourceHasSecondPage(): void
+    {
+        SavedPost::factory(12)->create([
+            'user_id' => $this->user->id,
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->route);
+
+        $response->assertOk()
+            ->assertJsonCount(10, 'data')
+            ->assertJsonFragment([
+                'current_page' => 1,
+                'next_page' => 2,
+                'prev_page' => null,
+            ]);
+    }
+
+    public function testSecondPageReturnProperlyPaginationData(): void
+    {
+        SavedPost::factory(12)->create([
+            'user_id' => $this->user->id,
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->route.'?page=2');
+
+        $response->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonFragment([
+                'current_page' => 2,
+                'next_page' => null,
+                'prev_page' => 1,
             ]);
     }
 }

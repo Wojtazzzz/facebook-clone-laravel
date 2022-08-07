@@ -45,7 +45,7 @@ class IndexTest extends TestCase
             ->getJson($this->route);
 
         $response->assertOk()
-            ->assertJsonCount(0);
+            ->assertJsonCount(0, 'data');
     }
 
     public function testReturnCommentsProperly(): void
@@ -56,7 +56,7 @@ class IndexTest extends TestCase
             ->getJson($this->route);
 
         $response->assertOk()
-            ->assertJsonCount(1);
+            ->assertJsonCount(1, 'data');
     }
 
     public function testReturnCommentsWhichAuthorsIsLoggedUser(): void
@@ -67,7 +67,7 @@ class IndexTest extends TestCase
             ->getJson($this->route);
 
         $response->assertOk()
-            ->assertJsonCount(5);
+            ->assertJsonCount(5, 'data');
     }
 
     public function testReturnCommentsWhichAuthorsIsFriend(): void
@@ -80,7 +80,7 @@ class IndexTest extends TestCase
             ->getJson($this->route);
 
         $response->assertOk()
-            ->assertJsonCount(8);
+            ->assertJsonCount(8, 'data');
     }
 
     public function testCannotReturnCommentsFromAnotherPost(): void
@@ -93,7 +93,7 @@ class IndexTest extends TestCase
             ->getJson($this->route);
 
         $response->assertOk()
-            ->assertJsonCount(0);
+            ->assertJsonCount(0, 'data');
     }
 
     public function testReturnMaxTenComments(): void
@@ -104,7 +104,7 @@ class IndexTest extends TestCase
             ->getJson($this->route);
 
         $response->assertOk()
-            ->assertJsonCount(10);
+            ->assertJsonCount(10, 'data');
     }
 
     public function testCanFetchMoreCommentsFromSecondPage(): void
@@ -113,7 +113,7 @@ class IndexTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson($this->route.'?page=2');
         $response->assertOk()
-            ->assertJsonCount(4);
+            ->assertJsonCount(4, 'data');
     }
 
     public function testCannotReturnCommentsFromPostWhichNotExists(): void
@@ -124,6 +124,51 @@ class IndexTest extends TestCase
             ->getJson(route('api.comments.posts.index', 999999));
 
         $response->assertNotFound();
+    }
+
+    public function testFirstPageReturnProperlyPaginationDataWhenResourceHasOnlyFirstPage(): void
+    {
+        $this->generateComments(2);
+
+        $response = $this->actingAs($this->user)->getJson($this->route);
+
+        $response->assertOk()
+            ->assertJsonCount(2, 'data', 'data')
+            ->assertJsonFragment([
+                'current_page' => 1,
+                'next_page' => null,
+                'prev_page' => null,
+            ]);
+    }
+
+    public function testFirstPageReturnProperlyPaginationDataWhenResourceHasSecondPage(): void
+    {
+        $this->generateComments(12);
+
+        $response = $this->actingAs($this->user)->getJson($this->route);
+
+        $response->assertOk()
+            ->assertJsonCount(10, 'data', 'data')
+            ->assertJsonFragment([
+                'current_page' => 1,
+                'next_page' => 2,
+                'prev_page' => null,
+            ]);
+    }
+
+    public function testSecondPageReturnProperlyPaginationData(): void
+    {
+        $this->generateComments(12);
+
+        $response = $this->actingAs($this->user)->getJson($this->route.'?page=2');
+
+        $response->assertOk()
+            ->assertJsonCount(2, 'data', 'data')
+            ->assertJsonFragment([
+                'current_page' => 2,
+                'next_page' => null,
+                'prev_page' => 1,
+            ]);
     }
 
     private function generateComments(int $count, int $authorId = null, int $postId = null): void

@@ -26,7 +26,7 @@ class PostController extends Controller
             ...$user->invitedByFriends->pluck('id'),
         ]);
 
-        $posts = Post::query()
+        $pagination = Post::query()
             ->with('author:id,first_name,last_name,profile_image,background_image')
             ->withCount([
                 'likes',
@@ -45,12 +45,19 @@ class PostController extends Controller
                 'updated_at',
             ]);
 
-        return response()->json(CombinedPostResource::collection($posts));
+            return response()->json([
+                'data' => CombinedPostResource::collection($pagination),
+                'current_page' => $pagination->currentPage(),
+                'next_page' => $pagination->hasMorePages() ? $pagination->currentPage() + 1 : null,
+                'prev_page' => $pagination->onFirstPage() ? null : $pagination->currentPage() - 1,
+            ]);
     }
+
+
 
     public function userPosts(Request $request, User $user): JsonResponse
     {
-        $posts = Post::query()
+        $pagination = Post::query()
             ->withCount([
                 'likes',
                 'comments' => fn (Builder $query) => $query->where('resource', 'POST'),
@@ -68,7 +75,12 @@ class PostController extends Controller
                 'updated_at',
             ]);
 
-        return response()->json(CombinedPostResource::collection($posts));
+        return response()->json([
+            'data' => CombinedPostResource::collection($pagination),
+            'current_page' => $pagination->currentPage(),
+            'next_page' => $pagination->hasMorePages() ? $pagination->currentPage() + 1 : null,
+            'prev_page' => $pagination->onFirstPage() ? null : $pagination->currentPage() - 1,
+        ]);
     }
 
     public function store(StoreRequest $request): JsonResponse
