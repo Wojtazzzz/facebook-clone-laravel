@@ -16,9 +16,9 @@ class PostResource extends JsonResource
             'author' => new UserResource($this->author),
             'likes_count' => $this->likes_count,
             'comments_count' => $this->comments_count,
-            'isLiked' => (bool) $this->isLiked,
-            'created_at' => $this->created_at->format('Y-m-d H:i'),
-            'updated_at' => $this->updated_at->format('Y-m-d H:i'),
+            'is_liked' => (bool) $this->isLiked,
+            'is_edited' => $this->when($this->created_at->notEqualTo($this->updated_at), true, false),
+            'created_at' => $this->created_at->diffAbsolute(),
         ];
     }
 }

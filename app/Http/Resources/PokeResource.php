@@ -13,7 +13,7 @@ class PokeResource extends JsonResource
             'data' => [
                 'id' => $this->id,
                 'count' => $this->count,
-                'updated_at' => $this->updated_at->format('Y-m-d H:i'),
+                'updated_at' => $this->updated_at->diffAbsolute(),
             ],
         ];
     }
