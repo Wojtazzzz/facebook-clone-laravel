@@ -15,8 +15,8 @@ class CommentResource extends JsonResource
             'content' => $this->content,
             'author' => new UserResource($this->author),
             'resource_id' => $this->resource_id,
-            'created_at' => $this->created_at->format('Y-m-d H:m'),
-            'updated_at' => $this->updated_at->format('Y-m-d H:m'),
+            'is_edited' => $this->when($this->created_at->notEqualTo($this->updated_at), true, false),
+            'created_at' => $this->created_at->diffAbsolute(),
         ];
     }
 }

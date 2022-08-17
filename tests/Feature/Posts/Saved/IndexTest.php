@@ -171,7 +171,7 @@ class IndexTest extends TestCase
         $response->assertOk()
             ->assertJsonCount(1, 'data')
             ->assertJsonFragment([
-                'isLiked' => true,
+                'is_liked' => true,
             ]);
     }
 

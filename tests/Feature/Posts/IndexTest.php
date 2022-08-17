@@ -12,6 +12,7 @@ use App\Models\HiddenPost;
 use App\Models\Like;
 use App\Models\Post;
 use App\Models\User;
+use Carbon\Carbon;
 use Tests\TestCase;
 
 class IndexTest extends TestCase
@@ -123,7 +124,7 @@ class IndexTest extends TestCase
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonFragment([
-                'isLiked' => true,
+                'is_liked' => true,
             ]);
     }
 
@@ -136,7 +137,7 @@ class IndexTest extends TestCase
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonFragment([
-                'isLiked' => false,
+                'is_liked' => false,
             ]);
     }
 
@@ -244,6 +245,22 @@ class IndexTest extends TestCase
             ->assertJsonCount(1, 'data')
             ->assertJsonFragment([
                 'type' => PostType::FRIEND,
+            ]);
+    }
+
+    public function testEditedPostHasProperlyIsEditedValue(): void
+    {
+        Post::factory()->createOne([
+            'author_id' => $this->user->id,
+            'created_at' => Carbon::yesterday(),
+            'updated_at' => now(),
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->route);
+        $response->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonFragment([
+                'is_edited' => true,
             ]);
     }
 

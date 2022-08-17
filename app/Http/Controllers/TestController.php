@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\WithFaker;
 
 class TestController extends Controller
@@ -18,6 +18,10 @@ class TestController extends Controller
 
     public function __invoke()
     {
-        $post = Post::factory()->createOne();
+        $from = Carbon::create('2022-08-18');
+        $to = Carbon::now();
+
+
+        return $from->diffWithConfig();
     }
 }

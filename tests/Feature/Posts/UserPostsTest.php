@@ -107,7 +107,7 @@ class UserPostsTest extends TestCase
             ]);
     }
 
-    public function testReturnProperlyDataWhenPostIsLikedByLoggedUser(): void
+    public function testReturnProperlyDataWhenPostIs_likedByLoggedUser(): void
     {
         $post = Post::factory()->createOne([
             'author_id' => $this->user->id,
@@ -121,11 +121,11 @@ class UserPostsTest extends TestCase
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonFragment([
-                'isLiked' => true,
+                'is_liked' => true,
             ]);
     }
 
-    public function testReturnProperlyDataWhenPostIsLikedByProfileUser(): void
+    public function testReturnProperlyDataWhenPostIs_likedByProfileUser(): void
     {
         $friend = User::factory()->createOne();
 
@@ -145,7 +145,7 @@ class UserPostsTest extends TestCase
         $response = $this->actingAs($this->user)->getJson($route);
         $response->assertOk()
             ->assertJsonFragment([
-                'isLiked' => false,
+                'is_liked' => false,
                 'likes_count' => 1,
             ]);
     }
@@ -159,7 +159,7 @@ class UserPostsTest extends TestCase
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonFragment([
-                'isLiked' => false,
+                'is_liked' => false,
             ]);
     }
 
