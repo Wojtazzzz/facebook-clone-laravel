@@ -13,7 +13,7 @@ class MessageResource extends JsonResource
             'id' => $this->id,
             'text' => $this->text,
             'isReceived' => $this->sender_id !== Auth::user()->id,
-            'created_at' => $this->created_at->isoFormat('MMMM Do YYYY, h:mm:ss a'),
+            'created_at' => $this->created_at->dependentFormat(),
         ];
     }
 }
