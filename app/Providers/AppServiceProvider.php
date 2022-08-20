@@ -50,6 +50,20 @@ class AppServiceProvider extends ServiceProvider
             ]);
         });
 
+        Carbon::macro('dependentFormat', function () {
+            $weekAgo = now()->subWeek();
+            $dayAgo = now()->subDay();
+
+            $format = 'h:i';
+
+            if ($this->isBefore($weekAgo)) {
+                $format = 'j F Y \a\t h:i';
+            } elseif ($this->isBefore($dayAgo)) {
+                $format = 'l h:i';
+            }
+
+            return $this->format($format);
+        });
 
         JsonResource::withoutWrapping();
     }

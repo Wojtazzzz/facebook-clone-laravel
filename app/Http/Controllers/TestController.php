@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\WithFaker;
 
 class TestController extends Controller
@@ -18,10 +17,18 @@ class TestController extends Controller
 
     public function __invoke()
     {
-        $from = Carbon::create('2022-08-18');
-        $to = Carbon::now();
+        $date = now(); // it can be any date
+        $weekAgo = now()->subWeek();
+        $dayAgo = now()->subDay();
 
+        $format = 'h:i';
 
-        return $from->diffWithConfig();
+        if ($date->isBefore($weekAgo)) {
+            $format = 'j F Y \a\t h:i';
+        } elseif ($date->isBefore($dayAgo)) {
+            $format = 'l h:i';
+        }
+
+        return $date->dependentFormat();
     }
 }

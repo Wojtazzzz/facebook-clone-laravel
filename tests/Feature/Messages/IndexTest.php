@@ -130,6 +130,63 @@ class IndexTest extends TestCase
             ]);
     }
 
+    public function testMessageCreatedEarlierThanWeekAgoHasOwnFormat(): void
+    {
+        $date = now()->subWeek();
+
+        $message = Message::factory()->createOne([
+            'sender_id' => $this->user->id,
+            'receiver_id' => $this->friend->id,
+            'created_at' => $date,
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->route);
+        $response->assertOk();
+
+        $data = $response->json('data');
+        $message = $data[0];
+
+        $this->assertEquals($date->format('j F Y \a\t h:i'), $message['created_at']);
+    }
+
+    public function testMessageCreatedEarlierThanDayAgoHasOwnFormat(): void
+    {
+        $date = now()->subDay();
+
+        Message::factory()->createOne([
+            'sender_id' => $this->user->id,
+            'receiver_id' => $this->friend->id,
+            'created_at' => $date->subDay(),
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->route);
+        $response->assertOk();
+
+        $data = $response->json('data');
+        $message = $data[0];
+
+        $this->assertEquals($date->format('l h:i'), $message['created_at']);
+    }
+
+    public function testMessageCreatedLaterThanADayAgoHasOwnFormat(): void
+    {
+        $date = now();
+
+        Message::factory()->createOne([
+            'sender_id' => $this->user->id,
+            'receiver_id' => $this->friend->id,
+            'created_at' => $date,
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->route);
+        $response->assertOk();
+
+        $data = $response->json('data');
+        $message = $data[0];
+
+        $this->assertEquals($date->format('h:i'), $message['created_at']);
+    }
+
     private function generateMessages(int $perUser = 15): void
     {
         Message::factory($perUser)->create([
