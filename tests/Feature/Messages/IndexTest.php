@@ -65,10 +65,10 @@ class IndexTest extends TestCase
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonFragment([
-                'isReceived' => true,
+                'is_received' => true,
             ])
             ->assertJsonFragment([
-                'isReceived' => false,
+                'is_received' => false,
             ]);
     }
 

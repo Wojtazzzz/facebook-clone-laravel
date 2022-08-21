@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Enums\MessageStatus;
 use App\Http\Requests\Message\StoreRequest;
 use App\Http\Resources\MessageResource;
 use App\Http\Resources\UserResource;
@@ -20,10 +21,13 @@ class MessageController extends Controller
     {
         $pagination = Message::query()
             ->conversation($request->user()->id, $user->id)
+            ->latest()
             ->paginate(15, [
                 'id',
                 'text',
                 'sender_id',
+                'status',
+                'read_at',
                 'created_at',
             ]);
 
@@ -37,7 +41,9 @@ class MessageController extends Controller
 
     public function store(StoreRequest $request): JsonResponse
     {
-        $message = Message::create($request->validated());
+        $message = Message::create($request->validated() + [
+            'status' => MessageStatus::DELIVERED,
+        ]);
 
         return response()->json(new MessageResource($message), 201);
     }

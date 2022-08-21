@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\MessageStatus;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -15,6 +16,12 @@ return new class() extends Migration {
             $table->text('text');
             $table->foreignIdFor(User::class, 'sender_id');
             $table->foreignIdFor(User::class, 'receiver_id');
+            $table->enum('status', [
+                MessageStatus::SENDING->value,
+                MessageStatus::DELIVERED->value,
+                MessageStatus::READ->value,
+            ]);
+            $table->timestamp('read_at')->nullable();
             $table->timestamps();
         });
     }

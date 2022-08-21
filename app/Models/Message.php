@@ -18,14 +18,15 @@ class Message extends Model
         'text',
         'sender_id',
         'receiver_id',
+        'status',
     ];
 
     protected $dispatchesEvents = [
         'created' => ChatMessageSent::class,
     ];
 
-    protected $casts = [
-        'created_at' => 'datetime:Y-m-d H:i:s',
+    protected $dates = [
+        'read_at',
     ];
 
     protected static function boot(): void
@@ -34,6 +35,10 @@ class Message extends Model
 
         self::creating(function (Message $message) {
             if (!Auth::check()) {
+                return;
+            }
+
+            if (isset($message->sender_id)) {
                 return;
             }
 
@@ -49,6 +54,6 @@ class Message extends Model
         ])->orWhere([
             ['sender_id', $friendId],
             ['receiver_id', $userId],
-        ])->latest();
+        ]);
     }
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Enums\MessageStatus;
+use App\Models\Message;
 use Illuminate\Foundation\Testing\WithFaker;
 
 class TestController extends Controller
@@ -17,18 +19,15 @@ class TestController extends Controller
 
     public function __invoke()
     {
-        $date = now(); // it can be any date
-        $weekAgo = now()->subWeek();
-        $dayAgo = now()->subDay();
+        Message::factory(8)->create([
+            'sender_id' => 2,
+            'receiver_id' => 1,
+            'status' => MessageStatus::READ,
+            'read_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
-        $format = 'h:i';
-
-        if ($date->isBefore($weekAgo)) {
-            $format = 'j F Y \a\t h:i';
-        } elseif ($date->isBefore($dayAgo)) {
-            $format = 'l h:i';
-        }
-
-        return $date->dependentFormat();
+        // return $date->dependentFormat();
     }
 }

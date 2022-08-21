@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Messages;
 
 use App\Enums\FriendshipStatus;
+use App\Enums\MessageStatus;
 use App\Models\Friendship;
 use App\Models\User;
 use Tests\TestCase;
@@ -158,6 +159,10 @@ class StoreTest extends TestCase
             ]);
 
         $response->assertCreated();
+
+        $this->assertDatabaseHas($this->table, [
+            'text' => 'Simple message',
+        ]);
     }
 
     public function testAutoAddingSenderIdToMessageModelDuringCreatingProcess(): void
@@ -175,9 +180,10 @@ class StoreTest extends TestCase
 
         $response->assertCreated();
 
-        $this->assertDatabaseHas($this->table, [
-            'sender_id' => $this->user->id,
-        ]);
+        $this->assertDatabaseCount($this->table, 1)
+            ->assertDatabaseHas($this->table, [
+                'sender_id' => $this->user->id,
+            ]);
     }
 
     public function testPassedEmptyValuesAreTreatingAsNullValues(): void
@@ -190,5 +196,26 @@ class StoreTest extends TestCase
 
         $response->assertJsonValidationErrorFor('text')
             ->assertJsonValidationErrorFor('receiver_id');
+    }
+
+    public function testCreatedMessageHasDeliveredStatus(): void
+    {
+        $friendship = Friendship::factory()->create([
+            'user_id' => $this->user->id,
+            'status' => FriendshipStatus::CONFIRMED,
+        ]);
+
+        $response = $this->actingAs($this->user)
+            ->postJson($this->route, [
+                'text' => 'Simple message',
+                'receiver_id' => $friendship->friend_id,
+            ]);
+
+        $response->assertCreated();
+
+        $this->assertDatabaseCount($this->table, 1)
+            ->assertDatabaseHas($this->table, [
+                'status' => MessageStatus::DELIVERED->value,
+            ]);
     }
 }

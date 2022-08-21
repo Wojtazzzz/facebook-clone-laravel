@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Factories;
 
 use App\Enums\FriendshipStatus;
+use App\Enums\MessageStatus;
 use App\Models\Friendship;
 use App\Models\Message;
 use App\Models\User;
@@ -14,10 +15,20 @@ class MessageFactory extends Factory
 {
     public function definition(): array
     {
+        $status = [
+            MessageStatus::SENDING,
+            MessageStatus::DELIVERED,
+            MessageStatus::READ,
+        ];
+
+        $status = $this->faker->randomElement($status);
+
         return [
             'text' => $this->faker->text,
             'sender_id' => User::factory(),
             'receiver_id' => User::factory(),
+            'status' => $status,
+            'read_at' => $status === MessageStatus::READ && now(),
         ];
     }
 
