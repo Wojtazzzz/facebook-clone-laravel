@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Notifications\FriendshipRequestAccepted;
 use App\Notifications\FriendshipRequestSent;
 use App\Notifications\Poked;
+use App\Notifications\PostLiked;
 use Illuminate\Console\Command;
 use Illuminate\Notifications\Notification as NotificationsNotification;
 
@@ -56,6 +57,7 @@ class NotifyCommand extends Command
             'poked' => new Poked($friend->id, rand(1, 999)),
             'invSent' => new FriendshipRequestSent($friend->id),
             'invAccepted' => new FriendshipRequestAccepted($friend->id),
+            'postLiked' => new PostLiked($friend->id, rand(1, 999)),
         };
     }
 }

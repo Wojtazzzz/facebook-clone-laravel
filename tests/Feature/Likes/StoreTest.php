@@ -14,9 +14,13 @@ class StoreTest extends TestCase
 {
     private User $user;
 
+    private Post $post;
+
     private string $route;
 
     private string $table = 'likes';
+
+    private string $notificationsTable = 'notifications';
 
     public function setUp(): void
     {
@@ -94,5 +98,56 @@ class StoreTest extends TestCase
 
         $response = $this->actingAs($this->user)->postJson($this->route);
         $response->assertCreated();
+    }
+
+    public function testLikeActionSendNotificationToPostsAuthor(): void
+    {
+        $post = Post::factory()->createOne();
+
+        $route = route('api.posts.likes.store', [
+            'post' => $post,
+        ]);
+
+        $response = $this->actingAs($this->user)->postJson($route);
+        $response->assertCreated();
+
+        $this->assertDatabaseCount($this->table, 1)
+            ->assertDatabaseCount($this->notificationsTable, 1)
+            ->assertDatabaseHas($this->notificationsTable, [
+                'notifiable_id' => $post->author_id,
+                'read_at' => null,
+            ]);
+    }
+
+    public function testLikeActionNotSendNotificationIfThatNotificationAlreadyExists(): void
+    {
+        $post = Post::factory()->createOne();
+
+        $route = route('api.posts.likes.store', [
+            'post' => $post,
+        ]);
+
+        $response = $this->actingAs($this->user)->postJson($route);
+        $response->assertCreated();
+
+        $this->assertDatabaseCount($this->table, 1)
+            ->assertDatabaseCount($this->notificationsTable, 1);
+
+        Like::truncate();
+
+        $response = $this->actingAs($this->user)->postJson($route);
+        $response->assertCreated();
+
+        $this->assertDatabaseCount($this->table, 1)
+            ->assertDatabaseCount($this->notificationsTable, 1);
+    }
+
+    public function testLikeActionNotSendNotificationWhenLikeOwnPost(): void
+    {
+        $response = $this->actingAs($this->user)->postJson($this->route);
+        $response->assertCreated();
+
+        $this->assertDatabaseCount($this->table, 1)
+            ->assertDatabaseCount($this->notificationsTable, 0);
     }
 }
