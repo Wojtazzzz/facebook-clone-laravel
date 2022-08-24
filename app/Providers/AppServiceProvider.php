@@ -54,15 +54,13 @@ class AppServiceProvider extends ServiceProvider
             $weekAgo = now()->subWeek();
             $dayAgo = now()->subDay();
 
-            $format = 'h:i';
-
             if ($this->isBefore($weekAgo)) {
-                $format = 'j F Y \a\t h:i';
+                return $this->format('j F Y \a\t h:i');
             } elseif ($this->isBefore($dayAgo)) {
-                $format = 'l h:i';
+                return $this->format('l h:i');
             }
 
-            return $this->format($format);
+            return $this->toTimeString('minute');
         });
 
         JsonResource::withoutWrapping();
