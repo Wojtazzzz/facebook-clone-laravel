@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Auth;
 
 class Comment extends Model
 {
@@ -29,22 +28,5 @@ class Comment extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id', 'id');
-    }
-
-    protected static function boot(): void
-    {
-        parent::boot();
-
-        self::creating(function (Comment $comment) {
-            if (! Auth::check()) {
-                return;
-            }
-
-            if (isset($comment->author_id)) {
-                return;
-            }
-
-            $comment->author_id = Auth::user()->id;
-        });
     }
 }

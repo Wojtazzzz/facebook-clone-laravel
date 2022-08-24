@@ -8,7 +8,6 @@ use App\Events\ChatMessageSent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 
 class Message extends Model
 {
@@ -28,23 +27,6 @@ class Message extends Model
     protected $dates = [
         'read_at',
     ];
-
-    protected static function boot(): void
-    {
-        parent::boot();
-
-        self::creating(function (Message $message) {
-            if (! Auth::check()) {
-                return;
-            }
-
-            if (isset($message->sender_id)) {
-                return;
-            }
-
-            $message->sender_id = Auth::user()->id;
-        });
-    }
 
     public function scopeConversation(Builder $query, int $userId, int $friendId): Builder
     {

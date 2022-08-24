@@ -98,6 +98,7 @@ class PostController extends Controller
             // 'content' => $request->validated('content', null),
             'content' => $request->validated('content'),
             'images' => $paths,
+            'author_id' => $request->user()->id,
         ]);
 
         return response()->json([

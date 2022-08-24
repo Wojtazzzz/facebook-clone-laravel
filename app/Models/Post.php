@@ -26,23 +26,6 @@ class Post extends Model
         'images' => 'array',
     ];
 
-    protected static function boot(): void
-    {
-        parent::boot();
-
-        self::creating(function (Post $post) {
-            if (! Auth::check()) {
-                return;
-            }
-
-            if (isset($post->author_id)) {
-                return;
-            }
-
-            $post->author_id = Auth::user()->id;
-        });
-    }
-
     public function scopeNotHidden(Builder $query): Builder
     {
         return $query->whereDoesntHave('hidden', fn (Builder $query) => $query->where('user_id', Auth::user()->id));

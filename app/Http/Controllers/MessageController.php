@@ -43,6 +43,7 @@ class MessageController extends Controller
     {
         $message = Message::create($request->validated() + [
             'status' => MessageStatus::DELIVERED,
+            'sender_id' => $request->user()->id,
         ]);
 
         return response()->json(new MessageResource($message), 201);

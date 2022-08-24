@@ -19,15 +19,25 @@ class TestController extends Controller
 
     public function __invoke()
     {
-        Message::factory(8)->create([
-            'sender_id' => 2,
-            'receiver_id' => 1,
-            'status' => MessageStatus::READ,
-            'read_at' => now(),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        // Message::factory(8)->create([
+        //     'sender_id' => 2,
+        //     'receiver_id' => 1,
+        //     'status' => MessageStatus::READ,
+        //     'read_at' => now(),
+        //     'created_at' => now(),
+        //     'updated_at' => now(),
+        // ]);
 
         // return $date->dependentFormat();
+
+        $now = now();
+        $day = now()->subDay();
+        $wek = now()->subWeek();
+
+        echo "
+            {$now->dependentFormat()} </br>
+            {$day->dependentFormat()} </br>
+            {$wek->dependentFormat()} </br>
+        ";
     }
 }

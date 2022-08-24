@@ -47,7 +47,9 @@ class SavedPostController extends Controller
 
     public function store(StoreRequest $request): JsonResponse
     {
-        SavedPost::create($request->validated());
+        SavedPost::create($request->validated() + [
+            'user_id' => $request->user()->id,
+        ]);
 
         return response()->json([
             'message' => 'Post saved successfully',

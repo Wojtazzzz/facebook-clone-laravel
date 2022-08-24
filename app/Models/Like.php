@@ -22,23 +22,6 @@ class Like extends Model
         'post_id',
     ];
 
-    protected static function boot(): void
-    {
-        parent::boot();
-
-        self::creating(function (Like $like) {
-            if (! Auth::check()) {
-                return;
-            }
-
-            if (isset($like->user_id)) {
-                return;
-            }
-
-            $like->user_id = Auth::user()->id;
-        });
-    }
-
     public function scopeUserLike(Builder $query, Post $post): Builder
     {
         return $query->where([

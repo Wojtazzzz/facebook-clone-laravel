@@ -47,7 +47,9 @@ class HiddenPostController extends Controller
 
     public function store(StoreRequest $request): JsonResponse
     {
-        HiddenPost::create($request->validated());
+        HiddenPost::create($request->validated() + [
+            'user_id' => $request->user()->id,
+        ]);
 
         return response()->json([
             'message' => 'Post hidden successfully',

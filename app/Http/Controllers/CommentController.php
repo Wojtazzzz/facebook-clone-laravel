@@ -51,6 +51,7 @@ class CommentController extends Controller
         $comment = Comment::create($request->validated() + [
             'resource' => $resource,
             'resource_id' => $resourceId,
+            'author_id' => $request->user()->id,
         ]);
 
         return response()->json(new CommentResource($comment), 201);

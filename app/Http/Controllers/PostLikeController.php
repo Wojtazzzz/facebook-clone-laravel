@@ -16,7 +16,11 @@ class PostLikeController extends Controller
 {
     public function store(StoreRequest $request, Post $post): Response
     {
-        $post->likes()->save(new Like());
+        $like = new Like([
+            'user_id' => $request->user()->id,
+        ]);
+
+        $post->likes()->save($like);
 
         return response(status: 201);
     }
