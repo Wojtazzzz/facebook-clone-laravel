@@ -12,10 +12,13 @@ use Tests\TestCase;
 class DestroyTest extends TestCase
 {
     private User $user;
+
     private Post $post;
+
     private Comment $comment;
 
     private string $route;
+
     private string $table = 'comments';
 
     public function setUp(): void

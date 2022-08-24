@@ -28,7 +28,7 @@ class DestroyRequest extends FormRequest
                 ->where('user_id', $this->user()->id)
                 ->exists();
 
-            if (!$isExist) {
+            if (! $isExist) {
                 $validator->errors()->add('post', 'Cannot unlike post which is not liked');
             }
         });

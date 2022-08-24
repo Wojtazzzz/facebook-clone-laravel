@@ -12,6 +12,7 @@ use Tests\TestCase;
 class IndexTest extends TestCase
 {
     private User $user;
+
     private Post $post;
 
     private string $route;

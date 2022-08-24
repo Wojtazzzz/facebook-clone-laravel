@@ -12,7 +12,7 @@ class NotHidden implements Rule
 {
     public function passes($attribute, $value): bool
     {
-        return !HiddenPost::query()
+        return ! HiddenPost::query()
             ->where('post_id', $value)
             ->where('user_id', Auth::user()->id)
             ->exists();

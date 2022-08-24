@@ -11,6 +11,7 @@ use Illuminate\Console\Command;
 class PokeCommand extends Command
 {
     protected $signature = 'data:poke {user} {amount=1} {--I|initiator}';
+
     protected $description = 'Create specific amount of pokes';
 
     public function __construct()
@@ -22,7 +23,7 @@ class PokeCommand extends Command
     {
         $user = User::findOrFail($this->argument('user'));
 
-        if (!$this->checkAmount()) {
+        if (! $this->checkAmount()) {
             return;
         }
 

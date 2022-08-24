@@ -15,6 +15,7 @@ class StoreTest extends TestCase
     private User $user;
 
     private string $route;
+
     private string $table = 'hidden_posts';
 
     public function setUp(): void

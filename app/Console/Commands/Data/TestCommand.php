@@ -7,13 +7,13 @@ namespace App\Console\Commands\Data;
 use App\Enums\FriendshipStatus;
 use App\Models\Comment;
 use App\Models\Friendship;
-use App\Models\Message;
 use App\Models\Post;
 use Illuminate\Console\Command;
 
 class TestCommand extends Command
 {
     protected $signature = 'data:test';
+
     protected $description = 'Test command for experiments';
 
     public function __construct()
@@ -38,7 +38,7 @@ class TestCommand extends Command
 
         Friendship::factory(30)->create([
             'friend_id' => 1,
-            'status' => FriendshipStatus::PENDING
+            'status' => FriendshipStatus::PENDING,
         ]);
     }
 }

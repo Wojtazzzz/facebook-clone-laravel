@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Console\Commands\Data;
 
 use App\Models\Comment;
-use App\Models\Friendship;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Console\Command;
@@ -13,6 +12,7 @@ use Illuminate\Console\Command;
 class PostCommand extends Command
 {
     protected $signature = 'data:post {amount=1} {--A|author=} {--C|comments=}';
+
     protected $description = 'Create specific amount of posts';
 
     public function __construct()
@@ -22,7 +22,7 @@ class PostCommand extends Command
 
     public function handle(): void
     {
-        if (!$this->checkAmount()) {
+        if (! $this->checkAmount()) {
             return;
         }
 
@@ -38,7 +38,7 @@ class PostCommand extends Command
 
         $this->info('Post(s) created successfully.');
 
-        if (!$this->checkComments()) {
+        if (! $this->checkComments()) {
             return;
         }
 
@@ -68,7 +68,7 @@ class PostCommand extends Command
     {
         $author = $this->option('author');
 
-        if ((bool) !$author) {
+        if ((bool) ! $author) {
             return false;
         }
 
@@ -81,7 +81,7 @@ class PostCommand extends Command
     {
         $comments = $this->option('comments');
 
-        if ((bool) !$comments) {
+        if ((bool) ! $comments) {
             return false;
         }
 

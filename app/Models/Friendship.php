@@ -27,12 +27,12 @@ class Friendship extends Model
     {
         return $query->where(function (Builder $query) use ($userId, $friendId) {
             $query->where([
-                    ['user_id', $userId],
-                    ['friend_id', $friendId],
-                ])->orWhere([
-                    ['user_id', $friendId],
-                    ['friend_id', $userId],
-                ]);
+                ['user_id', $userId],
+                ['friend_id', $friendId],
+            ])->orWhere([
+                ['user_id', $friendId],
+                ['friend_id', $userId],
+            ]);
         });
     }
 }

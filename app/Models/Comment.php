@@ -36,7 +36,7 @@ class Comment extends Model
         parent::boot();
 
         self::creating(function (Comment $comment) {
-            if (!Auth::check()) {
+            if (! Auth::check()) {
                 return;
             }
 

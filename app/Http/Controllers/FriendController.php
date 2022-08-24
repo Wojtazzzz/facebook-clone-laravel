@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Enums\FriendshipStatus;
-use App\Http\Resources\ContactResource;
 use App\Http\Resources\FriendResource;
 use App\Models\Friendship;
 use App\Models\User;

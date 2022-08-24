@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Enums\FriendshipStatus;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Friendship\Invite\StoreRequest;
 use App\Http\Requests\Friendship\Invite\UpdateRequest;
 use App\Http\Resources\FriendResource;

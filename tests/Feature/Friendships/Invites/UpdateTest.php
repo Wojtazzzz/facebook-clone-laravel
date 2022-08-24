@@ -12,11 +12,13 @@ use Tests\TestCase;
 class UpdateTest extends TestCase
 {
     private User $user;
+
     private Friendship $friendship;
 
     private string $route;
 
     private string $friendshipsTable = 'friendships';
+
     private string $notificationsTable = 'notifications';
 
     public function setUp(): void
@@ -155,7 +157,7 @@ class UpdateTest extends TestCase
         $response->assertJsonValidationErrorFor('status');
 
         $this->assertDatabaseMissing($this->friendshipsTable, [
-            'status' => FriendshipStatus::CONFIRMED
+            'status' => FriendshipStatus::CONFIRMED,
         ]);
     }
 

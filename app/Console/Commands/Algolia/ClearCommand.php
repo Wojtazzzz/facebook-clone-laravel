@@ -10,6 +10,7 @@ use Illuminate\Console\Command;
 class ClearCommand extends Command
 {
     protected $signature = 'algolia:clear';
+
     protected $description = 'Clear algolia\'s dataset';
 
     public function handle(): void
@@ -26,6 +27,5 @@ class ClearCommand extends Command
 
         $this->info('Algolia\'s dataset is now empty.');
 
-        return;
     }
 }

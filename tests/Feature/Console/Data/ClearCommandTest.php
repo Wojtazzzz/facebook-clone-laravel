@@ -9,6 +9,7 @@ use Tests\TestCase;
 class ClearCommandTest extends TestCase
 {
     private string $command = 'data:clear';
+
     private array $tables = [
         'comments',
         'friendships',

@@ -12,6 +12,7 @@ use Illuminate\Console\Command;
 class FriendshipCommand extends Command
 {
     protected $signature = 'data:friendship {user} {amount=1} {--S|status=confirmed}';
+
     protected $description = 'Create friendships for specific user';
 
     public function __construct()
@@ -21,7 +22,7 @@ class FriendshipCommand extends Command
 
     public function handle(): void
     {
-        if (!$this->checkAmount()) {
+        if (! $this->checkAmount()) {
             return;
         }
 

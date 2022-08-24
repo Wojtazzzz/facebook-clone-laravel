@@ -19,6 +19,7 @@ use Illuminate\Console\Command;
 class ClearCommand extends Command
 {
     protected $signature = 'data:clear';
+
     protected $description = 'Clear all records from database';
 
     public function __construct()

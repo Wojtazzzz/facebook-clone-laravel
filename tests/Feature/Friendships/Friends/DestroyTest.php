@@ -13,9 +13,11 @@ use Tests\TestCase;
 class DestroyTest extends TestCase
 {
     private User $user;
+
     private Friendship $friendship;
 
     private string $route;
+
     private string $table = 'friendships';
 
     public function setUp(): void

@@ -45,15 +45,13 @@ class PostController extends Controller
                 'updated_at',
             ]);
 
-            return response()->json([
-                'data' => CombinedPostResource::collection($pagination),
-                'current_page' => $pagination->currentPage(),
-                'next_page' => $pagination->hasMorePages() ? $pagination->currentPage() + 1 : null,
-                'prev_page' => $pagination->onFirstPage() ? null : $pagination->currentPage() - 1,
-            ]);
+        return response()->json([
+            'data' => CombinedPostResource::collection($pagination),
+            'current_page' => $pagination->currentPage(),
+            'next_page' => $pagination->hasMorePages() ? $pagination->currentPage() + 1 : null,
+            'prev_page' => $pagination->onFirstPage() ? null : $pagination->currentPage() - 1,
+        ]);
     }
-
-
 
     public function userPosts(Request $request, User $user): JsonResponse
     {

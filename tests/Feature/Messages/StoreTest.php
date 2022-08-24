@@ -15,6 +15,7 @@ class StoreTest extends TestCase
     private User $user;
 
     private string $route;
+
     private string $table = 'messages';
 
     public function setUp(): void

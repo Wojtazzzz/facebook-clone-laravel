@@ -15,11 +15,15 @@ use Tests\TestCase;
 class DestroyTest extends TestCase
 {
     private User $user;
+
     private Post $post;
 
     private string $route;
+
     private string $table = 'posts';
+
     private string $hiddenPostsTable = 'hidden_posts';
+
     private string $savedPostsTable = 'saved_posts';
 
     public function setUp(): void

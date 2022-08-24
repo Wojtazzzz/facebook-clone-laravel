@@ -10,6 +10,7 @@ use Illuminate\Console\Command;
 class UsersCommand extends Command
 {
     protected $signature = 'data:users {amount=1}';
+
     protected $description = 'Create specific amount of users';
 
     public function __construct()
@@ -19,7 +20,7 @@ class UsersCommand extends Command
 
     public function handle(): void
     {
-        if (!$this->checkAmount()) {
+        if (! $this->checkAmount()) {
             return;
         }
 

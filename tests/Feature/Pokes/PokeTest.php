@@ -15,7 +15,9 @@ class PokeTest extends TestCase
     private User $user;
 
     private string $route;
+
     private string $pokesTable = 'pokes';
+
     private string $table = 'notifications';
 
     public function setUp(): void

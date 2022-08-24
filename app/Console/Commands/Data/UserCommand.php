@@ -12,11 +12,15 @@ use Illuminate\Console\Command;
 class UserCommand extends Command
 {
     protected $signature = 'data:user {--F|friend : Whether user should have friend}';
+
     protected $description = 'Create root user';
 
     private int $id = 1;
+
     private string $first_name = 'Marcin';
+
     private string $last_name = 'Witas';
+
     private string $email = 'marcin.witas72@gmail.com';
 
     public function handle(): void
@@ -40,7 +44,7 @@ class UserCommand extends Command
 
         $this->info('User created successfully.');
 
-        if (!$this->option('friend')) {
+        if (! $this->option('friend')) {
             return;
         }
 

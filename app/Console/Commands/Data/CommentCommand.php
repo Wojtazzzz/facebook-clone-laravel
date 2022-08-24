@@ -12,6 +12,7 @@ use Illuminate\Console\Command;
 class CommentCommand extends Command
 {
     protected $signature = 'data:comment {post} {amount=1} {--A|author=}';
+
     protected $description = 'Create comments to specific post';
 
     public function __construct()
@@ -23,7 +24,7 @@ class CommentCommand extends Command
     {
         $post = Post::findOrFail($this->argument('post'));
 
-        if (!$this->checkAmount()) {
+        if (! $this->checkAmount()) {
             return;
         }
 
@@ -57,7 +58,7 @@ class CommentCommand extends Command
     {
         $author = $this->option('author');
 
-        if ((bool) !$author) {
+        if ((bool) ! $author) {
             return false;
         }
 

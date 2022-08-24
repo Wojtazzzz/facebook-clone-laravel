@@ -12,6 +12,7 @@ class Poked extends Notification
     use Queueable;
 
     private int $userId;
+
     private int $pokesCount;
 
     public function __construct(int $userId, int $pokesCount)

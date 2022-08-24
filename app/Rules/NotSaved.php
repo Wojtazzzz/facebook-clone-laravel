@@ -12,7 +12,7 @@ class NotSaved implements Rule
 {
     public function passes($attribute, $value): bool
     {
-        return !SavedPost::query()
+        return ! SavedPost::query()
             ->where('post_id', $value)
             ->where('user_id', Auth::user()->id)
             ->exists();

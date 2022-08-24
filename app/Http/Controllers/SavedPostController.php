@@ -43,7 +43,6 @@ class SavedPostController extends Controller
             'next_page' => $pagination->hasMorePages() ? $pagination->currentPage() + 1 : null,
             'prev_page' => $pagination->onFirstPage() ? null : $pagination->currentPage() - 1,
         ]);
-
     }
 
     public function store(StoreRequest $request): JsonResponse

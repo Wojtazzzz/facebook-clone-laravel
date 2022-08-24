@@ -12,6 +12,7 @@ use Tests\TestCase;
 class ShowTest extends TestCase
 {
     private User $user;
+
     private string $route;
 
     public function setUp(): void

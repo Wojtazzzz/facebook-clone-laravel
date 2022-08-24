@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Friendships\Invites;
 
-
 use App\Enums\FriendshipStatus;
 use App\Models\Friendship;
 use App\Models\User;
@@ -16,7 +15,9 @@ class StoreTest extends TestCase
     private User $user;
 
     private string $route;
+
     private string $friendshipsTable = 'friendships';
+
     private string $notificationsTable = 'notifications';
 
     public function setUp(): void

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Console\Commands\Data;
 
-use App\Models\Friendship;
-use App\Models\Notification;
 use App\Models\User;
 use App\Notifications\FriendshipRequestAccepted;
 use App\Notifications\FriendshipRequestSent;
@@ -16,6 +14,7 @@ use Illuminate\Notifications\Notification as NotificationsNotification;
 class NotifyCommand extends Command
 {
     protected $signature = 'data:notify {user} {friend} {type} {amount=1}';
+
     protected $description = 'Create specific amount of notifications';
 
     public function handle(): void
@@ -25,7 +24,7 @@ class NotifyCommand extends Command
             ->where(['id' => $this->argument('friend')])
             ->firstOr(fn () => User::factory()->createOne());
 
-        if (!$this->checkAmount()) {
+        if (! $this->checkAmount()) {
             return;
         }
 
@@ -33,7 +32,7 @@ class NotifyCommand extends Command
 
         $type = $this->getType($friend);
 
-        for ($i=0; $i < $amount; $i++) {
+        for ($i = 0; $i < $amount; $i++) {
             $user->notify($type);
         }
 
@@ -53,7 +52,7 @@ class NotifyCommand extends Command
 
     private function getType(User $friend): NotificationsNotification
     {
-        return match($this->argument('type')) {
+        return match ($this->argument('type')) {
             'poked' => new Poked($friend->id, rand(1, 999)),
             'invSent' => new FriendshipRequestSent($friend->id),
             'invAccepted' => new FriendshipRequestAccepted($friend->id),

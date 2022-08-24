@@ -12,9 +12,11 @@ use Tests\TestCase;
 class DestroyTest extends TestCase
 {
     private User $user;
+
     private Post $post;
 
     private string $route;
+
     private string $table = 'likes';
 
     public function setUp(): void

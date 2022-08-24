@@ -31,7 +31,7 @@ class Post extends Model
         parent::boot();
 
         self::creating(function (Post $post) {
-            if (!Auth::check()) {
+            if (! Auth::check()) {
                 return;
             }
 

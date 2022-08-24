@@ -14,6 +14,7 @@ class ConversationCommand extends Command
     use WithFaker;
 
     protected $signature = 'data:conversation {user : ID of first user} {friend : ID of second user} {amount : Amount of messages}';
+
     protected $description = 'Create messages between specified users';
 
     public function __construct()
@@ -25,11 +26,11 @@ class ConversationCommand extends Command
 
     public function handle(): void
     {
-        if (!$this->checkAmount()) {
+        if (! $this->checkAmount()) {
             return;
         }
 
-        if (!$this->checkUsers()) {
+        if (! $this->checkUsers()) {
             return;
         }
 

@@ -13,6 +13,7 @@ class MarkAsReadTest extends TestCase
     private User $user;
 
     private string $route;
+
     private string $table = 'notifications';
 
     public function setUp(): void

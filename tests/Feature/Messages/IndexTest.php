@@ -11,6 +11,7 @@ use Tests\TestCase;
 class IndexTest extends TestCase
 {
     private User $user;
+
     private User $friend;
 
     private string $route;

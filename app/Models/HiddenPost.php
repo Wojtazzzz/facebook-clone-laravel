@@ -25,7 +25,7 @@ class HiddenPost extends Model
         parent::boot();
 
         self::creating(function (HiddenPost $hiddenPost) {
-            if (!Auth::check()) {
+            if (! Auth::check()) {
                 return;
             }
 

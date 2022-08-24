@@ -27,7 +27,7 @@ class Like extends Model
         parent::boot();
 
         self::creating(function (Like $like) {
-            if (!Auth::check()) {
+            if (! Auth::check()) {
                 return;
             }
 

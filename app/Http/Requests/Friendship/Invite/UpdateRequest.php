@@ -25,7 +25,7 @@ class UpdateRequest extends FormRequest
                     FriendshipStatus::CONFIRMED->value,
                     FriendshipStatus::BLOCKED->value,
                 ]),
-            ]
+            ],
         ];
     }
 }

@@ -25,7 +25,7 @@ class SavedPost extends Model
         parent::boot();
 
         self::creating(function (SavedPost $savedPost) {
-            if (!Auth::check()) {
+            if (! Auth::check()) {
                 return;
             }
 

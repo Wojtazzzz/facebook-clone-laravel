@@ -9,7 +9,6 @@ use App\Rules\NotOwnPost;
 use App\Rules\NotSaved;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 
 class StoreRequest extends FormRequest
 {

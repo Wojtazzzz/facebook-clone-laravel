@@ -11,6 +11,7 @@ use Tests\TestCase;
 class PostCommandTest extends TestCase
 {
     private string $table = 'posts';
+
     private string $commentsTable = 'comments';
 
     public function setUp(): void

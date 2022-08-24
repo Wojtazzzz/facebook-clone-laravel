@@ -34,7 +34,7 @@ class Message extends Model
         parent::boot();
 
         self::creating(function (Message $message) {
-            if (!Auth::check()) {
+            if (! Auth::check()) {
                 return;
             }
 

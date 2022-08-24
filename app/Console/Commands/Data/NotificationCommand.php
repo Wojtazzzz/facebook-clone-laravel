@@ -11,13 +11,14 @@ use Illuminate\Console\Command;
 class NotificationCommand extends Command
 {
     protected $signature = 'data:notification {user} {amount=1}';
+
     protected $description = 'Create specific amount of notifications';
 
     public function handle(): void
     {
         $user = User::findOrFail($this->argument('user'));
 
-        if (!$this->checkAmount()) {
+        if (! $this->checkAmount()) {
             return;
         }
 

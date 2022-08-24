@@ -9,6 +9,7 @@ use Tests\TestCase;
 class UsersCommandTest extends TestCase
 {
     private string $command = 'data:users';
+
     private string $table = 'users';
 
     public function testExecuteWithSuccess(): void

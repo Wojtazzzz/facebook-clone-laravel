@@ -12,10 +12,13 @@ use Tests\TestCase;
 class UpdateTest extends TestCase
 {
     private User $user;
+
     private Post $post;
+
     private Comment $comment;
 
     private string $route;
+
     private string $table = 'comments';
 
     public function setUp(): void
@@ -90,9 +93,9 @@ class UpdateTest extends TestCase
         $response->assertForbidden();
 
         $this->assertDatabaseMissing($this->table, [
-                'content' => 'Simple updated comment',
-                'author_id' => $this->user->id,
-            ]);
+            'content' => 'Simple updated comment',
+            'author_id' => $this->user->id,
+        ]);
     }
 
     public function testCannotUpdateCommentWithoutPassingContent(): void

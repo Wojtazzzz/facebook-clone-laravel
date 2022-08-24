@@ -18,7 +18,7 @@ class PostObserver
 
     private function deleteImages(Post $post): void
     {
-        if (!$post->images) {
+        if (! $post->images) {
             return;
         }
 

@@ -12,7 +12,7 @@ class FriendshipUnique implements Rule
 {
     public function passes($attribute, $value): bool
     {
-        return !Friendship::query()
+        return ! Friendship::query()
             ->relation(Auth::user()->id, $value)
             ->exists();
     }

@@ -15,7 +15,7 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                if (!$request->expectsJson()) {
+                if (! $request->expectsJson()) {
                     return redirect(RouteServiceProvider::HOME);
                 }
             }

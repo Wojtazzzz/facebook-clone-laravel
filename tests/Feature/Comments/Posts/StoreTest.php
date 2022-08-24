@@ -7,15 +7,16 @@ namespace Tests\Feature\Comments\Posts;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Routing\Exceptions\UrlGenerationException;
-use Spatie\FlareClient\Http\Exceptions\NotFound;
 use Tests\TestCase;
 
 class StoreTest extends TestCase
 {
     private User $user;
+
     private Post $post;
 
     private string $route;
+
     private string $table = 'comments';
 
     public function setUp(): void
@@ -56,7 +57,7 @@ class StoreTest extends TestCase
 
         $this->assertDatabaseCount($this->table, 1)
             ->assertDatabaseHas($this->table, [
-                'content' => 'Simple comment'
+                'content' => 'Simple comment',
             ]);
     }
 
@@ -124,7 +125,7 @@ class StoreTest extends TestCase
 
         $response = $this->actingAs($this->user)
             ->postJson($route, [
-                'content' => 'Simple comment'
+                'content' => 'Simple comment',
             ]);
 
         $response->assertNotFound();

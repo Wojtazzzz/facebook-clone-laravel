@@ -11,6 +11,7 @@ use Tests\TestCase;
 class ConversationCommandTest extends TestCase
 {
     private User $user;
+
     private User $friend;
 
     private string $table = 'messages';

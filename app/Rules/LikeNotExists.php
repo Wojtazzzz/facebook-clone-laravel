@@ -12,7 +12,7 @@ class LikeNotExists implements Rule
 {
     public function passes($attribute, $value): bool
     {
-        return !(bool) Like::firstWhere([
+        return ! (bool) Like::firstWhere([
             ['user_id', Auth::user()->id],
             ['post_id', $value],
         ]);
