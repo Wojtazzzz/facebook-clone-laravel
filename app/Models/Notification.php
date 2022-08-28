@@ -11,6 +11,8 @@ class Notification extends Model
 {
     use HasFactory;
 
+    public $incrementing = false;
+
     protected $fillable = [
         'type',
         'notifiable_type',
