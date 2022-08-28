@@ -4,19 +4,22 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\MaritalStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use MaritalStatus;
+use Laravel\Scout\Attributes\SearchUsingPrefix;
+use Laravel\Scout\Searchable;
 
 class User extends Authenticatable
 {
     use HasApiTokens;
     use HasFactory;
     use Notifiable;
+    use Searchable;
 
     protected $fillable = [
         'first_name',
@@ -44,6 +47,15 @@ class User extends Authenticatable
         'updated_at' => 'datetime:Y-m-d H:i:s',
         'marital_statsu' => MaritalStatus::class,
     ];
+
+    #[SearchUsingPrefix(['first_name', 'last_name'])]
+    public function toSearchableArray(): array
+    {
+        return [
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
+        ];
+    }
 
     public function likes(): HasMany
     {

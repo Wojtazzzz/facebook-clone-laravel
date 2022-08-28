@@ -27,6 +27,7 @@ Route::middleware('auth:sanctum')
         Route::controller(UserController::class)
             ->group(function () {
                 Route::get('/user', 'user')->name('user');
+                Route::get('/users', 'index')->name('search');
             });
 
         Route::controller(FriendController::class)

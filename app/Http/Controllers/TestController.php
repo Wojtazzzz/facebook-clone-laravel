@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Enums\MessageStatus;
-use App\Models\Message;
+use App\Http\Resources\SearchHits\UserHitResource;
+use App\Models\User;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\Request;
 
 class TestController extends Controller
 {
@@ -17,27 +18,19 @@ class TestController extends Controller
         $this->setUpFaker();
     }
 
-    public function __invoke()
+    public function __invoke(Request $request)
     {
-        // Message::factory(8)->create([
-        //     'sender_id' => 2,
-        //     'receiver_id' => 1,
-        //     'status' => MessageStatus::READ,
-        //     'read_at' => now(),
-        //     'created_at' => now(),
-        //     'updated_at' => now(),
-        // ]);
+        dump($request->search);
+        dd($request->page);
 
-        // return $date->dependentFormat();
+        $pagination = User::search($request->search)
+            ->paginate();
 
-        $now = now();
-        $day = now()->subDay();
-        $wek = now()->subWeek();
-
-        echo "
-            {$now->dependentFormat()} </br>
-            {$day->dependentFormat()} </br>
-            {$wek->dependentFormat()} </br>
-        ";
+        return response()->json([
+            'data' => UserHitResource::collection($pagination),
+            'current_page' => $pagination->currentPage(),
+            'next_page' => $pagination->hasMorePages() ? $pagination->currentPage() + 1 : null,
+            'prev_page' => $pagination->onFirstPage() ? null : $pagination->currentPage() - 1,
+        ]);
     }
 }
