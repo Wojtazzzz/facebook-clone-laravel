@@ -95,8 +95,6 @@ class PostController extends Controller
         }
 
         $post = Post::create([
-            // @todo remove after BE tests
-            // 'content' => $request->validated('content', null),
             'content' => $request->validated('content'),
             'images' => $paths,
             'author_id' => $request->user()->id,
@@ -115,5 +113,27 @@ class PostController extends Controller
         $post->delete();
 
         return response()->noContent();
+    }
+
+    public function turnOffComments(Post $post): Response
+    {
+        $this->authorize('turnOffComments', [Post::class, $post]);
+
+        $post->update([
+            'commenting' => false,
+        ]);
+
+        return response(status: 200);
+    }
+
+    public function turnOnComments(Post $post): Response
+    {
+        $this->authorize('turnOnComments', [Post::class, $post]);
+
+        $post->update([
+            'commenting' => true,
+        ]);
+
+        return response(status: 200);
     }
 }

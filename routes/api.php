@@ -91,6 +91,9 @@ Route::middleware('auth:sanctum')
                 Route::get('/', 'index')->name('index');
                 Route::post('/', 'store')->name('store');
                 Route::delete('/{post}', 'destroy')->name('destroy');
+
+                Route::put('/{post}/turn-off-comments', 'turnOffComments')->name('turnOffComments');
+                Route::put('/{post}/turn-on-comments', 'turnOnComments')->name('turnOnComments');
             });
 
         Route::controller(PostLikeController::class)
