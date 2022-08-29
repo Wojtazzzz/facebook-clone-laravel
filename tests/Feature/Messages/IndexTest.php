@@ -185,7 +185,7 @@ class IndexTest extends TestCase
         $data = $response->json('data');
         $message = $data[0];
 
-        $this->assertEquals($date->format('h:i'), $message['created_at']);
+        $this->assertEquals($date->toTimeString('minute'), $message['created_at']);
     }
 
     private function generateMessages(int $perUser = 15): void
