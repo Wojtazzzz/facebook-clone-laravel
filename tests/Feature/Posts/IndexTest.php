@@ -248,6 +248,29 @@ class IndexTest extends TestCase
             ]);
     }
 
+    public function testPostCommentingAttributeIsBolean(): void
+    {
+        Post::factory()->createOne([
+            'author_id' => $this->user->id,
+            'commenting' => true,
+        ]);
+
+        Post::factory()->createOne([
+            'author_id' => $this->user->id,
+            'commenting' => false,
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->route);
+        $response->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonFragment([
+                'commenting' => true,
+            ])
+            ->assertJsonFragment([
+                'commenting' => false,
+            ]);
+    }
+
     public function testEditedPostHasProperlyIsEditedValue(): void
     {
         Post::factory()->createOne([

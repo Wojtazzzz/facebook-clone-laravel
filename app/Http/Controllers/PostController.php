@@ -41,6 +41,7 @@ class PostController extends Controller
                 'content',
                 'images',
                 'author_id',
+                'commenting',
                 'created_at',
                 'updated_at',
             ]);

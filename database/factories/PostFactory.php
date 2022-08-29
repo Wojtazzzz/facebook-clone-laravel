@@ -17,6 +17,7 @@ class PostFactory extends Factory
             'content' => $this->faker->text,
             'images' => $this->getRandomImages(),
             'author_id' => User::factory()->createOne()->id,
+            'commenting' => true,
         ];
     }
 

@@ -20,10 +20,12 @@ class Post extends Model
         'content',
         'images',
         'author_id',
+        'commenting',
     ];
 
     protected $casts = [
         'images' => 'array',
+        'commenting' => 'boolean',
     ];
 
     public function scopeNotHidden(Builder $query): Builder
@@ -35,11 +37,6 @@ class Post extends Model
     {
         return $this->belongsTo(User::class, 'author_id', 'id');
     }
-
-    // public function likes(): HasMany
-    // {
-    //     return $this->hasMany(Like::class, 'post_id', 'id');
-    // }
 
     public function comments(): HasMany
     {

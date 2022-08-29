@@ -16,6 +16,7 @@ return new class() extends Migration
             $table->text('content')->nullable();
             $table->json('images')->default('[]');
             $table->foreignIdFor(User::class, 'author_id');
+            $table->boolean('commenting')->default(true);
             $table->timestamps();
         });
     }
