@@ -24,7 +24,7 @@ class MessageController extends Controller
             ->latest()
             ->paginate(15, [
                 'id',
-                'text',
+                'content',
                 'sender_id',
                 'status',
                 'read_at',

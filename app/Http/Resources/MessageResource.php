@@ -11,7 +11,7 @@ class MessageResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'text' => $this->text,
+            'content' => $this->content,
             'is_received' => $this->sender_id !== Auth::user()->id,
             'status' => $this->status,
             'read_at' => $this->read_at && $this->read_at->dependentFormat(),

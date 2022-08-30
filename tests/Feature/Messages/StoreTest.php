@@ -36,7 +36,7 @@ class StoreTest extends TestCase
     {
         $response = $this->actingAs($this->user)->postJson($this->route);
         $response->assertJsonValidationErrorFor('receiver_id')
-            ->assertJsonValidationErrorFor('text');
+            ->assertJsonValidationErrorFor('content');
     }
 
     public function testCannotCreateMessageWithEmptyText(): void
@@ -51,7 +51,7 @@ class StoreTest extends TestCase
                 'receiver_id' => $friendship->friend_id,
             ]);
 
-        $response->assertJsonValidationErrorFor('text');
+        $response->assertJsonValidationErrorFor('content');
     }
 
     public function testCannotCreateTooLongMessage(): void
@@ -63,18 +63,18 @@ class StoreTest extends TestCase
 
         $response = $this->actingAs($this->user)
             ->postJson($this->route, [
-                'text' => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+                'content' => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
                 'receiver_id' => $friendship->friend_id,
             ]);
 
-        $response->assertJsonValidationErrorFor('text');
+        $response->assertJsonValidationErrorFor('content');
     }
 
     public function testCannotCreateMessageWithoutSpecificReceiver(): void
     {
         $response = $this->actingAs($this->user)
             ->postJson($this->route, [
-                'text' => 'Simple message',
+                'content' => 'Simple message',
             ]);
 
         $response->assertJsonValidationErrorFor('receiver_id');
@@ -84,7 +84,7 @@ class StoreTest extends TestCase
     {
         $response = $this->actingAs($this->user)
             ->postJson($this->route, [
-                'text' => 'Simple message',
+                'content' => 'Simple message',
                 'receiver_id' => 99999,
             ]);
 
@@ -95,7 +95,7 @@ class StoreTest extends TestCase
     {
         $response = $this->actingAs($this->user)
             ->postJson($this->route, [
-                'text' => 'Simple message',
+                'content' => 'Simple message',
                 'receiver_id' => $this->user->id,
             ]);
 
@@ -107,7 +107,7 @@ class StoreTest extends TestCase
         $friend = User::factory()->createOne();
 
         $response = $this->actingAs($this->user)->postJson($this->route, [
-            'text' => 'Simple message',
+            'content' => 'Simple message',
             'receiver_id' => $friend->id,
         ]);
 
@@ -123,7 +123,7 @@ class StoreTest extends TestCase
 
         $response = $this->actingAs($this->user)
             ->postJson($this->route, [
-                'text' => 'Simple message',
+                'content' => 'Simple message',
                 'receiver_id' => $friendship->friend_id,
             ]);
 
@@ -139,7 +139,7 @@ class StoreTest extends TestCase
 
         $response = $this->actingAs($this->user)
             ->postJson($this->route, [
-                'text' => 'Simple message',
+                'content' => 'Simple message',
                 'receiver_id' => $friendship->friend_id,
             ]);
 
@@ -155,14 +155,14 @@ class StoreTest extends TestCase
 
         $response = $this->actingAs($this->user)
             ->postJson($this->route, [
-                'text' => 'Simple message',
+                'content' => 'Simple message',
                 'receiver_id' => $friendship->friend_id,
             ]);
 
         $response->assertCreated();
 
         $this->assertDatabaseHas($this->table, [
-            'text' => 'Simple message',
+            'content' => 'Simple message',
         ]);
     }
 
@@ -175,7 +175,7 @@ class StoreTest extends TestCase
 
         $response = $this->actingAs($this->user)
             ->postJson($this->route, [
-                'text' => 'Simple message',
+                'content' => 'Simple message',
                 'receiver_id' => $friendship->friend_id,
             ]);
 
@@ -191,11 +191,11 @@ class StoreTest extends TestCase
     {
         $response = $this->actingAs($this->user)
             ->postJson($this->route, [
-                'text' => '',
+                'content' => '',
                 'receiver_id' => '',
             ]);
 
-        $response->assertJsonValidationErrorFor('text')
+        $response->assertJsonValidationErrorFor('content')
             ->assertJsonValidationErrorFor('receiver_id');
     }
 
@@ -208,7 +208,7 @@ class StoreTest extends TestCase
 
         $response = $this->actingAs($this->user)
             ->postJson($this->route, [
-                'text' => 'Simple message',
+                'content' => 'Simple message',
                 'receiver_id' => $friendship->friend_id,
             ]);
 
