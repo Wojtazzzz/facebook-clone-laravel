@@ -24,7 +24,7 @@ class MessageFactory extends Factory
         $status = $this->faker->randomElement($status);
 
         return [
-            'text' => $this->faker->text,
+            'content' => $this->faker->text,
             'sender_id' => User::factory(),
             'receiver_id' => User::factory(),
             'status' => $status,
