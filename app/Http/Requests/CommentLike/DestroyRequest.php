@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Like;
+namespace App\Http\Requests\CommentLike;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -23,13 +23,13 @@ class DestroyRequest extends FormRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator) {
-            $isExist = $this->post
+            $isExist = $this->comment
                 ->likes()
                 ->where('user_id', $this->user()->id)
                 ->exists();
 
             if (! $isExist) {
-                $validator->errors()->add('post', 'Cannot unlike post which is not liked');
+                $validator->errors()->add('comment', 'Cannot unlike comment which is not liked');
             }
         });
     }

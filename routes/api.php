@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\CommentLikeController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\HiddenPostController;
@@ -149,6 +150,15 @@ Route::middleware('auth:sanctum')
                         Route::put('/{comment}', 'update')->name('update');
                         Route::delete('/{comment}', 'destroy')->name('destroy');
                     });
+            });
+
+        Route::controller(CommentLikeController::class)
+            ->name('comments.likes.')
+            ->prefix('/comments/{comment}/likes')
+            ->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::post('/', 'store')->name('store');
+                Route::delete('/', 'destroy')->name('destroy');
             });
 
         Broadcast::routes();

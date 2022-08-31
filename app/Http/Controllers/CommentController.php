@@ -9,6 +9,7 @@ use App\Http\Requests\Comment\UpdateRequest;
 use App\Http\Resources\CommentResource;
 use App\Models\Comment;
 use App\Models\Post;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -17,18 +18,25 @@ class CommentController extends Controller
 {
     public function index(Request $request, int $resourceId): JsonResponse
     {
-        if ('posts' === $request->segment(2)) {
-            $post = Post::findOrFail($resourceId);
-            $comments = $post->comments;
-        } elseif ('comments' === $request->segment(2)) {
-            $comment = Comment::findOrFail($resourceId);
-            $comments = $comment->comments;
-        } else {
-            // $sale = Sale::findOrFail($resourceId);
-            // $comments = $sale->comments;
-        }
+        // if ('posts' === $request->segment(2)) {
+        //     $post = Post::findOrFail($resourceId);
+        //     $comments = $post->comments;
+        // } elseif ('comments' === $request->segment(2)) {
+        //     $comment = Comment::findOrFail($resourceId);
+        //     $comments = $comment->comments;
+        // } else {
+        //     // $sale = Sale::findOrFail($resourceId);
+        //     // $comments = $sale->comments;
+        // }
 
-        $pagination = $comments->sortByDesc('created_at')->paginate(10);
+        $post = Post::findOrFail($resourceId);
+        $comments = $post->comments()->withCount([
+            'likes',
+            'likes as is_liked' => fn (Builder $query) => $query->where('user_id', $request->user()->id),
+        ]);
+
+        // $pagination = $comments->sortByDesc('created_at')->paginate(10);
+        $pagination = $comments->paginate(10);
 
         return response()->json([
             'data' => CommentResource::collection($pagination),

@@ -9,18 +9,18 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
 
-class PostLiked extends Notification
+class CommentLiked extends Notification
 {
     use Queueable;
 
     private int $friendId;
 
-    private int $postId;
+    private int $commentId;
 
-    public function __construct(int $friendId, int $postId)
+    public function __construct(int $friendId, int $commentId)
     {
         $this->friendId = $friendId;
-        $this->postId = $postId;
+        $this->commentId = $commentId;
     }
 
     public function via(): array
@@ -34,19 +34,19 @@ class PostLiked extends Notification
             'friendId' => $this->friendId,
             'message' => 'Liked your post',
             'link' => "/profile/$this->friendId",
-            'postId' => $this->postId,
+            'commentId' => $this->commentId,
         ];
     }
 
     public function shouldSend($notifiable)
     {
-        $isPostAuthor = $notifiable->id === Auth::user()->id;
+        $isCommentAuthor = $notifiable->id === Auth::user()->id;
 
         $isExist = EloquentNotification::where([
-            ['data->postId', $this->postId],
+            ['data->commentId', $this->commentId],
             ['data->friendId', $this->friendId],
         ])->exists();
 
-        return ! $isPostAuthor && ! $isExist;
+        return ! $isCommentAuthor && ! $isExist;
     }
 }
