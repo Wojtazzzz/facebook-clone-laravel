@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Post\StoreRequest;
-use App\Http\Resources\Posts\CombinedPostResource;
-use App\Http\Resources\Posts\OwnPostResource;
+use App\Http\Resources\PostResource;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -32,6 +31,8 @@ class PostController extends Controller
             ->withAuthor()
             ->withStats()
             ->withIsLiked()
+            ->withIsSaved()
+            ->withIsHidden()
             ->fromAuthors($authors)
             ->whichNotHidden()
             ->latest()
@@ -46,18 +47,19 @@ class PostController extends Controller
             ]);
 
         return response()->json([
-            'data' => CombinedPostResource::collection($pagination),
+            'data' => PostResource::collection($pagination),
             'current_page' => $pagination->currentPage(),
             'next_page' => $pagination->hasMorePages() ? $pagination->currentPage() + 1 : null,
             'prev_page' => $pagination->onFirstPage() ? null : $pagination->currentPage() - 1,
         ]);
     }
 
-    public function userPosts(Request $request, User $user): JsonResponse
+    public function userPosts(User $user): JsonResponse
     {
         $pagination = Post::query()
             ->withStats()
             ->withIsLiked()
+            ->withIsSaved()
             ->fromAuthors($user)
             ->whichNotHidden()
             ->latest()
@@ -71,7 +73,7 @@ class PostController extends Controller
             ]);
 
         return response()->json([
-            'data' => CombinedPostResource::collection($pagination),
+            'data' => PostResource::collection($pagination),
             'current_page' => $pagination->currentPage(),
             'next_page' => $pagination->hasMorePages() ? $pagination->currentPage() + 1 : null,
             'prev_page' => $pagination->onFirstPage() ? null : $pagination->currentPage() - 1,
@@ -97,7 +99,7 @@ class PostController extends Controller
         ]);
 
         return response()->json([
-            'data' => new OwnPostResource($post),
+            'data' => new PostResource($post),
             'message' => 'Post was created',
         ], 201);
     }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Hidden\Post\StoreRequest;
-use App\Http\Resources\Posts\HiddenPostResource;
+use App\Http\Resources\PostResource;
 use App\Models\HiddenPost;
 use App\Models\Post;
 use Illuminate\Http\JsonResponse;
@@ -22,6 +22,7 @@ class HiddenPostController extends Controller
             ->withAuthor()
             ->withStats()
             ->withIsLiked()
+            ->withIsHidden()
             ->whereRelation('hidden', 'user_id', $user->id)
             ->latest()
             ->paginate(10, [
@@ -34,7 +35,7 @@ class HiddenPostController extends Controller
             ]);
 
         return response()->json([
-            'data' => HiddenPostResource::collection($pagination),
+            'data' => PostResource::collection($pagination),
             'current_page' => $pagination->currentPage(),
             'next_page' => $pagination->hasMorePages() ? $pagination->currentPage() + 1 : null,
             'prev_page' => $pagination->onFirstPage() ? null : $pagination->currentPage() - 1,

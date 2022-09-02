@@ -41,6 +41,26 @@ class Post extends Model
         ]);
     }
 
+    public function scopeWithIsSaved(Builder $query): Builder
+    {
+        return $query->withExists([
+            'stored as is_saved' => fn (Builder $query) => $query->where('user_id', Auth::user()->id),
+        ]);
+    }
+
+    public function scopeWithIsHidden(Builder $query): Builder
+    {
+        return $query->withExists([
+            'hidden as is_hidden' => fn (Builder $query) => $query->where('user_id', Auth::user()->id),
+        ]);
+    }
+
+    public function scopeWithType(Builder $query): Builder
+    {
+        return $query->withIsSaved()
+            ->withIsHidden();
+    }
+
     public function scopeFromAuthors(Builder $query, Collection | User $users): Builder
     {
         return $query->whereBelongsTo($users, 'author');
