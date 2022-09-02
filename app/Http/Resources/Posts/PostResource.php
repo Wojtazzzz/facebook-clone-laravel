@@ -16,7 +16,7 @@ class PostResource extends JsonResource
             'author' => new UserResource($this->author),
             'likes_count' => $this->likes_count,
             'comments_count' => $this->commenting ? $this->comments_count : 0,
-            'is_liked' => (bool) $this->isLiked,
+            'is_liked' => (bool) $this->is_liked,
             'is_edited' => $this->when($this->created_at->notEqualTo($this->updated_at), true, false),
             'commenting' => $this->commenting,
             'created_at' => $this->created_at->diffAbsolute(),

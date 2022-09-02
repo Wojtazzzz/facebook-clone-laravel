@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,9 +29,34 @@ class Post extends Model
         'commenting' => 'boolean',
     ];
 
-    public function scopeNotHidden(Builder $query): Builder
+    public function scopeWhichNotHidden(Builder $query): Builder
     {
         return $query->whereDoesntHave('hidden', fn (Builder $query) => $query->where('user_id', Auth::user()->id));
+    }
+
+    public function scopeWithIsLiked(Builder $query): Builder
+    {
+        return $query->withExists([
+            'likes as is_liked' => fn (Builder $query) => $query->where('user_id', Auth::user()->id),
+        ]);
+    }
+
+    public function scopeFromAuthors(Builder $query, Collection | User $users): Builder
+    {
+        return $query->whereBelongsTo($users, 'author');
+    }
+
+    public function scopeWithStats(Builder $query): Builder
+    {
+        return $query->withCount([
+            'likes',
+            'comments' => fn (Builder $query) => $query->where('resource', 'POST'),
+        ]);
+    }
+
+    public function scopeWithAuthor(Builder $query): Builder
+    {
+        return $query->with('author:id,first_name,last_name,profile_image,background_image');
     }
 
     public function author(): BelongsTo

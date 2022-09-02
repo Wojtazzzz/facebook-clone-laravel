@@ -35,12 +35,6 @@ class IndexTest extends TestCase
         $response->assertUnauthorized();
     }
 
-    public function testCanUseAsAuthorized(): void
-    {
-        $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk();
-    }
-
     public function testCanReturnProperlyAmountOfPosts(): void
     {
         Post::factory(6)->create([

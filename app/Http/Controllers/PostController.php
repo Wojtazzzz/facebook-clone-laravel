@@ -9,7 +9,6 @@ use App\Http\Resources\Posts\CombinedPostResource;
 use App\Http\Resources\Posts\OwnPostResource;
 use App\Models\Post;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -20,21 +19,21 @@ class PostController extends Controller
     {
         $user = $request->user();
 
-        $authorsId = collect([
-            $user->id,
-            ...$user->invitedFriends->pluck('id'),
-            ...$user->invitedByFriends->pluck('id'),
+        $authors = collect([
+            $user,
+            ...$user->invitedFriends,
+            ...$user->invitedByFriends,
         ]);
 
+        // @todo $authors should come from single relation
+        $authors = User::find($authors->pluck('id'));
+
         $pagination = Post::query()
-            ->with('author:id,first_name,last_name,profile_image,background_image')
-            ->withCount([
-                'likes',
-                'comments' => fn (Builder $query) => $query->where('resource', 'POST'),
-                'likes as isLiked' => fn (Builder $query) => $query->where('user_id', $user->id),
-            ])
-            ->whereIn('author_id', $authorsId)
-            ->notHidden()
+            ->withAuthor()
+            ->withStats()
+            ->withIsLiked()
+            ->fromAuthors($authors)
+            ->whichNotHidden()
             ->latest()
             ->paginate(10, [
                 'id',
@@ -57,13 +56,10 @@ class PostController extends Controller
     public function userPosts(Request $request, User $user): JsonResponse
     {
         $pagination = Post::query()
-            ->withCount([
-                'likes',
-                'comments' => fn (Builder $query) => $query->where('resource', 'POST'),
-                'likes as isLiked' => fn (Builder $query) => $query->where('user_id', $request->user()->id),
-            ])
-            ->whereRelation('author', 'author_id', $user->id)
-            ->notHidden()
+            ->withStats()
+            ->withIsLiked()
+            ->fromAuthors($user)
+            ->whichNotHidden()
             ->latest()
             ->paginate(10, [
                 'id',
