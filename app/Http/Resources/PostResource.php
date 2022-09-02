@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Resources\Posts;
+namespace App\Http\Resources;
 
-use App\Http\Resources\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PostResource extends JsonResource
@@ -18,6 +17,11 @@ class PostResource extends JsonResource
             'comments_count' => $this->commenting ? $this->comments_count : 0,
             'is_liked' => (bool) $this->is_liked,
             'is_edited' => $this->when($this->created_at->notEqualTo($this->updated_at), true, false),
+            'type' => [
+                'is_saved' => $this->is_saved,
+                'is_hidden' => $this->is_hidden,
+                'is_own' => $this->author->id === $request->user()->id,
+            ],
             'commenting' => $this->commenting,
             'created_at' => $this->created_at->diffAbsolute(),
         ];

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Saved\Post\StoreRequest;
-use App\Http\Resources\Posts\SavedPostResource;
+use App\Http\Resources\PostResource;
 use App\Models\Post;
 use App\Models\SavedPost;
 use Illuminate\Http\JsonResponse;
@@ -22,6 +22,7 @@ class SavedPostController extends Controller
             ->withAuthor()
             ->withStats()
             ->withIsLiked()
+            ->withIsSaved()
             ->whereRelation('stored', 'user_id', $user->id)
             ->latest()
             ->paginate(10, [
@@ -34,7 +35,7 @@ class SavedPostController extends Controller
             ]);
 
         return response()->json([
-            'data' => SavedPostResource::collection($pagination),
+            'data' => PostResource::collection($pagination),
             'current_page' => $pagination->currentPage(),
             'next_page' => $pagination->hasMorePages() ? $pagination->currentPage() + 1 : null,
             'prev_page' => $pagination->onFirstPage() ? null : $pagination->currentPage() - 1,

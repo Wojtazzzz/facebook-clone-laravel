@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Feature\Posts;
 
 use App\Enums\FriendshipStatus;
-use App\Enums\PostType;
 use App\Models\Comment;
 use App\Models\Friendship;
 use App\Models\HiddenPost;
@@ -166,6 +165,20 @@ class IndexTest extends TestCase
             ->assertJsonCount(5, 'data');
     }
 
+    public function testFriendsPostsHasPropertyIsOwnSetToFalse(): void
+    {
+        Post::factory(1)
+            ->friendsAuthors($this->user->id)
+            ->create();
+
+        $response = $this->actingAs($this->user)->getJson($this->route);
+        $response->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonFragment([
+                'is_own' => false,
+            ]);
+    }
+
     public function testCannotReturnHiddenPosts(): void
     {
         $posts = Post::factory(2)
@@ -209,7 +222,7 @@ class IndexTest extends TestCase
             ->assertJsonCount(1, 'data');
     }
 
-    public function testOwnPostHasOwnType(): void
+    public function testOwnPostHasIsOwnPropertyToTrue(): void
     {
         Post::factory()->createOne([
             'author_id' => $this->user->id,
@@ -219,11 +232,11 @@ class IndexTest extends TestCase
         $response->assertOk()
             ->assertJsonCount(1, 'data')
             ->assertJsonFragment([
-                'type' => PostType::OWN,
+                'is_own' => true,
             ]);
     }
 
-    public function testFriendPostHasOwnType(): void
+    public function testFriendPostHasIsOwnPropertyToFalse(): void
     {
         $friendship = Friendship::factory()->createOne([
             'user_id' => $this->user->id,
@@ -238,7 +251,7 @@ class IndexTest extends TestCase
         $response->assertOk()
             ->assertJsonCount(1, 'data')
             ->assertJsonFragment([
-                'type' => PostType::FRIEND,
+                'is_own' => false,
             ]);
     }
 

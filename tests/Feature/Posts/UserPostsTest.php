@@ -33,12 +33,6 @@ class UserPostsTest extends TestCase
         $response->assertUnauthorized();
     }
 
-    public function testCanUseAsAuthorized(): void
-    {
-        $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk();
-    }
-
     public function testCanReturnProperlyAmountOfPosts(): void
     {
         Post::factory(4)->create([
@@ -48,6 +42,20 @@ class UserPostsTest extends TestCase
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
             ->assertJsonCount(4, 'data');
+    }
+
+    public function testOwnPostHasIsOwnPropertySetToTrue(): void
+    {
+        Post::factory(1)->create([
+            'author_id' => $this->user->id,
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson($this->route);
+        $response->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonFragment([
+                'is_own' => true,
+            ]);
     }
 
     public function testCanReturnMaxTenPosts(): void

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Feature\Posts\Saved;
 
 use App\Enums\FriendshipStatus;
-use App\Enums\PostType;
 use App\Models\Comment;
 use App\Models\Friendship;
 use App\Models\Like;
@@ -114,7 +113,7 @@ class IndexTest extends TestCase
         $response->assertOk()
             ->assertJsonCount(1, 'data')
             ->assertJsonFragment([
-                'type' => PostType::SAVED,
+                'is_saved' => true,
             ]);
     }
 
