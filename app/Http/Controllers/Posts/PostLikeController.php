@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Posts;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\PostLike\DestroyRequest;
 use App\Http\Requests\PostLike\StoreRequest;
 use App\Http\Resources\LikeResource;

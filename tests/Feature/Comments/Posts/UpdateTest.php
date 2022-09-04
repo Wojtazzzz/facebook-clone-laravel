@@ -33,10 +33,7 @@ class UpdateTest extends TestCase
             'resource_id' => $this->post->id,
         ]);
 
-        $this->route = route('api.comments.posts.update', [
-            'resourceId' => $this->post->id,
-            'comment' => $this->comment,
-        ]);
+        $this->route = $this->getRoute($this->post, $this->comment);
     }
 
     public function testCannotUseAsUnauthorized(): void
@@ -80,10 +77,7 @@ class UpdateTest extends TestCase
             'author_id' => $friend->id,
         ]);
 
-        $route = route('api.comments.posts.update', [
-            'resourceId' => $this->post->id,
-            'comment' => $comment,
-        ]);
+        $route = $this->getRoute($this->post, $comment);
 
         $response = $this->actingAs($this->user)
             ->putJson($route, [
@@ -151,10 +145,7 @@ class UpdateTest extends TestCase
 
     public function testCannotUpdateCommentWhichNotExists(): void
     {
-        $route = route('api.comments.posts.update', [
-            'resourceId' => $this->post->id,
-            'comment' => 99999,
-        ]);
+        $route = $this->getRoute($this->post, 99999);
 
         $response = $this->actingAs($this->user)
             ->putJson($route, [
@@ -162,5 +153,13 @@ class UpdateTest extends TestCase
             ]);
 
         $response->assertNotFound();
+    }
+
+    private function getRoute(Post | int $post, Comment | int $comment): string
+    {
+        return route('api.posts.comments.update', [
+            'post' => $post,
+            'comment' => $comment,
+        ]);
     }
 }

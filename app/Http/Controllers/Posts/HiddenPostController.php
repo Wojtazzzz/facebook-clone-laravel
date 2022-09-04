@@ -2,17 +2,18 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Posts;
 
-use App\Http\Requests\Saved\Post\StoreRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Hidden\Post\StoreRequest;
 use App\Http\Resources\PostResource;
+use App\Models\HiddenPost;
 use App\Models\Post;
-use App\Models\SavedPost;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class SavedPostController extends Controller
+class HiddenPostController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
@@ -22,8 +23,8 @@ class SavedPostController extends Controller
             ->withAuthor()
             ->withStats()
             ->withIsLiked()
-            ->withIsSaved()
-            ->whereRelation('stored', 'user_id', $user->id)
+            ->withIsHidden()
+            ->whereRelation('hidden', 'user_id', $user->id)
             ->latest()
             ->paginate(10, [
                 'id',
@@ -44,12 +45,12 @@ class SavedPostController extends Controller
 
     public function store(StoreRequest $request): JsonResponse
     {
-        SavedPost::create($request->validated() + [
+        HiddenPost::create($request->validated() + [
             'user_id' => $request->user()->id,
         ]);
 
         return response()->json([
-            'message' => 'Post saved successfully',
+            'message' => 'Post hidden successfully',
         ], 201);
     }
 
@@ -57,7 +58,7 @@ class SavedPostController extends Controller
     {
         $user = $request->user();
 
-        SavedPost::query()
+        HiddenPost::query()
             ->where('user_id', $user->id)
             ->where('post_id', $post->id)
             ->firstOrFail()

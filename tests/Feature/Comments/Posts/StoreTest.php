@@ -25,7 +25,7 @@ class StoreTest extends TestCase
 
         $this->user = User::factory()->createOne();
         $this->post = Post::factory()->createOne();
-        $this->route = route('api.comments.posts.store', $this->post->id);
+        $this->route = route('api.posts.comments.store', $this->post->id);
     }
 
     public function testCannotUseAsUnauthorized(): void
@@ -109,9 +109,9 @@ class StoreTest extends TestCase
     {
         $this->expectException(UrlGenerationException::class);
 
-        $route = route('api.comments.posts.store');
+        $route = route('api.posts.comments.store');
 
-        $response = $this->actingAs($this->user)
+        $this->actingAs($this->user)
             ->postJson($route, [
                 'content' => 'Simple comment',
             ]);
@@ -121,7 +121,7 @@ class StoreTest extends TestCase
 
     public function testCannotCreateCommentForPostWhichNotExists(): void
     {
-        $route = route('api.comments.posts.store', ['resourceId' => 99999]);
+        $route = route('api.posts.comments.store', 99999);
 
         $response = $this->actingAs($this->user)
             ->postJson($route, [

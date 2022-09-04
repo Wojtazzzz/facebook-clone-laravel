@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Facades\Auth;
 
 class Comment extends Model
 {
@@ -21,10 +22,12 @@ class Comment extends Model
         'resource_id',
     ];
 
-    // public function comments(): HasMany
-    // {
-    //     return $this->hasMany(Comment::class, 'resource_id', 'id');
-    // }
+    public function scopeWithIsLiked(Builder $query): Builder
+    {
+        return $query->withExists([
+            'likes as is_liked' => fn (Builder $query) => $query->where('user_id', Auth::user()->id),
+        ]);
+    }
 
     public function author(): BelongsTo
     {

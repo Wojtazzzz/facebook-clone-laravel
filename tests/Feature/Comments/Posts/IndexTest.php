@@ -23,7 +23,7 @@ class IndexTest extends TestCase
 
         $this->user = User::factory()->createOne();
         $this->post = Post::factory()->createOne();
-        $this->route = route('api.comments.posts.index', $this->post->id);
+        $this->route = route('api.posts.comments.index', $this->post->id);
     }
 
     public function testCannotUseAsUnauthorized(): void

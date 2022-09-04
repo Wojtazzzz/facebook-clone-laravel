@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CommentLikeController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\FriendController;
-use App\Http\Controllers\HiddenPostController;
 use App\Http\Controllers\InviteController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NextController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PokeController;
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\PostLikeController;
-use App\Http\Controllers\SavedPostController;
+use App\Http\Controllers\Posts\HiddenPostController;
+use App\Http\Controllers\Posts\PostCommentController;
+use App\Http\Controllers\Posts\PostController;
+use App\Http\Controllers\Posts\PostLikeController;
+use App\Http\Controllers\Posts\SavedPostController;
 use App\Http\Controllers\SuggestController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Broadcast;
@@ -139,11 +139,11 @@ Route::middleware('auth:sanctum')
                     });
             });
 
-        Route::controller(CommentController::class)
-            ->name('comments.')
+        Route::controller(PostCommentController::class)
+            ->name('posts.')
             ->group(function () {
-                Route::prefix('/posts/{resourceId}/comments')
-                    ->name('posts.')
+                Route::prefix('/posts/{post}/comments')
+                    ->name('comments.')
                     ->group(function () {
                         Route::get('/', 'index')->name('index');
                         Route::post('/', 'store')->name('store');

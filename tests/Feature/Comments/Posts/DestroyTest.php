@@ -21,6 +21,14 @@ class DestroyTest extends TestCase
 
     private string $table = 'comments';
 
+    private function getRoute(Post | int $post, Comment | int $comment): string
+    {
+        return route('api.posts.comments.destroy', [
+            'post' => $post,
+            'comment' => $comment,
+        ]);
+    }
+
     public function setUp(): void
     {
         parent::setUp();
@@ -32,10 +40,7 @@ class DestroyTest extends TestCase
             'resource_id' => $this->post->id,
         ]);
 
-        $this->route = route('api.comments.posts.destroy', [
-            'resourceId' => $this->post->id,
-            'comment' => $this->comment,
-        ]);
+        $this->route = $this->getRoute($this->post, $this->comment);
     }
 
     public function testCannotUseAsUnauthorized(): void
@@ -68,13 +73,9 @@ class DestroyTest extends TestCase
     {
         $comment = Comment::factory()->createOne();
 
-        $route = route('api.comments.posts.destroy', [
-            'resourceId' => $this->post->id,
-            'comment' => $comment,
-        ]);
+        $route = $this->getRoute($this->post, $comment);
 
         $response = $this->actingAs($this->user)->deleteJson($route);
-
         $response->assertForbidden();
 
         $this->assertDatabaseCount($this->table, 2);
@@ -82,10 +83,7 @@ class DestroyTest extends TestCase
 
     public function testCannotDestroyCommentWhichNotExists(): void
     {
-        $route = route('api.comments.posts.destroy', [
-            'resourceId' => $this->post->id,
-            'comment' => 99999,
-        ]);
+        $route = $this->getRoute($this->post, 99999);
 
         $response = $this->actingAs($this->user)->deleteJson($route);
         $response->assertNotFound();
