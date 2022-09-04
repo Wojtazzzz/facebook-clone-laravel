@@ -6,6 +6,7 @@ namespace App\Http\Requests\Post;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\File;
 
 class StoreRequest extends FormRequest
 {
@@ -33,8 +34,7 @@ class StoreRequest extends FormRequest
 
             'images.*' => [
                 'required',
-                'file',
-                'image',
+                File::image(),
             ],
         ];
     }
