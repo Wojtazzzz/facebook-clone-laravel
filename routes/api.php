@@ -81,7 +81,7 @@ Route::middleware('auth:sanctum')
             ->prefix('/messages')
             ->group(function () {
                 Route::get('/', 'messenger')->name('messenger');
-                Route::post('/', 'store')->name('store');
+                Route::post('/', 'store')->middleware(['throttle:message'])->name('store');
                 Route::get('/{user}', 'index')->name('index');
             });
 
