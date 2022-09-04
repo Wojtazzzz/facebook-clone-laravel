@@ -9,12 +9,12 @@ use App\Models\Friendship;
 use App\Models\HiddenPost;
 use App\Models\Like;
 use App\Models\Message;
-use App\Models\Notification;
 use App\Models\Poke;
 use App\Models\Post;
 use App\Models\SavedPost;
 use App\Models\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class ClearCommand extends Command
 {
@@ -34,7 +34,7 @@ class ClearCommand extends Command
         HiddenPost::truncate();
         Like::truncate();
         Message::truncate();
-        Notification::truncate();
+        DB::table('notifications')->truncate();
         Poke::truncate();
         Post::truncate();
         SavedPost::truncate();

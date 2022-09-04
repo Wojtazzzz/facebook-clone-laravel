@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Notifications;
 
-use App\Models\Notification as EloquentNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
@@ -38,11 +37,11 @@ class CommentLiked extends Notification
         ];
     }
 
-    public function shouldSend($notifiable)
+    public function shouldSend($notifiable): bool
     {
         $isCommentAuthor = $notifiable->id === Auth::user()->id;
 
-        $isExist = EloquentNotification::where([
+        $isExist = $notifiable->notifications()->where([
             ['data->commentId', $this->commentId],
             ['data->friendId', $this->friendId],
         ])->exists();

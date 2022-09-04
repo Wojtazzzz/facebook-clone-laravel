@@ -31,7 +31,9 @@ class PostLikeController extends Controller
 
         $post->likes()->save($like);
 
-        $post->author->notify(new PostLiked($userId, $post->id));
+        if ($post->author->id !== $userId) {
+            $post->author->notify(new PostLiked($userId, $post));
+        }
 
         return response(status: 201);
     }

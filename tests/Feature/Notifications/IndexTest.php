@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Notifications;
 
-use App\Models\Notification;
+use App\Models\Post;
 use App\Models\User;
 use App\Notifications\FriendshipRequestAccepted;
 use App\Notifications\FriendshipRequestSent;
 use App\Notifications\Poked;
+use App\Notifications\PostLiked;
 use Tests\TestCase;
 
 class IndexTest extends TestCase
@@ -39,9 +40,7 @@ class IndexTest extends TestCase
 
     public function testReturnProperlyNotificationsAmount(): void
     {
-        Notification::factory(8)->create([
-            'notifiable_id' => $this->user->id,
-        ]);
+        $this->generateNotifications(8);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
@@ -50,9 +49,7 @@ class IndexTest extends TestCase
 
     public function testReturnMaxFiveteeenNotifications(): void
     {
-        Notification::factory(16)->create([
-            'notifiable_id' => $this->user->id,
-        ]);
+        $this->generateNotifications(16);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
@@ -61,9 +58,7 @@ class IndexTest extends TestCase
 
     public function testCanFetchMoreNotificationsFromSecondPage(): void
     {
-        Notification::factory(16)->create([
-            'notifiable_id' => $this->user->id,
-        ]);
+        $this->generateNotifications(16);
 
         $response = $this->actingAs($this->user)->getJson($this->route.'?page=2');
         $response->assertOk()
@@ -145,9 +140,7 @@ class IndexTest extends TestCase
 
     public function testFirstPageReturnProperlyPaginationDataWhenResourceHasOnlyFirstPage(): void
     {
-        Notification::factory(2)->create([
-            'notifiable_id' => $this->user->id,
-        ]);
+        $this->generateNotifications(2);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
 
@@ -162,9 +155,7 @@ class IndexTest extends TestCase
 
     public function testFirstPageReturnProperlyPaginationDataWhenResourceHasSecondPage(): void
     {
-        Notification::factory(12)->create([
-            'notifiable_id' => $this->user->id,
-        ]);
+        $this->generateNotifications(12);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
 
@@ -179,9 +170,7 @@ class IndexTest extends TestCase
 
     public function testSecondPageReturnProperlyPaginationData(): void
     {
-        Notification::factory(23)->create([
-            'notifiable_id' => $this->user->id,
-        ]);
+        $this->generateNotifications(23);
 
         $response = $this->actingAs($this->user)->getJson($this->route.'?page=2');
 
@@ -192,5 +181,15 @@ class IndexTest extends TestCase
                 'next_page' => null,
                 'prev_page' => 1,
             ]);
+    }
+
+    private function generateNotifications(int $count): void
+    {
+        for ($i = 0; $i < $count; $i++) {
+            $friend = User::factory()->createOne();
+            $post = Post::factory()->createOne();
+
+            $this->user->notify(new PostLiked($friend->id, $post));
+        }
     }
 }

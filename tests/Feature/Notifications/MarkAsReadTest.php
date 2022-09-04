@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Notifications;
 
-use App\Models\Notification;
+use App\Models\Post;
 use App\Models\User;
+use App\Notifications\PostLiked;
 use Tests\TestCase;
 
 class MarkAsReadTest extends TestCase
@@ -32,18 +33,15 @@ class MarkAsReadTest extends TestCase
 
     public function testCanMarkAsReadPassedNotifications(): void
     {
-        $notifications = Notification::factory(8)->create([
-            'notifiable_id' => $this->user->id,
-            'read_at' => null,
-        ]);
+        $this->generateNotifications(4);
 
         $response = $this->actingAs($this->user)->putJson($this->route, [
-            'ids' => $notifications->pluck('id'),
+            'ids' => $this->user->unreadNotifications->pluck('id'),
         ]);
 
         $response->assertOk();
 
-        $this->assertDatabaseCount($this->table, 8)
+        $this->assertDatabaseCount($this->table, 4)
             ->assertDatabaseMissing($this->table, [
                 'read_at' => null,
             ]);
@@ -51,13 +49,10 @@ class MarkAsReadTest extends TestCase
 
     public function testMarkOnlyPassedNotifications(): void
     {
-        $notifications = Notification::factory(8)->create([
-            'notifiable_id' => $this->user->id,
-            'read_at' => null,
-        ]);
+        $this->generateNotifications(8);
 
         $response = $this->actingAs($this->user)->putJson($this->route, [
-            'ids' => $notifications->pluck('id')->except(0),
+            'ids' => $this->user->unreadNotifications->pluck('id')->except(0),
         ]);
 
         $response->assertOk();
@@ -67,11 +62,9 @@ class MarkAsReadTest extends TestCase
                 'read_at' => null,
             ]);
 
-        $storedNotifications = Notification::get();
+        $unreadNotifications = $this->user->unreadNotifications()->whereNull('read_at')->get();
 
-        $this->assertNull($storedNotifications[0]->read_at);
-        $this->assertIsString($storedNotifications[1]->read_at);
-        $this->assertIsString($storedNotifications[7]->read_at);
+        $this->assertCount(1, $unreadNotifications);
     }
 
     public function testCannotPassEmptyArrayOfIds(): void
@@ -91,13 +84,10 @@ class MarkAsReadTest extends TestCase
 
     public function testCannotPassUuidInsteadOfArray(): void
     {
-        $notification = Notification::factory()->createOne([
-            'notifiable_id' => $this->user->id,
-            'read_at' => null,
-        ]);
+        $this->generateNotifications(1);
 
         $response = $this->actingAs($this->user)->putJson($this->route, [
-            'ids' => $notification->id,
+            'ids' => $this->user->notifications[0]->id,
         ]);
 
         $response->assertJsonValidationErrorFor('ids');
@@ -105,11 +95,6 @@ class MarkAsReadTest extends TestCase
 
     public function testIdInArrayMustBeUuid(): void
     {
-        Notification::factory()->createOne([
-            'notifiable_id' => $this->user->id,
-            'read_at' => null,
-        ]);
-
         $response = $this->actingAs($this->user)->putJson($this->route, [
             'ids' => 'random-string',
         ]);
@@ -126,5 +111,15 @@ class MarkAsReadTest extends TestCase
         $response->assertOk();
 
         $this->assertDatabaseCount($this->table, 0);
+    }
+
+    private function generateNotifications(int $count): void
+    {
+        for ($i = 0; $i < $count; $i++) {
+            $friend = User::factory()->createOne();
+            $post = Post::factory()->createOne();
+
+            $this->user->notify(new PostLiked($friend->id, $post));
+        }
     }
 }
