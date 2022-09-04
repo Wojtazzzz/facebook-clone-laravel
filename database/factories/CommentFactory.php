@@ -14,9 +14,19 @@ class CommentFactory extends Factory
     {
         return [
             'content' => $this->faker->text,
-            'resource' => 'POST',
+            'commentable_type' => Post::class,
+            'commentable_id' => Post::factory(),
             'author_id' => User::factory(),
-            'resource_id' => Post::factory(),
         ];
+    }
+
+    public function forPost(int $postId = null): static
+    {
+        return $this->state(function (array $attributes) use ($postId) {
+            return [
+                'commentable_type' => Post::class,
+                'commentable_id' => $postId ?? Post::factory(),
+            ];
+        });
     }
 }

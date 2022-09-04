@@ -23,7 +23,7 @@ class IndexTest extends TestCase
 
         $this->user = User::factory()->createOne();
         $this->post = Post::factory()->createOne();
-        $this->route = route('api.posts.comments.index', $this->post->id);
+        $this->route = route('api.posts.comments.index', $this->post);
     }
 
     public function testCannotUseAsUnauthorized(): void
@@ -122,7 +122,7 @@ class IndexTest extends TestCase
         $this->generateComments(8, postId: 99999);
 
         $response = $this->actingAs($this->user)
-            ->getJson(route('api.comments.posts.index', 999999));
+            ->getJson(route('api.posts.comments.index', 999999));
 
         $response->assertNotFound();
     }
@@ -174,10 +174,10 @@ class IndexTest extends TestCase
 
     private function generateComments(int $count, int $authorId = null, int $postId = null): void
     {
-        Comment::factory($count)->create([
-            'resource' => 'POST',
+        $postId = $postId ?? $this->post->id;
+
+        Comment::factory($count)->forPost($postId)->create([
             'author_id' => $authorId ?? $this->user->id,
-            'resource_id' => $postId ?? $this->post->id,
         ]);
     }
 }

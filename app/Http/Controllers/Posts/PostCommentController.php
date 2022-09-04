@@ -21,7 +21,15 @@ class PostCommentController extends Controller
             ->withCount('likes')
             ->withIsLiked()
             ->latest()
-            ->paginate(10);
+            ->paginate(10, [
+                'id',
+                'content',
+                'commentable_id',
+                'is_edited',
+                'is_liked',
+                'likes_count',
+                'created_at',
+            ]);
 
         return response()->json([
             'data' => CommentResource::collection($pagination),
@@ -33,7 +41,7 @@ class PostCommentController extends Controller
 
     public function store(StoreRequest $request, Post $post): JsonResponse
     {
-        $comment = Comment::create($request->validated() + [
+        $comment = new Comment($request->validated() + [
             'author_id' => $request->user()->id,
         ]);
 

@@ -98,10 +98,9 @@ class UserPostsTest extends TestCase
             'author_id' => $this->user->id,
         ]);
 
-        $comments = Comment::factory(7)->create([
-            'resource' => 'POST',
-            'resource_id' => $post->id,
-        ]);
+        $comments = Comment::factory(7)
+            ->forPost($post->id)
+            ->create();
 
         $likes = Like::factory(5)->create([
             'likeable_id' => $post->id,

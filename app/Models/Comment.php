@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Auth;
 
 class Comment extends Model
@@ -27,6 +28,11 @@ class Comment extends Model
         return $query->withExists([
             'likes as is_liked' => fn (Builder $query) => $query->where('user_id', Auth::user()->id),
         ]);
+    }
+
+    public function commentable(): MorphTo
+    {
+        return $this->morphTo();
     }
 
     public function author(): BelongsTo

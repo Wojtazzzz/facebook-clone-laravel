@@ -182,9 +182,9 @@ class IndexTest extends TestCase
             'user_id' => $this->user->id,
         ]);
 
-        Comment::factory()->createOne([
-            'resource_id' => $hiddenPost->post_id,
-        ]);
+        Comment::factory()
+            ->forPost($hiddenPost->post_id)
+            ->createOne();
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()

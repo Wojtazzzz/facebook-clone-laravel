@@ -36,9 +36,9 @@ class CommentCommand extends Command
 
         $amount = $this->argument('amount');
 
-        Comment::factory($amount)->create([
-            'resource_id' => $post->id,
-        ] + $data);
+        Comment::factory($amount)
+            ->forPost($post->id)
+            ->create($data);
 
         $this->info('Comment(s) created successfully.');
     }

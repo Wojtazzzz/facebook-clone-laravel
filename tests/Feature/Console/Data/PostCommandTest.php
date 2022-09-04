@@ -122,10 +122,10 @@ class PostCommandTest extends TestCase
         $this->assertDatabaseCount($this->table, 1)
             ->assertDatabaseCount($this->commentsTable, 2)
             ->assertDatabaseHas($this->commentsTable, [
-                'resource_id' => 1,
+                'commentable_id' => 1,
             ])
             ->assertDatabaseMissing($this->commentsTable, [
-                'resource_id' => 2,
+                'commentable_id' => 2,
             ]);
     }
 

@@ -25,25 +25,13 @@ class StoreTest extends TestCase
 
         $this->user = User::factory()->createOne();
         $this->post = Post::factory()->createOne();
-        $this->route = route('api.posts.comments.store', $this->post->id);
+        $this->route = route('api.posts.comments.store', $this->post);
     }
 
     public function testCannotUseAsUnauthorized(): void
     {
         $response = $this->postJson($this->route);
         $response->assertUnauthorized();
-    }
-
-    public function testCanUseAsAuthorized(): void
-    {
-        $response = $this->actingAs($this->user)
-            ->postJson($this->route, [
-                'content' => 'Simple comment',
-            ]);
-
-        $response->assertCreated();
-
-        $this->assertDatabaseCount($this->table, 1);
     }
 
     public function testCanCreateComment(): void
@@ -142,7 +130,7 @@ class StoreTest extends TestCase
         $response->assertCreated()
             ->assertJsonFragment([
                 'content' => 'Simple comment',
-                'resource_id' => $this->post->id,
+                'commentable_id' => $this->post->id,
             ]);
     }
 }

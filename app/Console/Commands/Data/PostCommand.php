@@ -45,8 +45,8 @@ class PostCommand extends Command
         $commentsAmount = $this->option('comments');
 
         $posts->each(function (Post $post) use ($commentsAmount) {
-            Comment::factory($commentsAmount)->create([
-                'resource_id' => $post->id,
+            Comment::factory($commentsAmount)->forPost()->create([
+                'commentable_id' => $post->id,
             ]);
         });
 

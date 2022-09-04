@@ -14,9 +14,8 @@ return new class() extends Migration
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
             $table->text('content');
-            $table->enum('resource', ['POST', 'COMMENT', 'SALE']);
+            $table->morphs('commentable');
             $table->foreignIdFor(User::class, 'author_id');
-            $table->foreignId('resource_id');
             $table->timestamps();
         });
     }

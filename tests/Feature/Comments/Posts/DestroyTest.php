@@ -35,9 +35,8 @@ class DestroyTest extends TestCase
 
         $this->user = User::factory()->createOne();
         $this->post = Post::factory()->createOne();
-        $this->comment = Comment::factory()->createOne([
+        $this->comment = Comment::factory()->forPost()->createOne([
             'author_id' => $this->user->id,
-            'resource_id' => $this->post->id,
         ]);
 
         $this->route = $this->getRoute($this->post, $this->comment);

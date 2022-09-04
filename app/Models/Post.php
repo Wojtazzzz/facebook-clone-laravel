@@ -70,7 +70,7 @@ class Post extends Model
     {
         return $query->withCount([
             'likes',
-            'comments' => fn (Builder $query) => $query->where('resource', 'POST'),
+            'comments',
         ]);
     }
 
@@ -82,11 +82,6 @@ class Post extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id', 'id');
-    }
-
-    public function comments(): HasMany
-    {
-        return $this->hasMany(Comment::class, 'resource_id', 'id');
     }
 
     public function hidden(): HasMany
@@ -104,5 +99,10 @@ class Post extends Model
     public function likes(): MorphMany
     {
         return $this->morphMany(Like::class, 'likeable');
+    }
+
+    public function comments(): MorphMany
+    {
+        return $this->morphMany(Comment::class, 'commentable');
     }
 }
