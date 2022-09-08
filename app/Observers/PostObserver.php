@@ -16,6 +16,19 @@ class PostObserver
         $this->deleteFromSavedPostsTable($post);
     }
 
+    public function updated(Post $post): void
+    {
+        if ((bool) $post->content) {
+            return;
+        }
+
+        if ((bool) count($post->images)) {
+            return;
+        }
+
+        $post->delete();
+    }
+
     private function deleteImages(Post $post): void
     {
         if (! $post->images) {

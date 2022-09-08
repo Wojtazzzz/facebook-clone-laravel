@@ -91,6 +91,8 @@ Route::middleware('auth:sanctum')
             ->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::post('/', 'store')->name('store');
+                // it's method POST because of it: https://github.com/laravel/framework/issues/13457
+                Route::post('/{post}', 'update')->name('update');
                 Route::delete('/{post}', 'destroy')->name('destroy');
 
                 Route::put('/{post}/turn-off-comments', 'turnOffComments')->name('turnOffComments');

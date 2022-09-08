@@ -6,12 +6,15 @@ namespace App\Http\Controllers\Posts;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Post\StoreRequest;
+use App\Http\Requests\Post\UpdateRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -105,6 +108,34 @@ class PostController extends Controller
         ], 201);
     }
 
+    public function update(Post $post, UpdateRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+
+        $paths = collect($post->images);
+
+        if (isset($data['imagesToDelete'])) {
+            $paths = $paths->diff($data['imagesToDelete']);
+
+            Storage::disk('public')->delete($data['imagesToDelete']);
+        }
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('posts', 'public');
+
+                $paths->push(str_replace('public', '', $path));
+            }
+        }
+
+        $post->update([
+            'content' => $request->validated('content', $post->content),
+            'images' => $paths,
+        ]);
+
+        return response()->json();
+    }
+
     public function destroy(Post $post): Response
     {
         $this->authorize('delete', [Post::class, $post]);
@@ -134,5 +165,13 @@ class PostController extends Controller
         ]);
 
         return response(status: 200);
+    }
+
+    private function checkPostHasContent(?string $content, Collection $images): bool
+    {
+        $hasImages = (bool) $images->count();
+        $hasContent = (bool) $content;
+
+        return $hasImages || $hasContent;
     }
 }

@@ -10,8 +10,8 @@ class PostResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'content' => $this->content,
-            'images' => $this->images,
+            'content' => $this->content ?? '',
+            'images' => $this->images ?? [],
             'author' => new UserResource($this->author),
             'likes_count' => $this->likes_count,
             'comments_count' => $this->commenting ? $this->comments_count : 0,
