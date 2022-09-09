@@ -14,7 +14,7 @@ class LikeResource extends JsonResource
             'id' => $this->id,
             'author' => [
                 'id' => $this->author->id,
-                'name' => "{$this->author->first_name} {$this->author->last_name}",
+                'name' => $this->author->name,
             ],
         ];
     }

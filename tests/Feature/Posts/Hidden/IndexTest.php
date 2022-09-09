@@ -137,7 +137,7 @@ class IndexTest extends TestCase
                     'background_image' => $author->background_image,
                     'first_name' => $author->first_name,
                     'id' => $author->id,
-                    'name' => "$author->first_name $author->last_name",
+                    'name' => $author->name,
                     'profile_image' => $author->profile_image,
                 ],
             ]);

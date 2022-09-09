@@ -10,7 +10,6 @@ use App\Http\Resources\MessageResource;
 use App\Http\Resources\UserResource;
 use App\Models\Message;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

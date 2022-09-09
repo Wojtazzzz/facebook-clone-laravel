@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enums\MaritalStatus;
 use App\Traits\HasFriendship;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -57,6 +58,13 @@ class User extends Authenticatable
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
         ];
+    }
+
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, $attributes) => "{$attributes['first_name']} {$attributes['last_name']}",
+        );
     }
 
     public function likes(): HasMany

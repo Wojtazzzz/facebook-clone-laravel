@@ -44,7 +44,7 @@ class ShowTest extends TestCase
                     'id' => $this->user->id,
                     'lives_in' => $this->user->lives_in,
                     'marital_status' => $this->user->marital_status,
-                    'name' => "{$this->user->first_name} {$this->user->last_name}",
+                    'name' => $this->user->name,
                     'profile_image' => $this->user->profile_image,
                     'went_to' => $this->user->went_to,
                     'works_at' => $this->user->works_at,

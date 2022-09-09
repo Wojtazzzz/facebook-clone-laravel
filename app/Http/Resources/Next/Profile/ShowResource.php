@@ -14,7 +14,7 @@ class ShowResource extends JsonResource
         return [
             'user' => [
                 'id' => $this->id,
-                'name' => "$this->first_name $this->last_name",
+                'name' => $this->name,
                 'first_name' => $this->first_name,
                 'profile_image' => $this->profile_image,
                 'background_image' => $this->background_image,

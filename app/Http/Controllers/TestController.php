@@ -26,13 +26,6 @@ class TestController extends Controller
     {
         $user = User::firstWhere('id', 1);
 
-        $authors = collect([
-            ...$user->invitedFriends,
-            ...$user->invitedByFriends,
-        ]);
-
-        dump($authors);
-
-        dd($user->friends);
+        dd($user->name);
     }
 }
