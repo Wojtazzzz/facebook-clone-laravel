@@ -23,7 +23,7 @@ class Friendship extends Model
         'status',
     ];
 
-    public function scopeRelation(Builder $query, int $userId, int $friendId): Builder
+    public function scopeRelation(Builder $query, int $userId, int $friendId, $status = FriendshipStatus::CONFIRMED): Builder
     {
         return $query->where(function (Builder $query) use ($userId, $friendId) {
             $query->where([
@@ -33,6 +33,6 @@ class Friendship extends Model
                 ['user_id', $friendId],
                 ['friend_id', $userId],
             ]);
-        });
+        })->where('status', $status);
     }
 }

@@ -70,7 +70,6 @@ class InviteController extends Controller
             $message = 'Request accepted successfully';
         }
 
-        // @todo set correct response message
         return response()->json([
             'message' => $message ?? 'Request rejected successfully',
         ]);

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Rules;
 
+use App\Enums\FriendshipStatus;
 use App\Models\Friendship;
 use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
 class FriendshipUnique implements Rule
@@ -13,7 +15,8 @@ class FriendshipUnique implements Rule
     public function passes($attribute, $value): bool
     {
         return ! Friendship::query()
-            ->relation(Auth::user()->id, $value)
+            ->where(fn (Builder $query) => $query->relation(Auth::user()->id, $value, FriendshipStatus::PENDING))
+            ->orWhere(fn (Builder $query) => $query->relation(Auth::user()->id, $value, FriendshipStatus::CONFIRMED))
             ->exists();
     }
 

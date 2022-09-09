@@ -20,12 +20,13 @@ class RequestReceived implements Rule
 
     public function passes($attribute, $value): bool
     {
-        return Friendship::where([
-            'user_id' => $value,
-            'friend_id' => Auth::user()->id,
-        ])
-        ->where('status', $this->status)
-        ->exists();
+        return Friendship::query()
+            ->where([
+                'user_id' => $value,
+                'friend_id' => Auth::user()->id,
+            ])
+            ->where('status', $this->status)
+            ->exists();
     }
 
     public function message(): string
