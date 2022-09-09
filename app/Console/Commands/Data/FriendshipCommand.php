@@ -20,10 +20,12 @@ class FriendshipCommand extends Command
         parent::__construct();
     }
 
-    public function handle(): void
+    public function handle(): int
     {
         if (! $this->checkAmount()) {
-            return;
+            $this->error('Amount must be integer greater than 0.');
+
+            return 1;
         }
 
         $user = User::findOrFail($this->argument('user'));
@@ -38,6 +40,8 @@ class FriendshipCommand extends Command
         ]);
 
         $this->info('Friendship(s) created successfully.');
+
+        return 0;
     }
 
     private function checkAmount(): bool
@@ -45,8 +49,6 @@ class FriendshipCommand extends Command
         if ((int) $this->argument('amount') >= 1) {
             return true;
         }
-
-        $this->error('Amount must be integer greater than 0.');
 
         return false;
     }

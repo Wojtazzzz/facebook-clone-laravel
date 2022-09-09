@@ -27,7 +27,7 @@ class ClearCommand extends Command
         parent::__construct();
     }
 
-    public function handle(): void
+    public function handle(): int
     {
         Comment::truncate();
         Friendship::truncate();
@@ -41,5 +41,7 @@ class ClearCommand extends Command
         User::truncate();
 
         $this->info('Database cleared successfully.');
+
+        return 0;
     }
 }

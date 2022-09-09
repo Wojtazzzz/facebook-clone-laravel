@@ -31,7 +31,8 @@ class ClearCommandTest extends TestCase
 
     public function testCommandClearAllTabels(): void
     {
-        $this->artisan($this->command);
+        $this->artisan($this->command)
+            ->assertSuccessful();
 
         foreach ($this->tables as $table) {
             $this->assertDatabaseCount($table, 0);
@@ -41,6 +42,7 @@ class ClearCommandTest extends TestCase
     public function testCommandPrintProperlyMessageWhenSuccess(): void
     {
         $this->artisan($this->command)
+            ->assertSuccessful()
             ->expectsOutput('Database cleared successfully.');
     }
 }

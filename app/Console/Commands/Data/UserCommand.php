@@ -23,7 +23,7 @@ class UserCommand extends Command
 
     private string $email = 'marcin.witas72@gmail.com';
 
-    public function handle(): void
+    public function handle(): int
     {
         $isExists = User::query()
             ->where('id', $this->id)
@@ -33,7 +33,7 @@ class UserCommand extends Command
         if ($isExists) {
             $this->error('User already exists.');
 
-            return;
+            return 1;
         }
 
         User::factory()->createOne([
@@ -45,7 +45,7 @@ class UserCommand extends Command
         $this->info('User created successfully.');
 
         if (! $this->option('friend')) {
-            return;
+            return 0;
         }
 
         Friendship::factory()->createOne([
@@ -54,5 +54,7 @@ class UserCommand extends Command
         ]);
 
         $this->info('Friendship created successfully.');
+
+        return 0;
     }
 }
