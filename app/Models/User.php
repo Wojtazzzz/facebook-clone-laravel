@@ -8,7 +8,6 @@ use App\Enums\MaritalStatus;
 use App\Traits\HasFriendship;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -82,15 +81,14 @@ class User extends Authenticatable
         return $this->hasMany(Post::class, 'author_id', 'id');
     }
 
-    public function sendedMessages(): BelongsToMany
+    public function sentMessages(): HasMany
     {
-        return $this->belongsToMany(User::class, 'messages', 'sender_id', 'receiver_id')
-            ->withPivot(['id', 'text', 'created_at']);
+        return $this->hasMany(Message::class, 'sender_id', 'id');
     }
 
-    public function receivedMessages(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'messages', 'receiver_id', 'sender_id')
-            ->withPivot(['id', 'text', 'created_at']);
-    }
+    // Unused
+    // public function receivedMessages(): HasMany
+    // {
+    //     return $this->hasMany(Message::class, 'receiver_id', 'id');
+    // }
 }

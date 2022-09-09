@@ -40,12 +40,13 @@ class MessageController extends Controller
 
     public function store(StoreRequest $request): JsonResponse
     {
-        $message = Message::create($request->validated() + [
+        $user = $request->user();
+
+        $user->sentMessages()->create($request->validated() + [
             'status' => MessageStatus::DELIVERED,
-            'sender_id' => $request->user()->id,
         ]);
 
-        return response()->json(new MessageResource($message), 201);
+        return response()->json(status: 201);
     }
 
     public function messenger(Request $request): JsonResponse
