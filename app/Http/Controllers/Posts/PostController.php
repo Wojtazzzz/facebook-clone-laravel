@@ -22,22 +22,13 @@ class PostController extends Controller
     {
         $user = $request->user();
 
-        $authors = collect([
-            $user,
-            ...$user->invitedFriends,
-            ...$user->invitedByFriends,
-        ]);
-
-        // @todo $authors should come from single relation
-        $authors = User::find($authors->pluck('id'));
-
         $pagination = Post::query()
             ->withAuthor()
             ->withStats()
             ->withIsLiked()
             ->withIsSaved()
             ->withIsHidden()
-            ->fromAuthors($authors)
+            ->fromUserAndFriends($user)
             ->whichNotHidden()
             ->latest()
             ->paginate(10, [
@@ -64,7 +55,7 @@ class PostController extends Controller
             ->withStats()
             ->withIsLiked()
             ->withIsSaved()
-            ->fromAuthors($user)
+            ->fromUser($user)
             ->whichNotHidden()
             ->latest()
             ->paginate(10, [

@@ -53,19 +53,7 @@ class MessageController extends Controller
     {
         $user = $request->user();
 
-        $pagination = User::query()
-            ->whereNot('id', $user->id)
-            ->where(fn (Builder $query) => $query
-                ->whereHas('invitedByFriends', fn (Builder $query) => $query
-                    ->where('user_id', $user->id)
-                    ->orWhere('friend_id', $user->id)
-                )
-                ->orWhereHas('invitedFriends', fn (Builder $query) => $query
-                    ->where('user_id', $user->id)
-                    ->orWhere('friend_id', $user->id)
-                )
-            )
-            ->paginate(15);
+        $pagination = $user->friends->paginate(15);
 
         return response()->json([
             'data' => UserResource::collection($pagination),

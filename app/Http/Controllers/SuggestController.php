@@ -17,8 +17,7 @@ class SuggestController extends Controller
 
         $pagination = User::whereNotIn('id', [
             $user->id,
-            ...$user->invitedFriends->pluck('id'),
-            ...$user->invitedByFriends->pluck('id'),
+            ...$user->friends->pluck('id'),
             ...$user->receivedInvites->pluck('id'),
             ...$user->sendedInvites->pluck('id'),
             ...$user->receivedBlocks->pluck('id'),

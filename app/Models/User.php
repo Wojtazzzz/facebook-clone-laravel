@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\MaritalStatus;
+use App\Traits\HasFriendship;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -20,6 +21,7 @@ class User extends Authenticatable
     use HasFactory;
     use Notifiable;
     use Searchable;
+    use HasFriendship;
 
     protected $fillable = [
         'first_name',
@@ -82,41 +84,5 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(User::class, 'messages', 'receiver_id', 'sender_id')
             ->withPivot(['id', 'text', 'created_at']);
-    }
-
-    public function invitedFriends(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'friendships', 'user_id', 'friend_id')
-            ->wherePivot('status', 'CONFIRMED');
-    }
-
-    public function invitedByFriends(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'friendships', 'friend_id', 'user_id')
-            ->wherePivot('status', 'CONFIRMED');
-    }
-
-    public function receivedInvites(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'friendships', 'friend_id', 'user_id')
-            ->wherePivot('status', 'PENDING');
-    }
-
-    public function sendedInvites(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'friendships', 'user_id', 'friend_id')
-            ->wherePivot('status', 'PENDING');
-    }
-
-    public function receivedBlocks(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'friendships', 'friend_id', 'user_id')
-            ->wherePivot('status', 'BLOCKED');
-    }
-
-    public function sendedBlocks(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'friendships', 'user_id', 'friend_id')
-            ->wherePivot('status', 'BLOCKED');
     }
 }

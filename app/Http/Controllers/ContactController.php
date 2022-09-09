@@ -14,12 +14,7 @@ class ContactController extends Controller
     {
         $user = $request->user();
 
-        $user->loadMissing(['invitedFriends', 'invitedByFriends']);
-
-        $pagination = collect([
-            ...$user->invitedFriends,
-            ...$user->invitedByFriends,
-        ])->paginate(20);
+        $pagination = $user->friends->paginate(20);
 
         return response()->json([
             'data' => ContactResource::collection($pagination),

@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
+use App\Models\User;
 use Bezhanov\Faker\Provider\Educator;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Mmo\Faker\PicsumProvider;
 
 class TestController extends Controller
@@ -25,12 +24,15 @@ class TestController extends Controller
 
     public function __invoke(Request $request)
     {
-        $post = Post::firstWhere('content', 'Siema');
+        $user = User::firstWhere('id', 1);
 
-        $img = Storage::disk('public')->get($post->images[0]);
+        $authors = collect([
+            ...$user->invitedFriends,
+            ...$user->invitedByFriends,
+        ]);
 
-        dd(var_dump($img));
+        dump($authors);
 
-        return response()->json();
+        dd($user->friends);
     }
 }

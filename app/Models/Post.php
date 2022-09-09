@@ -61,9 +61,30 @@ class Post extends Model
             ->withIsHidden();
     }
 
-    public function scopeFromAuthors(Builder $query, Collection | User $users): Builder
+    public function scopeFromUsers(Builder $query, Collection $users): Builder
     {
-        return $query->whereBelongsTo($users, 'author');
+        if ((bool) $users->count()) {
+            return $query->whereBelongsTo($users, 'author');
+        }
+
+        return $query;
+    }
+
+    public function scopeFromUser(Builder $query, User $user): Builder
+    {
+        return $query->whereBelongsTo($user, 'author');
+    }
+
+    public function scopeFromUserAndFriends(Builder $query, User $user): Builder
+    {
+        $friends = $user->friends;
+
+        if ((bool) $friends->count()) {
+            return $query->fromUser($user)
+                ->orWhereBelongsTo($friends, 'author');
+        }
+
+        return $query->fromUser($user);
     }
 
     public function scopeWithStats(Builder $query): Builder

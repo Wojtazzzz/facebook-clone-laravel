@@ -18,12 +18,7 @@ class FriendController extends Controller
     {
         $user = $request->user();
 
-        $user->load(['invitedFriends', 'invitedByFriends']);
-
-        $pagination = collect([
-            ...$user->invitedFriends,
-            ...$user->invitedByFriends,
-        ])->paginate(10);
+        $pagination = $user->friends->paginate(10);
 
         return response()->json([
             'data' => FriendResource::collection($pagination),
@@ -33,7 +28,7 @@ class FriendController extends Controller
         ]);
     }
 
-    public function destroy(Request $request, User $user)//: Response
+    public function destroy(Request $request, User $user): Response
     {
         Friendship::query()
             ->relation($request->user()->id, $user->id)

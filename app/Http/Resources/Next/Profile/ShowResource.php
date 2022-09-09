@@ -11,11 +11,6 @@ class ShowResource extends JsonResource
 {
     public function toArray($request): array
     {
-        $friends = [
-            ...$this->invitedFriends,
-            ...$this->invitedByFriends,
-        ];
-
         return [
             'user' => [
                 'id' => $this->id,
@@ -31,8 +26,8 @@ class ShowResource extends JsonResource
                 'marital_status' => $this->marital_status,
             ],
             'friends' => [
-                'amount' => count($friends),
-                'list' => UserResource::collection($friends),
+                'amount' => count($this->friends),
+                'list' => UserResource::collection($this->friends),
             ],
         ];
     }
