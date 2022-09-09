@@ -13,7 +13,6 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
@@ -51,11 +50,10 @@ class PostController extends Controller
 
     public function userPosts(User $user): JsonResponse
     {
-        $pagination = Post::query()
+        $pagination = $user->posts()
             ->withStats()
             ->withIsLiked()
             ->withIsSaved()
-            ->fromUser($user)
             ->whichNotHidden()
             ->latest()
             ->paginate(10, [
@@ -87,10 +85,9 @@ class PostController extends Controller
             }
         }
 
-        $post = Post::create([
+        $post = $request->user()->posts()->create([
             'content' => $request->validated('content'),
             'images' => $paths,
-            'author_id' => $request->user()->id,
         ]);
 
         return response()->json([
@@ -156,13 +153,5 @@ class PostController extends Controller
         ]);
 
         return response(status: 200);
-    }
-
-    private function checkPostHasContent(?string $content, Collection $images): bool
-    {
-        $hasImages = (bool) $images->count();
-        $hasContent = (bool) $content;
-
-        return $hasImages || $hasContent;
     }
 }
