@@ -224,6 +224,9 @@ class UpdateTest extends TestCase
         $post = Post::factory()->createOne([
             'author_id' => $this->user->id,
             'content' => 'Simple content',
+            'images' => [
+
+            ],
         ]);
 
         $images = Post::where('id', $post->id)->value('images');
