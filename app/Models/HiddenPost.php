@@ -19,11 +19,6 @@ class HiddenPost extends Model
         'post_id',
     ];
 
-    public function hiddenBy(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'user_id', 'id');
-    }
-
     public function post(): BelongsTo
     {
         return $this->belongsTo(Post::class, 'post_id', 'id');

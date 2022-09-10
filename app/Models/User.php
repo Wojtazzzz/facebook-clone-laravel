@@ -66,16 +66,6 @@ class User extends Authenticatable
         );
     }
 
-    public function likes(): HasMany
-    {
-        return $this->hasMany(Like::class, 'user_id', 'id');
-    }
-
-    public function pokedUsers(): HasMany
-    {
-        return $this->hasMany(Poke::class, 'initiator_id', 'id');
-    }
-
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class, 'author_id', 'id');
