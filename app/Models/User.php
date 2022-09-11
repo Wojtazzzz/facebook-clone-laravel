@@ -35,6 +35,7 @@ class User extends Authenticatable
         'lives_in',
         'from',
         'marital_status',
+        'born_at',
     ];
 
     protected $hidden = [
@@ -48,6 +49,10 @@ class User extends Authenticatable
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
         'marital_statsu' => MaritalStatus::class,
+    ];
+
+    protected $dates = [
+        'born_at',
     ];
 
     #[SearchUsingPrefix(['first_name', 'last_name'])]

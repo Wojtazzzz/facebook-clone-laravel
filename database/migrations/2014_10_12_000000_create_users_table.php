@@ -36,6 +36,7 @@ return new class() extends Migration
                 MaritalStatus::SEPARATED->value,
                 MaritalStatus::WIDOWED->value,
             ])->nullable();
+            $table->timestamp('born_at');
             $table->timestamps();
         });
     }

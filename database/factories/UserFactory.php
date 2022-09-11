@@ -25,6 +25,7 @@ class UserFactory extends Factory
             'lives_in' => $this->faker->randomElement([$this->generateRandomLocation(), null]),
             'from' => $this->faker->randomElement([$this->generateRandomLocation(), null]),
             'marital_status' => $this->faker->randomElement(MaritalStatus::cases() + [null]),
+            'born_at' => $this->faker->date(max: now()->subYears(50)),
         ];
     }
 

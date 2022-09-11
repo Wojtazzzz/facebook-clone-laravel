@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\BirthdayController;
 use App\Http\Controllers\CommentLikeController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\FriendController;
@@ -29,6 +30,12 @@ Route::middleware('auth:sanctum')
             ->group(function () {
                 Route::get('/user', 'user')->name('user');
                 Route::get('/users', 'index')->name('search');
+            });
+
+        Route::name('birthdays.')
+            ->prefix('/birthdays')
+            ->group(function () {
+                Route::get('/', BirthdayController::class)->name('index');
             });
 
         Route::controller(FriendController::class)
