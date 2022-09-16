@@ -20,7 +20,7 @@ class StoreRequest extends FormRequest
             'content' => [
                 'required',
                 'string',
-                'min:2',
+                'min:1',
                 'max:1000',
             ],
         ];
