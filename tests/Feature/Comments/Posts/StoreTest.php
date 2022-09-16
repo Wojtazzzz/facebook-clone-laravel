@@ -59,18 +59,6 @@ class StoreTest extends TestCase
         $this->assertDatabaseCount($this->table, 0);
     }
 
-    public function testCannotCreateCommentWithOneLetterLengthContent(): void
-    {
-        $response = $this->actingAs($this->user)
-            ->postJson($this->route, [
-                'content' => 'S',
-            ]);
-
-        $response->assertJsonValidationErrorFor('content');
-
-        $this->assertDatabaseCount($this->table, 0);
-    }
-
     public function testPassedEmptyStringValuesAreTreatingAsNullValues(): void
     {
         $response = $this->actingAs($this->user)
