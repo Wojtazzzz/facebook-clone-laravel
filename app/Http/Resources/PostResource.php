@@ -10,11 +10,11 @@ class PostResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'content' => $this->content ?? '',
-            'images' => $this->images ?? [],
+            'content' => $this->whenNotNull($this->content, ''),
+            'images' => $this->whenNotNull($this->images, []),
             'author' => new UserResource($this->author),
             'likes_count' => $this->likes_count,
-            'comments_count' => $this->commenting ? $this->comments_count : 0,
+            'comments_count' => $this->when($this->commenting, $this->comments_count, 0),
             'is_liked' => (bool) $this->is_liked,
             'is_edited' => $this->when($this->created_at->notEqualTo($this->updated_at), true, false),
             'type' => [

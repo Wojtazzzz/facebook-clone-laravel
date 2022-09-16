@@ -38,16 +38,17 @@ class ShowTest extends TestCase
             ->assertJsonFragment([
                 'user' => [
                     'background_image' => $this->user->background_image,
+                    'born_at' => $this->user->born_at->format('j F Y'),
                     'created_at' => $this->user->created_at->format('F Y'),
                     'first_name' => $this->user->first_name,
-                    'from' => $this->user->from,
+                    'from' => $this->user->from ?? '',
                     'id' => $this->user->id,
-                    'lives_in' => $this->user->lives_in,
-                    'marital_status' => $this->user->marital_status,
+                    'lives_in' => $this->user->lives_in ?? '',
+                    'marital_status' => $this->user->marital_status ?? '',
                     'name' => $this->user->name,
                     'profile_image' => $this->user->profile_image,
-                    'went_to' => $this->user->went_to,
-                    'works_at' => $this->user->works_at,
+                    'went_to' => $this->user->went_to ?? '',
+                    'works_at' => $this->user->works_at ?? '',
                 ],
             ])
             ->assertJsonFragment([
@@ -55,14 +56,14 @@ class ShowTest extends TestCase
             ])
             ->assertJsonCount(12, 'friends.list');
 
-        $data = $response->json('friends.list');
+        $friends = $response->json('friends.list');
 
-        $this->assertArrayNotHasKey('created_at', $data);
-        $this->assertArrayNotHasKey('from', $data);
-        $this->assertArrayNotHasKey('lives_in', $data);
-        $this->assertArrayNotHasKey('marital_status', $data);
-        $this->assertArrayNotHasKey('went_to', $data);
-        $this->assertArrayNotHasKey('works_at', $data);
+        $this->assertArrayNotHasKey('created_at', $friends);
+        $this->assertArrayNotHasKey('from', $friends);
+        $this->assertArrayNotHasKey('lives_in', $friends);
+        $this->assertArrayNotHasKey('marital_status', $friends);
+        $this->assertArrayNotHasKey('went_to', $friends);
+        $this->assertArrayNotHasKey('works_at', $friends);
     }
 
     public function testResponseCanReturnEmptyFriendsListWhenUserHasNoFriends(): void
