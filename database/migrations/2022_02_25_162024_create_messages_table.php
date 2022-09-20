@@ -14,7 +14,8 @@ return new class() extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->text('content');
+            $table->text('content')->nullable();
+            $table->json('images')->default('[]');
             $table->foreignIdFor(User::class, 'sender_id');
             $table->foreignIdFor(User::class, 'receiver_id');
             $table->enum('status', [

@@ -15,6 +15,7 @@ class Message extends Model
 
     protected $fillable = [
         'content',
+        'images',
         'sender_id',
         'receiver_id',
         'status',
@@ -26,6 +27,10 @@ class Message extends Model
 
     protected $dates = [
         'read_at',
+    ];
+
+    protected $casts = [
+        'images' => 'array',
     ];
 
     public function scopeConversation(Builder $query, int $userId, int $friendId): Builder

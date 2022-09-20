@@ -24,6 +24,7 @@ class MessageController extends Controller
             ->paginate(15, [
                 'id',
                 'content',
+                'images',
                 'sender_id',
                 'status',
                 'read_at',
@@ -40,11 +41,24 @@ class MessageController extends Controller
 
     public function store(StoreRequest $request): JsonResponse
     {
-        $user = $request->user();
+        $paths = [];
 
-        $user->sentMessages()->create($request->validated() + [
-            'status' => MessageStatus::DELIVERED,
-        ]);
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('messages', 'public');
+
+                $paths[] = str_replace('public', '', $path);
+            }
+        }
+
+        $request->user()
+            ->sentMessages()
+            ->create([
+                'content' => $request->validated('content'),
+                'images' => $paths,
+                'receiver_id' => $request->validated('receiver_id'),
+                'status' => MessageStatus::DELIVERED,
+            ]);
 
         return response()->json(status: 201);
     }

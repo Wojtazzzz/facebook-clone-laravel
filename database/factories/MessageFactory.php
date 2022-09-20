@@ -25,6 +25,7 @@ class MessageFactory extends Factory
 
         return [
             'content' => $this->faker->text,
+            'images' => [],
             'sender_id' => User::factory(),
             'receiver_id' => User::factory(),
             'status' => $status,

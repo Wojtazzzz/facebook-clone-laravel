@@ -8,6 +8,7 @@ use App\Rules\Friend;
 use App\Rules\NotSelfId;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\File;
 
 class StoreRequest extends FormRequest
 {
@@ -20,9 +21,21 @@ class StoreRequest extends FormRequest
     {
         return [
             'content' => [
-                'required',
+                'nullable',
+                'required_without:images',
                 'string',
                 'max:200',
+            ],
+
+            'images' => [
+                'nullable',
+                'required_without:content',
+                'array',
+            ],
+
+            'images.*' => [
+                'required',
+                File::image(),
             ],
 
             'receiver_id' => [

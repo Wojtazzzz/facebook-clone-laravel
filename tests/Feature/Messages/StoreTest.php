@@ -8,6 +8,8 @@ use App\Enums\FriendshipStatus;
 use App\Enums\MessageStatus;
 use App\Models\Friendship;
 use App\Models\User;
+use Illuminate\Http\Testing\File;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class StoreTest extends TestCase
@@ -22,6 +24,8 @@ class StoreTest extends TestCase
     {
         parent::setUp();
 
+        Storage::fake('public');
+
         $this->user = User::factory()->createOne();
         $this->route = route('api.messages.store');
     }
@@ -32,14 +36,7 @@ class StoreTest extends TestCase
         $response->assertUnauthorized();
     }
 
-    public function testCanUseAsAuthorized(): void
-    {
-        $response = $this->actingAs($this->user)->postJson($this->route);
-        $response->assertJsonValidationErrorFor('receiver_id')
-            ->assertJsonValidationErrorFor('content');
-    }
-
-    public function testCannotCreateMessageWithEmptyText(): void
+    public function testCannotCreateMessageWithEmptyTextAndNoImages(): void
     {
         $friendship = Friendship::factory()->create([
             'user_id' => $this->user->id,
@@ -51,7 +48,8 @@ class StoreTest extends TestCase
                 'receiver_id' => $friendship->friend_id,
             ]);
 
-        $response->assertJsonValidationErrorFor('content');
+        $response->assertJsonValidationErrorFor('content')
+            ->assertJsonValidationErrorFor('images');
     }
 
     public function testCannotCreateTooLongMessage(): void
@@ -67,7 +65,8 @@ class StoreTest extends TestCase
                 'receiver_id' => $friendship->friend_id,
             ]);
 
-        $response->assertJsonValidationErrorFor('content');
+        $response->assertJsonValidationErrorFor('content')
+            ->assertJsonMissingValidationErrors('images');
     }
 
     public function testCannotCreateMessageWithoutSpecificReceiver(): void
@@ -166,7 +165,7 @@ class StoreTest extends TestCase
         ]);
     }
 
-    public function testAutoAddingSenderIdToMessageModelDuringCreatingProcess(): void
+    public function testCanCreateMessageWithImagesAndWithoutText(): void
     {
         $friendship = Friendship::factory()->create([
             'user_id' => $this->user->id,
@@ -175,16 +174,45 @@ class StoreTest extends TestCase
 
         $response = $this->actingAs($this->user)
             ->postJson($this->route, [
-                'content' => 'Simple message',
+                'images' => [
+                    new File('test.jpg', tmpfile()),
+                    new File('test2.jpg', tmpfile()),
+                    new File('test3.jpg', tmpfile()),
+                ],
                 'receiver_id' => $friendship->friend_id,
             ]);
 
         $response->assertCreated();
 
-        $this->assertDatabaseCount($this->table, 1)
-            ->assertDatabaseHas($this->table, [
-                'sender_id' => $this->user->id,
+        $this->assertDatabaseHas($this->table, [
+            'content' => null,
+        ]);
+
+        $this->assertCount(1, $this->user->sentMessages);
+        $this->assertCount(3, $this->user->sentMessages[0]->images);
+    }
+
+    public function testPassedImagesAreStoredInStorage(): void
+    {
+        $friendship = Friendship::factory()->create([
+            'user_id' => $this->user->id,
+            'status' => FriendshipStatus::CONFIRMED,
+        ]);
+
+        $response = $this->actingAs($this->user)
+            ->postJson($this->route, [
+                'images' => [
+                    new File('test.jpg', tmpfile()),
+                    new File('test2.jpg', tmpfile()),
+                    new File('test3.jpg', tmpfile()),
+                    new File('test4.jpg', tmpfile()),
+                ],
+                'receiver_id' => $friendship->friend_id,
             ]);
+
+        $response->assertCreated();
+
+        $this->assertCount(4, Storage::disk('public')->allFiles('messages'));
     }
 
     public function testPassedEmptyValuesAreTreatingAsNullValues(): void
@@ -193,10 +221,12 @@ class StoreTest extends TestCase
             ->postJson($this->route, [
                 'content' => '',
                 'receiver_id' => '',
+                'images' => [],
             ]);
 
         $response->assertJsonValidationErrorFor('content')
-            ->assertJsonValidationErrorFor('receiver_id');
+            ->assertJsonValidationErrorFor('receiver_id')
+            ->assertJsonValidationErrorFor('images');
     }
 
     public function testCreatedMessageHasDeliveredStatus(): void
