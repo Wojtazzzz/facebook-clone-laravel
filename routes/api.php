@@ -18,6 +18,7 @@ use App\Http\Controllers\Posts\PostLikeController;
 use App\Http\Controllers\Posts\SavedPostController;
 use App\Http\Controllers\SuggestController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserFriendController;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
@@ -44,6 +45,13 @@ Route::middleware('auth:sanctum')
             ->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::delete('/{user}', 'destroy')->name('destroy');
+            });
+
+        Route::controller(UserFriendController::class)
+            ->name('users.')
+            ->prefix('/users/{user}/friends')
+            ->group(function () {
+                Route::get('/', 'getByCount')->name('getByCount');
             });
 
         Route::controller(InviteController::class)
