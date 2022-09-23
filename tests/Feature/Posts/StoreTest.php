@@ -33,16 +33,6 @@ class StoreTest extends TestCase
         $response->assertUnauthorized();
     }
 
-    public function testCanUseAsAuthorized(): void
-    {
-        $response = $this->actingAs($this->user)
-            ->postJson($this->route, [
-                'content' => 'Simple post',
-            ]);
-
-        $response->assertCreated();
-    }
-
     public function testCannotCreatePostWithoutData(): void
     {
         $response = $this->actingAs($this->user)->postJson($this->route);

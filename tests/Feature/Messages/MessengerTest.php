@@ -30,12 +30,6 @@ class MessengerTest extends TestCase
         $response->assertUnauthorized();
     }
 
-    public function testCanUseAsAuthorized(): void
-    {
-        $response = $this->actingAs($this->user)->getJson($this->route);
-        $response->assertOk();
-    }
-
     public function testCanMaxFetchFiveteenUsers(): void
     {
         $this->generateFriends(17);

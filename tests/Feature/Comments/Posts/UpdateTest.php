@@ -41,18 +41,6 @@ class UpdateTest extends TestCase
         $response->assertUnauthorized();
     }
 
-    public function testCanUseAsAuthorized(): void
-    {
-        $response = $this->actingAs($this->user)
-            ->putJson($this->route, [
-                'content' => 'Simple comment',
-            ]);
-
-        $response->assertOk();
-
-        $this->assertDatabaseCount($this->table, 1);
-    }
-
     public function testCanUpdateOwnComment(): void
     {
         $response = $this->actingAs($this->user)

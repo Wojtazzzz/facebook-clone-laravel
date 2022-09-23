@@ -48,14 +48,6 @@ class DestroyTest extends TestCase
         $response->assertUnauthorized();
     }
 
-    public function testCanUseAsAuthorized(): void
-    {
-        $response = $this->actingAs($this->user)
-            ->deleteJson($this->route);
-
-        $response->assertNoContent();
-    }
-
     public function testCanDestroyOwnComment(): void
     {
         $this->assertDatabaseCount($this->table, 1);

@@ -42,12 +42,6 @@ class StoreTest extends TestCase
         $response->assertUnauthorized();
     }
 
-    public function testCanUseAsAuthorized(): void
-    {
-        $response = $this->actingAs($this->user)->postJson($this->route);
-        $response->assertCreated();
-    }
-
     public function testNotPassedPostIdReturnsNotFound(): void
     {
         $this->expectException(UrlGenerationException::class);

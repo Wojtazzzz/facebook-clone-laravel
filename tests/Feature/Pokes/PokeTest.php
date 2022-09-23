@@ -34,21 +34,6 @@ class PokeTest extends TestCase
         $response->assertUnauthorized();
     }
 
-    public function testCanUseAsAuthorized(): void
-    {
-        $friendship = Friendship::factory()->createOne([
-            'user_id' => $this->user->id,
-            'status' => FriendshipStatus::CONFIRMED,
-        ]);
-
-        $response = $this->actingAs($this->user)
-            ->postJson($this->route, [
-                'friend_id' => $friendship->friend_id,
-            ]);
-
-        $response->assertCreated();
-    }
-
     public function testCannotPassNoFriendId(): void
     {
         $response = $this->actingAs($this->user)
