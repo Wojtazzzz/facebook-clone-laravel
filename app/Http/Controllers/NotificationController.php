@@ -13,10 +13,9 @@ class NotificationController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $user = $request->user();
-        $notifications = $user->notifications;
-
-        $pagination = $notifications->paginate(15);
+        $pagination = $request->user()
+            ->notifications()
+            ->paginate(15);
 
         return response()->json([
             'data' => NotificationResource::collection($pagination),
@@ -39,5 +38,14 @@ class NotificationController extends Controller
             ]);
 
         return response()->json(status: 200);
+    }
+
+    public function checkUnread(Request $request): JsonResponse
+    {
+        $exist = $request->user()
+            ->unreadNotifications()
+            ->exists();
+
+        return response()->json((bool) $exist);
     }
 }

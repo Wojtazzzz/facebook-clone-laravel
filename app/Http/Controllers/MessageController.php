@@ -63,6 +63,19 @@ class MessageController extends Controller
         return response()->json(status: 201);
     }
 
+    public function update(Request $request, User $user): JsonResponse
+    {
+        $request->user()
+                ->receivedMessages()
+                ->where('sender_id', $user->id)
+                ->whereNull('read_at')
+                ->update([
+                    'read_at' => now(),
+                ]);
+
+        return response()->json();
+    }
+
     public function messenger(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -75,5 +88,15 @@ class MessageController extends Controller
             'next_page' => $pagination->hasMorePages() ? $pagination->currentPage() + 1 : null,
             'prev_page' => $pagination->onFirstPage() ? null : $pagination->currentPage() - 1,
         ]);
+    }
+
+    public function checkUnread(Request $request): JsonResponse
+    {
+        $exist = $request->user()
+            ->receivedMessages()
+            ->whereNull('read_at')
+            ->exists();
+
+        return response()->json((bool) $exist);
     }
 }

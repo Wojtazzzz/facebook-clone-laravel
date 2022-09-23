@@ -89,6 +89,7 @@ Route::middleware('auth:sanctum')
             ->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::put('/', 'update')->name('update');
+                Route::get('/checkUnread', 'checkUnread')->name('checkUnread');
             });
 
         Route::controller(MessageController::class)
@@ -97,6 +98,8 @@ Route::middleware('auth:sanctum')
             ->group(function () {
                 Route::get('/', 'messenger')->name('messenger');
                 Route::post('/', 'store')->middleware(['throttle:message'])->name('store');
+                Route::get('/checkUnread', 'checkUnread')->name('checkUnread');
+                Route::put('/{user}/update', 'update')->name('update');
                 Route::get('/{user}', 'index')->name('index');
             });
 

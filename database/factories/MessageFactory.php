@@ -29,7 +29,7 @@ class MessageFactory extends Factory
             'sender_id' => User::factory(),
             'receiver_id' => User::factory(),
             'status' => $status,
-            'read_at' => $status === MessageStatus::READ ? now() : null,
+            'read_at' => null,
         ];
     }
 
