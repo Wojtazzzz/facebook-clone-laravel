@@ -71,6 +71,7 @@ class MessageController extends Controller
                 ->whereNull('read_at')
                 ->update([
                     'read_at' => now(),
+                    'status' => MessageStatus::READ,
                 ]);
 
         return response()->json();
