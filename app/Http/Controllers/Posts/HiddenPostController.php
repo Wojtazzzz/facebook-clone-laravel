@@ -9,6 +9,7 @@ use App\Http\Requests\Hidden\Post\StoreRequest;
 use App\Http\Resources\PostResource;
 use App\Models\HiddenPost;
 use App\Models\Post;
+use App\Services\PaginatedResponseFacade;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -35,12 +36,7 @@ class HiddenPostController extends Controller
                 'updated_at',
             ]);
 
-        return response()->json([
-            'data' => PostResource::collection($pagination),
-            'current_page' => $pagination->currentPage(),
-            'next_page' => $pagination->hasMorePages() ? $pagination->currentPage() + 1 : null,
-            'prev_page' => $pagination->onFirstPage() ? null : $pagination->currentPage() - 1,
-        ]);
+        return PaginatedResponseFacade::response(PostResource::class, $pagination);
     }
 
     public function store(StoreRequest $request): JsonResponse

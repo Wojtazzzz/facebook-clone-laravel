@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\PaginatedResponseFacade;
 use Bezhanov\Faker\Provider\Educator;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Request;
@@ -24,8 +26,8 @@ class TestController extends Controller
 
     public function __invoke(Request $request)
     {
-        $user = User::firstWhere('id', 1);
+        $pagination = User::paginate(15);
 
-        dd($user->name);
+        return PaginatedResponseFacade::response($pagination, UserResource::class);
     }
 }

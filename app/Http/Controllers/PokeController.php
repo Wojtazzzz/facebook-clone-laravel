@@ -9,6 +9,7 @@ use App\Http\Resources\PokeResource;
 use App\Models\Poke;
 use App\Models\User;
 use App\Notifications\Poked;
+use App\Services\PaginatedResponseFacade;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -33,12 +34,7 @@ class PokeController extends Controller
                 'updated_at',
             ]);
 
-        return response()->json([
-            'data' => PokeResource::collection($pagination),
-            'current_page' => $pagination->currentPage(),
-            'next_page' => $pagination->hasMorePages() ? $pagination->currentPage() + 1 : null,
-            'prev_page' => $pagination->onFirstPage() ? null : $pagination->currentPage() - 1,
-        ]);
+        return PaginatedResponseFacade::response(PokeResource::class, $pagination);
     }
 
     public function poke(PokeRequest $request): JsonResponse

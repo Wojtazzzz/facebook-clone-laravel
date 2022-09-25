@@ -10,6 +10,7 @@ use App\Http\Requests\Comment\UpdateRequest;
 use App\Http\Resources\CommentResource;
 use App\Models\Comment;
 use App\Models\Post;
+use App\Services\PaginatedResponseFacade;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
@@ -31,12 +32,7 @@ class PostCommentController extends Controller
                 'created_at',
             ]);
 
-        return response()->json([
-            'data' => CommentResource::collection($pagination),
-            'current_page' => $pagination->currentPage(),
-            'next_page' => $pagination->hasMorePages() ? $pagination->currentPage() + 1 : null,
-            'prev_page' => $pagination->onFirstPage() ? null : $pagination->currentPage() - 1,
-        ]);
+        return PaginatedResponseFacade::response(CommentResource::class, $pagination);
     }
 
     public function store(StoreRequest $request, Post $post): JsonResponse
