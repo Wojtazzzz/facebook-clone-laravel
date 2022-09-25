@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\FriendResource;
 use App\Models\Friendship;
 use App\Models\User;
+use App\Services\PaginatedResponseFacade;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -19,12 +20,7 @@ class FriendController extends Controller
 
         $pagination = $user->friends->paginate(10);
 
-        return response()->json([
-            'data' => FriendResource::collection($pagination),
-            'current_page' => $pagination->currentPage(),
-            'next_page' => $pagination->hasMorePages() ? $pagination->currentPage() + 1 : null,
-            'prev_page' => $pagination->onFirstPage() ? null : $pagination->currentPage() - 1,
-        ]);
+        return PaginatedResponseFacade::response(FriendResource::class, $pagination);
     }
 
     public function destroy(Request $request, User $user): Response

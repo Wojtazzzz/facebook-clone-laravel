@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\PaginatedResponseFacade;
 use Illuminate\Support\Facades\Facade;
 
 return [
@@ -177,6 +178,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\FakerServiceProvider::class,
+        App\Providers\PaginatedResponseServiceProvider::class,
     ],
 
     /*
@@ -191,6 +193,6 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        // ...
+        'PaginatedResponse' => PaginatedResponseFacade::class,
     ])->toArray(),
 ];

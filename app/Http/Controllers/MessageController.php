@@ -10,6 +10,7 @@ use App\Http\Resources\MessageResource;
 use App\Http\Resources\UserResource;
 use App\Models\Message;
 use App\Models\User;
+use App\Services\PaginatedResponseFacade;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -31,12 +32,7 @@ class MessageController extends Controller
                 'created_at',
             ]);
 
-        return response()->json([
-            'data' => MessageResource::collection($pagination),
-            'current_page' => $pagination->currentPage(),
-            'next_page' => $pagination->hasMorePages() ? $pagination->currentPage() + 1 : null,
-            'prev_page' => $pagination->onFirstPage() ? null : $pagination->currentPage() - 1,
-        ]);
+        return PaginatedResponseFacade::response(MessageResource::class, $pagination);
     }
 
     public function store(StoreRequest $request): JsonResponse
@@ -83,12 +79,7 @@ class MessageController extends Controller
 
         $pagination = $user->friends->paginate(15);
 
-        return response()->json([
-            'data' => UserResource::collection($pagination),
-            'current_page' => $pagination->currentPage(),
-            'next_page' => $pagination->hasMorePages() ? $pagination->currentPage() + 1 : null,
-            'prev_page' => $pagination->onFirstPage() ? null : $pagination->currentPage() - 1,
-        ]);
+        return PaginatedResponseFacade::response(UserResource::class, $pagination);
     }
 
     public function checkUnread(Request $request): JsonResponse
