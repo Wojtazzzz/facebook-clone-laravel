@@ -48,7 +48,10 @@ class IndexTest extends TestCase
             ->getJson($this->getRoute(2, $this->friend));
 
         $response->assertOk()
-            ->assertJsonCount(2);
+            ->assertJsonCount(2, 'friends')
+            ->assertJsonFragment([
+                'count' => 2,
+            ]);
     }
 
     public function testCanGetOwnFriends(): void
@@ -62,7 +65,10 @@ class IndexTest extends TestCase
             ->getJson($this->getRoute(3, $this->user));
 
         $response->assertOk()
-            ->assertJsonCount(3);
+            ->assertJsonCount(3, 'friends')
+            ->assertJsonFragment([
+                'count' => 3,
+            ]);
     }
 
     public function testReturnOnlySpecifedCountOfFriends(): void
@@ -76,7 +82,10 @@ class IndexTest extends TestCase
             ->getJson($this->getRoute(9, $this->friend));
 
         $response->assertOk()
-            ->assertJsonCount(9);
+            ->assertJsonCount(9, 'friends')
+            ->assertJsonFragment([
+                'count' => 12,
+            ]);
     }
 
     public function testSpecifedCountOfFriendsCanBeHigherThanCurrentCountOfFriends(): void
@@ -90,7 +99,10 @@ class IndexTest extends TestCase
             ->getJson($this->getRoute(8, $this->friend));
 
         $response->assertOk()
-            ->assertJsonCount(3);
+            ->assertJsonCount(3, 'friends')
+            ->assertJsonFragment([
+                'count' => 3,
+            ]);
     }
 
     public function testReturnNoFriendsWhenUserDontHaveFriends(): void
@@ -99,10 +111,13 @@ class IndexTest extends TestCase
             ->getJson($this->getRoute(9, $this->friend));
 
         $response->assertOk()
-            ->assertJsonCount(0);
+            ->assertJsonCount(0, 'friends')
+            ->assertJsonFragment([
+                'count' => 0,
+            ]);
     }
 
-    public function testReturnNoFriendsWhenCountParamIsNotSpecifed(): void
+    public function testReturnOnlyCountWhenCountParamIsNotSpecifed(): void
     {
         Friendship::factory(3)->create([
             'user_id' => $this->friend->id,
@@ -115,7 +130,10 @@ class IndexTest extends TestCase
             ]));
 
         $response->assertOk()
-            ->assertJsonCount(0);
+            ->assertJsonCount(0, 'friends')
+            ->assertJsonFragment([
+                'count' => 3,
+            ]);
     }
 
     public function testReturnedFriendHasCorrectAttributes(): void
@@ -131,11 +149,14 @@ class IndexTest extends TestCase
         $friend = User::findOrFail($friendship->friend_id);
 
         $response->assertOk()
-            ->assertJsonCount(1)
+            ->assertJsonCount(1, 'friends')
             ->assertJsonFragment([
                 'id' => $friend->id,
                 'name' => $friend->name,
                 'profile_image' => $friend->profile_image,
+            ])
+            ->assertJsonFragment([
+                'count' => 1,
             ]);
     }
 }
