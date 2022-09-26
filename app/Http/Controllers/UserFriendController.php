@@ -15,8 +15,12 @@ class UserFriendController extends Controller
     {
         $countToFetch = (int) $request->query('count', 0);
 
-        $friends = $user->friends->random(min($countToFetch, $user->friends->count()));
+        $friendsCount = $user->friends->count();
+        $friends = $user->friends->random(min($countToFetch, $friendsCount));
 
-        return response()->json(UserFriendResource::collection($friends));
+        return response()->json([
+            'friends' => UserFriendResource::collection($friends),
+            'count' => $friendsCount,
+        ]);
     }
 }
