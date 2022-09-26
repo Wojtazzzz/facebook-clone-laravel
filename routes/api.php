@@ -51,7 +51,7 @@ Route::middleware('auth:sanctum')
             ->name('users.')
             ->prefix('/users/{user}/friends')
             ->group(function () {
-                Route::get('/', 'getByCount')->name('getByCount');
+                Route::get('/getByCount', 'getByCount')->name('getByCount');
             });
 
         Route::controller(InviteController::class)

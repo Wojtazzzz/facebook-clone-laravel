@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Next\Profile;
 
-use App\Http\Resources\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ShowResource extends JsonResource
@@ -25,10 +24,6 @@ class ShowResource extends JsonResource
                 'lives_in' => $this->whenNotNull($this->lives_in, ''),
                 'from' => $this->whenNotNull($this->from, ''),
                 'marital_status' => $this->whenNotNull($this->marital_status, ''),
-            ],
-            'friends' => [
-                'amount' => count($this->friends),
-                'list' => UserResource::collection($this->friends),
             ],
         ];
     }
