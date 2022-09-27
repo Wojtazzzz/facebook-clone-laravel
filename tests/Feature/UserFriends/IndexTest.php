@@ -23,17 +23,16 @@ class IndexTest extends TestCase
         $this->friend = User::factory()->createOne();
     }
 
-    private function getRoute(int $count, User $user): string
+    private function getRoute(User $user): string
     {
-        return route('api.users.getByCount', [
+        return route('api.users.index', [
             'user' => $user,
-            'count' => $count,
         ]);
     }
 
     public function testCannotUseAsUnauthorized(): void
     {
-        $response = $this->getJson($this->getRoute(1, $this->friend));
+        $response = $this->getJson($this->getRoute($this->friend));
         $response->assertUnauthorized();
     }
 
@@ -45,118 +44,134 @@ class IndexTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->getJson($this->getRoute(2, $this->friend));
+            ->getJson($this->getRoute($this->friend));
 
         $response->assertOk()
-            ->assertJsonCount(2, 'friends')
-            ->assertJsonFragment([
-                'count' => 2,
-            ]);
+            ->assertJsonCount(2, 'data');
     }
 
     public function testCanGetOwnFriends(): void
     {
-        Friendship::factory(3)->create([
+        Friendship::factory(9)->create([
             'user_id' => $this->user->id,
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
         $response = $this->actingAs($this->user)
-            ->getJson($this->getRoute(3, $this->user));
+            ->getJson($this->getRoute($this->user));
 
         $response->assertOk()
-            ->assertJsonCount(3, 'friends')
-            ->assertJsonFragment([
-                'count' => 3,
-            ]);
+            ->assertJsonCount(9, 'data');
     }
 
-    public function testReturnOnlySpecifedCountOfFriends(): void
+    public function testReturnOnlyUsersWhichAreConfirmedFriends(): void
     {
-        Friendship::factory(12)->create([
+        Friendship::factory(5)->create([
             'user_id' => $this->friend->id,
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
-        $response = $this->actingAs($this->user)
-            ->getJson($this->getRoute(9, $this->friend));
+        Friendship::factory(8)->create([
+            'user_id' => $this->friend->id,
+            'status' => FriendshipStatus::BLOCKED,
+        ]);
 
-        $response->assertOk()
-            ->assertJsonCount(9, 'friends')
-            ->assertJsonFragment([
-                'count' => 12,
-            ]);
-    }
-
-    public function testSpecifedCountOfFriendsCanBeHigherThanCurrentCountOfFriends(): void
-    {
         Friendship::factory(3)->create([
             'user_id' => $this->friend->id,
+            'status' => FriendshipStatus::PENDING,
+        ]);
+
+        Friendship::factory(7)->create([
+            'user_id' => $this->user->id,
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
+        User::factory(11)->create();
+
         $response = $this->actingAs($this->user)
-            ->getJson($this->getRoute(8, $this->friend));
+            ->getJson($this->getRoute($this->friend));
 
         $response->assertOk()
-            ->assertJsonCount(3, 'friends')
-            ->assertJsonFragment([
-                'count' => 3,
-            ]);
+            ->assertJsonCount(5, 'data');
     }
 
-    public function testReturnNoFriendsWhenUserDontHaveFriends(): void
+    public function testReturnMax20Users(): void
     {
-        $response = $this->actingAs($this->user)
-            ->getJson($this->getRoute(9, $this->friend));
-
-        $response->assertOk()
-            ->assertJsonCount(0, 'friends')
-            ->assertJsonFragment([
-                'count' => 0,
-            ]);
-    }
-
-    public function testReturnOnlyCountWhenCountParamIsNotSpecifed(): void
-    {
-        Friendship::factory(3)->create([
+        Friendship::factory(24)->create([
             'user_id' => $this->friend->id,
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
         $response = $this->actingAs($this->user)
-            ->getJson(route('api.users.getByCount', [
-                'user' => $this->friend,
-            ]));
+            ->getJson($this->getRoute($this->friend));
 
         $response->assertOk()
-            ->assertJsonCount(0, 'friends')
-            ->assertJsonFragment([
-                'count' => 3,
-            ]);
+            ->assertJsonCount(20, 'data');
     }
 
-    public function testReturnedFriendHasCorrectAttributes(): void
+    public function testCanReturnEmptyDataWhenNoFriends(): void
     {
-        $friendship = Friendship::factory()->createOne([
+        $response = $this->actingAs($this->user)
+            ->getJson($this->getRoute($this->friend));
+
+        $response->assertOk()
+            ->assertJsonCount(0, 'data');
+    }
+
+    public function testFirstPageReturnProperlyPaginationDataWhenResourceHasOnlyFirstPage(): void
+    {
+        Friendship::factory(5)->create([
             'user_id' => $this->friend->id,
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
         $response = $this->actingAs($this->user)
-            ->getJson($this->getRoute(8, $this->friend));
-
-        $friend = User::findOrFail($friendship->friend_id);
+            ->getJson($this->getRoute($this->friend));
 
         $response->assertOk()
-            ->assertJsonCount(1, 'friends')
+            ->assertJsonCount(5, 'data')
             ->assertJsonFragment([
-                'id' => $friend->id,
-                'name' => $friend->name,
-                'profile_image' => $friend->profile_image,
-            ])
+                'current_page' => 1,
+                'next_page' => null,
+                'prev_page' => null,
+            ]);
+    }
+
+    public function testFirstPageReturnProperlyPaginationDataWhenResourceHasSecondPage(): void
+    {
+        Friendship::factory(26)->create([
+            'user_id' => $this->friend->id,
+            'status' => FriendshipStatus::CONFIRMED,
+        ]);
+
+        $response = $this->actingAs($this->user)
+            ->getJson($this->getRoute($this->friend));
+
+        $response->assertOk()
+            ->assertJsonCount(20, 'data')
             ->assertJsonFragment([
-                'count' => 1,
+                'current_page' => 1,
+                'next_page' => 2,
+                'prev_page' => null,
+            ]);
+    }
+
+    public function testSecondPageReturnProperlyPaginationData(): void
+    {
+        Friendship::factory(23)->create([
+            'user_id' => $this->friend->id,
+            'status' => FriendshipStatus::CONFIRMED,
+        ]);
+
+        $response = $this->actingAs($this->user)
+            ->getJson($this->getRoute($this->friend).'?page=2');
+
+        $response->assertOk()
+            ->assertJsonCount(3, 'data')
+            ->assertJsonFragment([
+                'current_page' => 2,
+                'next_page' => null,
+                'prev_page' => 1,
             ]);
     }
 }

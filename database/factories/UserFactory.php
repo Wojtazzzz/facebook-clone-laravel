@@ -20,11 +20,11 @@ class UserFactory extends Factory
             'password' => Hash::make('password'),
             'profile_image' => $this->faker->picsumStaticRandomUrl(168, 168),
             'background_image' => $this->faker->picsumStaticRandomUrl(850, 350),
-            'works_at' => $this->faker->randomElement([$this->faker->company, null]),
-            'went_to' => $this->faker->randomElement([$this->faker->secondarySchool, null]),
-            'lives_in' => $this->faker->randomElement([$this->generateRandomLocation(), null]),
-            'from' => $this->faker->randomElement([$this->generateRandomLocation(), null]),
-            'marital_status' => $this->faker->randomElement(MaritalStatus::cases() + [null]),
+            'works_at' => $this->faker->company,
+            'went_to' => $this->faker->secondarySchool,
+            'lives_in' => $this->generateRandomLocation(),
+            'from' => $this->generateRandomLocation(),
+            'marital_status' => $this->faker->randomElement(MaritalStatus::cases()),
             'born_at' => $this->faker->date(max: now()->subYears(50)),
         ];
     }

@@ -51,6 +51,7 @@ Route::middleware('auth:sanctum')
             ->name('users.')
             ->prefix('/users/{user}/friends')
             ->group(function () {
+                Route::get('/', 'index')->name('index');
                 Route::get('/getByCount', 'getByCount')->name('getByCount');
             });
 
