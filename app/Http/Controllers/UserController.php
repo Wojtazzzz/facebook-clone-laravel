@@ -15,8 +15,14 @@ class UserController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $pagination = User::search($request->search)
-            ->paginate(10);
+        $pagination = User::query()
+            ->whereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%$request->search%"])
+            ->paginate(10, [
+                'id',
+                'first_name',
+                'last_name',
+                'profile_image',
+            ]);
 
         return PaginatedResponseFacade::response(UserHitResource::class, $pagination);
     }

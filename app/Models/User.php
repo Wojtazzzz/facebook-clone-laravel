@@ -12,15 +12,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Laravel\Scout\Attributes\SearchUsingPrefix;
-use Laravel\Scout\Searchable;
 
 class User extends Authenticatable
 {
     use HasApiTokens;
     use HasFactory;
     use Notifiable;
-    use Searchable;
     use HasFriendship;
 
     protected $fillable = [
@@ -54,15 +51,6 @@ class User extends Authenticatable
     protected $dates = [
         'born_at',
     ];
-
-    #[SearchUsingPrefix(['first_name', 'last_name'])]
-    public function toSearchableArray(): array
-    {
-        return [
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
-        ];
-    }
 
     protected function name(): Attribute
     {

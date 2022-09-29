@@ -14,7 +14,6 @@
         "laravel/breeze": "^1.8",
         "laravel/framework": "^9.0",
         "laravel/sanctum": "^2.14",
-        "laravel/scout": "^9.4",
         "laravel/tinker": "^2.7",
         "mbezhanov/faker-provider-collection": "^2.0",
         "pusher/pusher-php-server": "^7.0"
