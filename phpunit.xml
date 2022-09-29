@@ -22,7 +22,11 @@
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_DRIVER" value="array"/>
         <env name="DB_CONNECTION" value="mysql"/>
+<<<<<<< HEAD
         <env name="DB_DATABASE" value="facebook_clone_tests"/>
+=======
+        <env name="DB_DATABASE" value="facebook_close_tests"/>
+>>>>>>> 27f259bcd47de20f3d4e45ee175ddffcfe035728
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
