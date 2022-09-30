@@ -31,7 +31,7 @@ class CommentLiked extends Notification
     {
         return [
             'friendId' => $this->friendId,
-            'message' => 'Liked your post',
+            'message' => 'Liked your comment',
             'link' => "/profile/$this->friendId",
             'commentId' => $this->commentId,
         ];
