@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Enums\MessageStatus;
 use App\Http\Requests\Message\StoreRequest;
 use App\Http\Resources\MessageResource;
+use App\Http\Resources\UserFriendResource;
 use App\Http\Resources\UserResource;
 use App\Models\Message;
 use App\Models\User;
@@ -79,7 +80,7 @@ class MessageController extends Controller
 
         $pagination = $user->friends->paginate(15);
 
-        return PaginatedResponseFacade::response(UserResource::class, $pagination);
+        return PaginatedResponseFacade::response(UserFriendResource::class, $pagination);
     }
 
     public function checkUnread(Request $request): JsonResponse
