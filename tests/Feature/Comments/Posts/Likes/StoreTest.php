@@ -7,6 +7,8 @@ namespace Tests\Feature\Comments\Posts\Likes;
 use App\Models\Comment;
 use App\Models\Like;
 use App\Models\User;
+use App\Notifications\CommentLiked;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class StoreTest extends TestCase
@@ -19,8 +21,6 @@ class StoreTest extends TestCase
 
     private string $table = 'likes';
 
-    private string $notificationsTable = 'notifications';
-
     public function setUp(): void
     {
         parent::setUp();
@@ -30,6 +30,15 @@ class StoreTest extends TestCase
 
         $this->route = route('api.comments.likes.store', [
             'comment' => $this->comment,
+        ]);
+
+        Notification::fake();
+    }
+
+    private function getRoute(Comment | int $comment): string
+    {
+        return route('api.comments.likes.store', [
+            'comment' => $comment,
         ]);
     }
 
@@ -77,36 +86,19 @@ class StoreTest extends TestCase
 
     public function testLikeCommentSendNotificationToCommentAuthor(): void
     {
-        $comment = Comment::factory()->createOne();
+        $author = User::factory()->createOne();
+
+        $comment = Comment::factory()->createOne([
+            'author_id' => $author->id
+        ]);
 
         $response = $this->actingAs($this->user)->postJson($this->getRoute($comment));
         $response->assertCreated();
 
-        $this->assertDatabaseCount($this->table, 1)
-            ->assertDatabaseCount($this->notificationsTable, 1)
-            ->assertDatabaseHas($this->notificationsTable, [
-                'notifiable_id' => $comment->author_id,
-                'read_at' => null,
-            ]);
-    }
+        $this->assertDatabaseCount($this->table, 1);
 
-    public function testLikeActionNotSendNotificationIfThatNotificationAlreadyExists(): void
-    {
-        $comment = Comment::factory()->createOne();
-
-        $response = $this->actingAs($this->user)->postJson($this->getRoute($comment));
-        $response->assertCreated();
-
-        $this->assertDatabaseCount($this->table, 1)
-            ->assertDatabaseCount($this->notificationsTable, 1);
-
-        Like::truncate();
-
-        $response = $this->actingAs($this->user)->postJson($this->getRoute($comment));
-        $response->assertCreated();
-
-        $this->assertDatabaseCount($this->table, 1)
-            ->assertDatabaseCount($this->notificationsTable, 1);
+        Notification::assertSentTo($author, CommentLiked::class);
+        Notification::assertTimesSent(1, CommentLiked::class);
     }
 
     public function testLikeActionNotSendNotificationWhenLikeOwnComment(): void
@@ -118,14 +110,9 @@ class StoreTest extends TestCase
         $response = $this->actingAs($this->user)->postJson($this->getRoute($comment));
         $response->assertCreated();
 
-        $this->assertDatabaseCount($this->table, 1)
-            ->assertDatabaseCount($this->notificationsTable, 0);
-    }
+        $this->assertDatabaseCount($this->table, 1);
 
-    private function getRoute(Comment | int $comment): string
-    {
-        return route('api.comments.likes.store', [
-            'comment' => $comment,
-        ]);
+        Notification::assertNotSentTo($this->user, CommentLiked::class);
+        Notification::assertTimesSent(0, CommentLiked::class);
     }
 }

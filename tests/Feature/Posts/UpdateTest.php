@@ -25,6 +25,13 @@ class UpdateTest extends TestCase
         $this->user = User::factory()->createOne();
     }
 
+    private function getRoute(Post | int $post): string
+    {
+        return route('api.posts.update', [
+            'post' => $post,
+        ]);
+    }
+
     public function testCannotUseAsUnauthorized(): void
     {
         $post = Post::factory()->createOne();
@@ -55,7 +62,7 @@ class UpdateTest extends TestCase
 
         $this->assertCount(1, $images);
         $this->assertDatabaseHas($this->table, [
-            'id' => 1,
+            'id' => $post->id,
             'content' => 'Test content',
         ]);
 
@@ -67,7 +74,7 @@ class UpdateTest extends TestCase
         $response->assertOk();
 
         $this->assertDatabaseHas($this->table, [
-            'id' => 1,
+            'id' => $post->id,
             'content' => 'Simple content',
         ]);
 
@@ -90,7 +97,7 @@ class UpdateTest extends TestCase
 
         $this->assertCount(1, $images);
         $this->assertDatabaseHas($this->table, [
-            'id' => 1,
+            'id' => $post->id,
             'content' => 'Test content',
         ]);
 
@@ -102,7 +109,7 @@ class UpdateTest extends TestCase
         $response->assertOk();
 
         $this->assertDatabaseHas($this->table, [
-            'id' => 1,
+            'id' => $post->id,
             'content' => null,
         ]);
 
@@ -122,7 +129,7 @@ class UpdateTest extends TestCase
         ]);
 
         $this->assertDatabaseHas($this->table, [
-            'id' => 1,
+            'id' => $post->id,
             'content' => 'Test content',
         ]);
 
@@ -145,7 +152,7 @@ class UpdateTest extends TestCase
         ]);
 
         $this->assertDatabaseHas($this->table, [
-            'id' => 1,
+            'id' => $post->id,
             'content' => 'Test content',
         ]);
 
@@ -168,7 +175,7 @@ class UpdateTest extends TestCase
         ]);
 
         $this->assertDatabaseHas($this->table, [
-            'id' => 1,
+            'id' => $post->id,
             'content' => null,
         ]);
 
@@ -180,7 +187,7 @@ class UpdateTest extends TestCase
         $response->assertOk();
 
         $this->assertDatabaseHas($this->table, [
-            'id' => 1,
+            'id' => $post->id,
             'content' => 'Test content',
         ]);
     }
@@ -210,7 +217,7 @@ class UpdateTest extends TestCase
 
         $this->assertDatabaseCount($this->table, 1);
         $this->assertDatabaseHas($this->table, [
-            'author_id' => 1,
+            'author_id' => $this->user->id,
             'content' => 'Simple content',
         ]);
 
@@ -224,9 +231,7 @@ class UpdateTest extends TestCase
         $post = Post::factory()->createOne([
             'author_id' => $this->user->id,
             'content' => 'Simple content',
-            'images' => [
-
-            ],
+            'images' => [],
         ]);
 
         $images = Post::where('id', $post->id)->value('images');
@@ -244,7 +249,7 @@ class UpdateTest extends TestCase
 
         $this->assertDatabaseCount($this->table, 1);
         $this->assertDatabaseHas($this->table, [
-            'author_id' => 1,
+            'author_id' => $this->user->id,
             'content' => 'Simple content',
         ]);
 
@@ -400,12 +405,5 @@ class UpdateTest extends TestCase
         $response->assertOk();
 
         $this->assertDatabaseCount($this->table, 0);
-    }
-
-    private function getRoute(Post | int $post): string
-    {
-        return route('api.posts.update', [
-            'post' => $post,
-        ]);
     }
 }

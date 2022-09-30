@@ -21,6 +21,11 @@ class UserTest extends TestCase
         ]);
     }
 
+    private function getRoute(array $params): string
+    {
+        return route('api.search', $params);
+    }
+
     public function testReturnEmptyResponseWhenNoQueryProvided(): void
     {
         $response = $this->actingAs($this->user)
@@ -156,10 +161,5 @@ class UserTest extends TestCase
                 'next_page' => null,
                 'prev_page' => 1,
             ]);
-    }
-
-    private function getRoute(array $params): string
-    {
-        return route('api.search', $params);
     }
 }

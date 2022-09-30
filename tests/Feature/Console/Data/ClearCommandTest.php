@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Console\Data;
 
-use Tests\TestCase;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Tests\ClearCommandTestCase as TestCase;
 
 class ClearCommandTest extends TestCase
 {
+    use DatabaseMigrations;
+
     private string $command = 'data:clear';
 
     private array $tables = [
