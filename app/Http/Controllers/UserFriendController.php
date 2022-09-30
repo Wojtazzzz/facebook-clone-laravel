@@ -12,9 +12,17 @@ use Illuminate\Http\Request;
 
 class UserFriendController extends Controller
 {
-    public function index(User $user): JsonResponse
+    public function index(Request $request, User $user): JsonResponse
     {
-        $pagination = $user->friends->paginate(20);
+        $friendsOfMine = $user->friendsOfMine()
+            ->whereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%$request->search%"])
+            ->get();
+
+        $friendOf = $user->friendOf()
+            ->whereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%$request->search%"])
+            ->get();
+
+        $pagination = $friendsOfMine->merge($friendOf)->paginate(20);
 
         return PaginatedResponseFacade::response(UserFriendResource::class, $pagination);
     }
