@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Posts;
 
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Testing\File;
 use Illuminate\Support\Facades\Storage;
@@ -54,9 +55,12 @@ class StoreTest extends TestCase
         $this->assertDatabaseCount($this->table, 1)
             ->assertDatabaseHas($this->table, [
                 'content' => 'Simple post',
-                'author_id' => $this->user->id,
-                'images' => '[]',
+                'author_id' => $this->user->id
             ]);
+
+        $post = Post::firstWhere('content', 'Simple post');
+
+        $this->assertEmpty($post->images);
     }
 
     public function testPostContentMustBeAtLeastTwoCharactersLong(): void

@@ -29,6 +29,7 @@ class AuthenticationTest extends TestCase
         ]);
 
         $response->assertNoContent();
+
         $this->assertAuthenticated();
     }
 
@@ -42,6 +43,7 @@ class AuthenticationTest extends TestCase
         $response->assertJson([
             'message' => 'The email must be a valid email address.',
         ]);
+
         $this->assertGuest();
     }
 
