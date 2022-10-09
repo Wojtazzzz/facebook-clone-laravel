@@ -24,8 +24,7 @@ use Illuminate\Support\Facades\Route;
 
 require __DIR__.'/auth.php';
 
-Route::middleware('auth:sanctum')
-    ->name('api.')
+Route::name('api.')
     ->group(function () {
         Route::controller(UserController::class)
             ->group(function () {
