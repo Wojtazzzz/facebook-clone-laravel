@@ -27,8 +27,12 @@ class UserController extends Controller
         return PaginatedResponseFacade::response(UserHitResource::class, $pagination);
     }
 
-    public function user(Request $request): JsonResponse
+    public function user(Request $request)//: JsonResponse
     {
+        session()->put('dupa', 'DUPA');
+
+        return session()->all();
+
         return response()->json(new UserResource($request->user()));
     }
 }
