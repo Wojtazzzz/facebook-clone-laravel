@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
-use Bezhanov\Faker\Provider\Educator;
 use Faker\Factory;
 use Faker\Generator;
 use Illuminate\Support\ServiceProvider;
-use Mmo\Faker\PicsumProvider;
 
 class FakerServiceProvider extends ServiceProvider
 {
@@ -17,8 +15,8 @@ class FakerServiceProvider extends ServiceProvider
         $this->app->singleton(Generator::class, function () {
             $faker = Factory::create();
 
-            $faker->addProvider(new PicsumProvider($faker));
-            $faker->addProvider(new Educator($faker));
+            $faker->addProvider(new \Mmo\Faker\PicsumProvider($faker));
+            $faker->addProvider(new \Bezhanov\Faker\Provider\Educator($faker));
 
             return $faker;
         });

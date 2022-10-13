@@ -18,16 +18,11 @@ class TestController extends Controller
 
     public function __construct()
     {
-        $this->setUpFaker();
 
-        $this->faker->addProvider(new PicsumProvider($this->faker));
-        $this->faker->addProvider(new Educator($this->faker));
     }
 
     public function __invoke(Request $request)
     {
-        $pagination = User::paginate(15);
 
-        return PaginatedResponseFacade::response($pagination, UserResource::class);
     }
 }
