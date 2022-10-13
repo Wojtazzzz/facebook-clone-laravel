@@ -1,0 +1,63 @@
+# fly.toml file generated for winter-fire-3129 on 2022-10-12T16:03:26+02:00
+
+app = "winter-fire-3129"
+kill_signal = "SIGINT"
+kill_timeout = 5
+processes = []
+
+[build]
+  [build.args]
+    PHP_VERSION = "8.1"
+
+[env]
+  APP_NAME = "FacebookClone"
+  APP_ENV = "development"
+  APP_KEY = "base64:TbfzUgY/0kPVFKuWmDly9FkLah0JnLdLc/muKEJGi6A="
+  APP_DEBUG = "true"
+  APP_URL = "https://api.fb-clone.pl"
+  FRONTEND_URL = "https://www.fb-clone.pl"
+  IGNITION_EDITOR = "vscode"
+  LOG_CHANNEL = "stack"
+  LOG_LEVEL = "debug"
+  LOG_STDERR_FORMATTER = "Monolog\\Formatter\\JsonFormatter"
+  DB_CONNECTION = "mysql"
+  DB_HOST = "eu-central.connect.psdb.cloud"
+  DB_PORT = "3306"
+  DB_DATABASE = "facebook_clone"
+  DB_USERNAME = "qzyxwyevmk6d3qxzcc61"
+  DB_PASSWORD = "pscale_pw_M6IerrjvzJW6EXwJPXnl6H8SJtQTUASQ8iabq27jhlr"
+  MYSQL_ATTR_SSL_CA = "/etc/ssl/certs/ca-certificates.crt"
+  SESSION_DRIVER = "cookie"
+  SESSION_SECURE_COOKIE = "true"
+  SANCTUM_STATEFUL_DOMAINS = "api.fb-clone.pl,www.fb-clone.pl"
+  SESSION_DOMAIN = ".fb-clone.pl"
+
+[experimental]
+  allowed_public_ports = []
+  auto_rollback = true
+
+[[services]]
+  http_checks = []
+  internal_port = 8080
+  processes = ["app"]
+  protocol = "tcp"
+  script_checks = []
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+    type = "connections"
+
+  [[services.ports]]
+    force_https = true
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+  [[services.tcp_checks]]
+    grace_period = "1s"
+    interval = "15s"
+    restart_limit = 0
+    timeout = "2s"
