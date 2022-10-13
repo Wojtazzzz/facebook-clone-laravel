@@ -10,6 +10,6 @@ class ChatMessageChannel
 {
     public function join(User $user, int $senderId, int $receiverId): bool
     {
-        return (bool) $user->id === $receiverId || $user->id === $senderId;
+        return ($user->id === $senderId) || ($user->id === $receiverId);
     }
 }
