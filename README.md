@@ -1,6 +1,6 @@
 # Surface App
 
-<img align="right" src="/public/storage/Logo.svg" height="150px" alt="Surface App Logo">
+<img align="right" src="/public/Logo.svg" height="150px" alt="Surface App Logo">
 
 **Surface App** is simple clone of Facebook app.
 
