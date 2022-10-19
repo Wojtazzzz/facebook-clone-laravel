@@ -46,7 +46,7 @@ class UpdateTest extends TestCase
                 'status' => 'CONFIRMED',
             ]);
 
-        $response->assertOk();
+        $response->assertNoContent();
 
         $this->assertDatabaseHas($this->friendshipsTable, [
             'user_id' => $this->friendship->user_id,
@@ -62,7 +62,7 @@ class UpdateTest extends TestCase
                 'status' => 'BLOCKED',
             ]);
 
-        $response->assertOk();
+        $response->assertNoContent();
 
         $this->assertDatabaseCount($this->friendshipsTable, 1);
         $this->assertDatabaseHas($this->friendshipsTable, [
@@ -96,7 +96,7 @@ class UpdateTest extends TestCase
                 'status' => 'CONFIRMED',
             ]);
 
-        $response->assertOk();
+        $response->assertNoContent();
 
         $this->assertDatabaseCount($this->notificationsTable, 1)
             ->assertDatabaseHas($this->notificationsTable, [
@@ -117,7 +117,7 @@ class UpdateTest extends TestCase
                 'status' => 'BLOCKED',
             ]);
 
-        $response->assertOk();
+        $response->assertNoContent();
 
         $this->assertDatabaseCount($this->notificationsTable, 0);
     }

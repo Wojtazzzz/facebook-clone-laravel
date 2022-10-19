@@ -9,6 +9,7 @@ use App\Http\Resources\NotificationResource;
 use App\Services\PaginatedResponseFacade;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class NotificationController extends Controller
 {
@@ -21,7 +22,7 @@ class NotificationController extends Controller
         return PaginatedResponseFacade::response(NotificationResource::class, $pagination);
     }
 
-    public function update(UpdateRequest $request): JsonResponse
+    public function update(UpdateRequest $request): Response
     {
         $user = $request->user();
         $data = $request->validated();
@@ -33,7 +34,7 @@ class NotificationController extends Controller
                 'read_at' => now(),
             ]);
 
-        return response()->json(status: 200);
+        return response()->noContent();
     }
 
     public function checkUnread(Request $request): JsonResponse

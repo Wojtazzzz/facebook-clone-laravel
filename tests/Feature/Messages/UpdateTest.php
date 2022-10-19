@@ -52,7 +52,7 @@ class UpdateTest extends TestCase
         $response = $this->actingAs($this->user)
             ->putJson($this->getRoute($this->friend));
 
-        $response->assertOk();
+        $response->assertNoContent();
 
         $this->assertDatabaseCount($this->table, 1)
             ->assertDatabaseMissing($this->table, [
@@ -75,7 +75,7 @@ class UpdateTest extends TestCase
         $response = $this->actingAs($this->user)
             ->putJson($this->getRoute($this->friend));
 
-        $response->assertOk();
+        $response->assertNoContent();
 
         $this->assertDatabaseCount($this->table, 4)
             ->assertDatabaseMissing($this->table, [
@@ -105,7 +105,7 @@ class UpdateTest extends TestCase
         $response = $this->actingAs($this->user)
             ->putJson($this->getRoute($this->friend));
 
-        $response->assertOk();
+        $response->assertNoContent();
 
         $this->assertDatabaseCount($this->table, 8)
             ->assertDatabaseMissing($this->table, [
@@ -145,7 +145,7 @@ class UpdateTest extends TestCase
         $response = $this->actingAs($this->user)
             ->putJson($this->getRoute($this->friend));
 
-        $response->assertOk();
+        $response->assertNoContent();
 
         $this->assertDatabaseCount($this->table, 3)
             ->assertDatabaseMissing($this->table, [
@@ -186,7 +186,7 @@ class UpdateTest extends TestCase
         $response = $this->actingAs($this->user)
             ->putJson($this->getRoute($this->friend));
 
-        $response->assertOk();
+        $response->assertNoContent();
 
         $this->assertDatabaseCount($this->table, 2)
             ->assertDatabaseMissing($this->table, [

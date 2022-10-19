@@ -12,6 +12,7 @@ use App\Models\Comment;
 use App\Models\Post;
 use App\Services\PaginatedResponseFacade;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
 
 class PostCommentController extends Controller
@@ -43,10 +44,12 @@ class PostCommentController extends Controller
 
         $post->comments()->save($comment);
 
-        return response()->json(new CommentResource($comment), 201);
+        return (new CommentResource($comment))
+            ->response()
+            ->setStatusCode(201);
     }
 
-    public function update(UpdateRequest $request, Post $post, Comment $comment): JsonResponse
+    public function update(UpdateRequest $request, Post $post, Comment $comment): JsonResource
     {
         $data = $request->validated();
 
@@ -54,7 +57,7 @@ class PostCommentController extends Controller
             'content' => $data['content'],
         ]);
 
-        return response()->json(new CommentResource($comment));
+        return new CommentResource($comment);
     }
 
     public function destroy(Post $post, Comment $comment): Response

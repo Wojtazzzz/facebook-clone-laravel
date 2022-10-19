@@ -45,7 +45,7 @@ class ToggleCommentingTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->putJson($this->getRoute($post));
-        $response->assertOk();
+        $response->assertNoContent();
 
         $this->assertDatabaseCount($this->table, 1)
             ->assertDatabaseHas($this->table, [
@@ -61,7 +61,7 @@ class ToggleCommentingTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->putJson($this->getRoute($post));
-        $response->assertOk();
+        $response->assertNoContent();
 
         $this->assertDatabaseCount($this->table, 1)
             ->assertDatabaseHas($this->table, [

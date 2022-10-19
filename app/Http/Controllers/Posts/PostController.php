@@ -9,7 +9,6 @@ use App\Http\Requests\Post\StoreRequest;
 use App\Http\Requests\Post\UpdateRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
-use App\Models\User;
 use App\Services\PaginatedResponseFacade;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -61,13 +60,12 @@ class PostController extends Controller
             'images' => $paths,
         ]);
 
-        return response()->json([
-            'data' => new PostResource($post),
-            'message' => 'Post was created',
-        ], 201);
+        return (new PostResource($post))
+            ->response()
+            ->setStatusCode(201);
     }
 
-    public function update(Post $post, UpdateRequest $request): JsonResponse
+    public function update(Post $post, UpdateRequest $request): Response
     {
         $data = $request->validated();
 
@@ -92,7 +90,7 @@ class PostController extends Controller
             'images' => $paths,
         ]);
 
-        return response()->json();
+        return response()->noContent();
     }
 
     public function destroy(Post $post): Response

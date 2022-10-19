@@ -39,7 +39,7 @@ class MarkAsReadTest extends TestCase
             'ids' => $this->user->unreadNotifications->pluck('id'),
         ]);
 
-        $response->assertOk();
+        $response->assertNoContent();
 
         $this->assertDatabaseCount($this->table, 4)
             ->assertDatabaseMissing($this->table, [
@@ -55,7 +55,7 @@ class MarkAsReadTest extends TestCase
             'ids' => $this->user->unreadNotifications->pluck('id')->except(0),
         ]);
 
-        $response->assertOk();
+        $response->assertNoContent();
 
         $this->assertDatabaseCount($this->table, 8)
             ->assertDatabaseHas($this->table, [
@@ -108,7 +108,7 @@ class MarkAsReadTest extends TestCase
             'ids' => ['7aebcbc9-8775-3371-a895-77e5cd083a63'],
         ]);
 
-        $response->assertOk();
+        $response->assertNoContent();
 
         $this->assertDatabaseCount($this->table, 0);
     }

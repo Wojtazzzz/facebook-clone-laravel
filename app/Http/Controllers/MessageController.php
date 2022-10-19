@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Services\PaginatedResponseFacade;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class MessageController extends Controller
 {
@@ -33,7 +34,7 @@ class MessageController extends Controller
         return PaginatedResponseFacade::response(MessageResource::class, $pagination);
     }
 
-    public function store(StoreRequest $request): JsonResponse
+    public function store(StoreRequest $request): Response
     {
         $paths = [];
 
@@ -54,10 +55,10 @@ class MessageController extends Controller
                 'status' => MessageStatus::DELIVERED,
             ]);
 
-        return response()->json(status: 201);
+        return response(status: 201);
     }
 
-    public function update(Request $request, User $user): JsonResponse
+    public function update(Request $request, User $user): Response
     {
         $request->user()
             ->receivedMessages()
@@ -68,6 +69,6 @@ class MessageController extends Controller
                 'status' => MessageStatus::READ,
             ]);
 
-        return response()->json();
+        return response()->noContent();
     }
 }

@@ -93,7 +93,7 @@ class StoreTest extends TestCase
             ]);
 
         $response->assertCreated()
-            ->assertJsonCount(1, 'data.images');
+            ->assertJsonCount(1, 'images');
 
         $this->assertDatabaseCount($this->table, 1)
             ->assertDatabaseHas($this->table, [
@@ -117,7 +117,7 @@ class StoreTest extends TestCase
             ]);
 
         $response->assertCreated()
-            ->assertJsonCount(6, 'data.images');
+            ->assertJsonCount(6, 'images');
     }
 
     public function testCanPassOnlyFilesWithSpecifiedTypes(): void
@@ -136,7 +136,7 @@ class StoreTest extends TestCase
             ]);
 
         $response->assertCreated()
-            ->assertJsonCount(7, 'data.images');
+            ->assertJsonCount(7, 'images');
 
         $response = $this->actingAs($this->user)->postJson($this->route, [
             'images' => [

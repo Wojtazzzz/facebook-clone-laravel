@@ -46,7 +46,7 @@ class InviteController extends Controller
         return response(status: 201);
     }
 
-    public function update(UpdateRequest $request, User $user): JsonResponse
+    public function update(UpdateRequest $request, User $user): Response
     {
         $data = $request->validated();
 
@@ -63,12 +63,8 @@ class InviteController extends Controller
 
         if ($data['status'] === FriendshipStatus::CONFIRMED->value) {
             $user->notify(new FriendshipRequestAccepted($request->user()->id));
-
-            $message = 'Request accepted successfully';
         }
 
-        return response()->json([
-            'message' => $message ?? 'Request rejected successfully',
-        ]);
+        return response()->noContent();
     }
 }

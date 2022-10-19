@@ -71,7 +71,7 @@ class UpdateTest extends TestCase
                 'content' => 'Simple content',
             ]);
 
-        $response->assertOk();
+        $response->assertNoContent();
 
         $this->assertDatabaseHas($this->table, [
             'id' => $post->id,
@@ -106,7 +106,7 @@ class UpdateTest extends TestCase
                 'content' => '',
             ]);
 
-        $response->assertOk();
+        $response->assertNoContent();
 
         $this->assertDatabaseHas($this->table, [
             'id' => $post->id,
@@ -184,7 +184,7 @@ class UpdateTest extends TestCase
                 'content' => 'Test content',
             ]);
 
-        $response->assertOk();
+        $response->assertNoContent();
 
         $this->assertDatabaseHas($this->table, [
             'id' => $post->id,
@@ -213,7 +213,7 @@ class UpdateTest extends TestCase
             ],
         ]);
 
-        $response->assertOk();
+        $response->assertNoContent();
 
         $this->assertDatabaseCount($this->table, 1);
         $this->assertDatabaseHas($this->table, [
@@ -245,7 +245,7 @@ class UpdateTest extends TestCase
                 ],
             ]);
 
-        $response->assertOk();
+        $response->assertNoContent();
 
         $this->assertDatabaseCount($this->table, 1);
         $this->assertDatabaseHas($this->table, [
@@ -279,7 +279,7 @@ class UpdateTest extends TestCase
                 ],
             ]);
 
-        $response->assertOk();
+        $response->assertNoContent();
 
         $this->assertDatabaseCount($this->table, 1);
         $this->assertDatabaseHas($this->table, [
@@ -317,7 +317,7 @@ class UpdateTest extends TestCase
                 ],
             ]);
 
-        $response->assertOk();
+        $response->assertNoContent();
 
         $this->assertDatabaseCount($this->table, 1);
 
@@ -347,7 +347,7 @@ class UpdateTest extends TestCase
                 ],
             ]);
 
-        $response->assertOk();
+        $response->assertNoContent();
 
         $this->assertDatabaseCount($this->table, 1);
         $this->assertDatabasehas($this->table, [
@@ -402,7 +402,7 @@ class UpdateTest extends TestCase
                 'content' => '',
             ]);
 
-        $response->assertOk();
+        $response->assertNoContent();
 
         $this->assertDatabaseCount($this->table, 0);
     }

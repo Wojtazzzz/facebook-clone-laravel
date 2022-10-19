@@ -13,6 +13,7 @@ use App\Services\PaginatedResponseFacade;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class PokeController extends Controller
 {
@@ -37,7 +38,7 @@ class PokeController extends Controller
         return PaginatedResponseFacade::response(PokeResource::class, $pagination);
     }
 
-    public function poke(PokeRequest $request): JsonResponse
+    public function poke(PokeRequest $request): Response
     {
         $data = $request->validated();
         $user = $request->user();
@@ -63,8 +64,6 @@ class PokeController extends Controller
 
         $friend->notify(new Poked($user->id, $poke->count));
 
-        return response()->json([
-            'message' => 'User poked successfully',
-        ], 201);
+        return response(status: 201);
     }
 }

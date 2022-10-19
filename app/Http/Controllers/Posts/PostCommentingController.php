@@ -18,6 +18,6 @@ class PostCommentingController extends Controller
             'commenting' => !$post->commenting,
         ]);
 
-        return response(status: 200);
+        return response()->noContent();
     }
 }
