@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Posts;
 
 use App\Models\Comment;
-use App\Models\HiddenPost;
+use App\Models\Hidden;
 use App\Models\Like;
 use App\Models\Post;
 use App\Models\User;
@@ -200,7 +200,7 @@ class UserPostsTest extends TestCase
             'author_id' => $this->user->id,
         ]);
 
-        HiddenPost::factory()->createOne([
+        Hidden::factory()->createOne([
             'user_id' => $this->user->id,
             'post_id' => $post->id,
         ]);

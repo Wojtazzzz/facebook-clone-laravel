@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Relationships;
 
+use App\Http\Controllers\Controller;
 use App\Http\Resources\FriendResource;
 use App\Models\User;
 use App\Services\PaginatedResponseFacade;
@@ -12,7 +13,7 @@ use Illuminate\Http\Request;
 
 class SuggestController extends Controller
 {
-    public function __invoke(Request $request): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $user = $request->user();
 

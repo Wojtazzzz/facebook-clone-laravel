@@ -5,20 +5,23 @@ declare(strict_types=1);
 use App\Http\Controllers\BirthdayController;
 use App\Http\Controllers\CommentLikeController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\FriendController;
-use App\Http\Controllers\InviteController;
+use App\Http\Controllers\Relationships\FriendController;
+use App\Http\Controllers\Relationships\InviteController;
 use App\Http\Controllers\MessageController;
-use App\Http\Controllers\NextController;
+use App\Http\Controllers\MessengerController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PokeController;
-use App\Http\Controllers\Posts\HiddenPostController;
+use App\Http\Controllers\Posts\HiddenController;
 use App\Http\Controllers\Posts\PostCommentController;
+use App\Http\Controllers\Posts\PostCommentingController;
 use App\Http\Controllers\Posts\PostController;
 use App\Http\Controllers\Posts\PostLikeController;
-use App\Http\Controllers\Posts\SavedPostController;
-use App\Http\Controllers\SuggestController;
+use App\Http\Controllers\Posts\SavedController;
+use App\Http\Controllers\Posts\UserPostController;
+use App\Http\Controllers\Relationships\SuggestController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\UserFriendController;
+use App\Http\Controllers\Relationships\UserFriendController;
+use App\Http\Controllers\SSGController;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
@@ -28,15 +31,10 @@ Route::middleware('auth:sanctum')
     ->name('api.')
     ->group(function () {
         Route::controller(UserController::class)
+            ->name('users.')
             ->group(function () {
-                Route::get('/user', 'user')->name('user');
-                Route::get('/users', 'index')->name('search');
-            });
-
-        Route::name('birthdays.')
-            ->prefix('/birthdays')
-            ->group(function () {
-                Route::get('/', BirthdayController::class)->name('index');
+                Route::get('/users', 'index')->name('index');
+                Route::get('/user', 'show')->name('show');
             });
 
         Route::controller(FriendController::class)
@@ -45,14 +43,6 @@ Route::middleware('auth:sanctum')
             ->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::delete('/{user}', 'destroy')->name('destroy');
-            });
-
-        Route::controller(UserFriendController::class)
-            ->name('users.')
-            ->prefix('/users/{user}/friends')
-            ->group(function () {
-                Route::get('/', 'index')->name('index');
-                Route::get('/getByCount', 'getByCount')->name('getByCount');
             });
 
         Route::controller(InviteController::class)
@@ -64,16 +54,11 @@ Route::middleware('auth:sanctum')
                 Route::put('/{user}', 'update')->name('update');
             });
 
-        Route::name('suggests.')
+        Route::controller(SuggestController::class)
+            ->name('suggests.')
             ->prefix('/suggests')
             ->group(function () {
-                Route::get('/', SuggestController::class)->name('index');
-            });
-
-        Route::name('contacts.')
-            ->prefix('/contacts')
-            ->group(function () {
-                Route::get('/', ContactController::class)->name('index');
+                Route::get('/', 'index')->name('index');
             });
 
         Route::controller(PokeController::class)
@@ -84,24 +69,12 @@ Route::middleware('auth:sanctum')
                 Route::post('/', 'poke')->name('poke');
             });
 
-        Route::controller(NotificationController::class)
-            ->name('notifications.')
-            ->prefix('/notifications')
+        Route::controller(UserFriendController::class)
+            ->name('users.friends.')
+            ->prefix('/users/{user}/friends')
             ->group(function () {
                 Route::get('/', 'index')->name('index');
-                Route::put('/', 'update')->name('update');
-                Route::get('/checkUnread', 'checkUnread')->name('checkUnread');
-            });
-
-        Route::controller(MessageController::class)
-            ->name('messages.')
-            ->prefix('/messages')
-            ->group(function () {
-                Route::get('/', 'messenger')->name('messenger');
-                Route::post('/', 'store')->middleware(['throttle:message'])->name('store');
-                Route::get('/checkUnread', 'checkUnread')->name('checkUnread');
-                Route::put('/{user}/update', 'update')->name('update');
-                Route::get('/{user}', 'index')->name('index');
+                Route::get('/get-by-count', 'getByCount')->name('getByCount');
             });
 
         Route::controller(PostController::class)
@@ -113,9 +86,13 @@ Route::middleware('auth:sanctum')
                 // it's method POST because of it: https://github.com/laravel/framework/issues/13457
                 Route::post('/{post}', 'update')->name('update');
                 Route::delete('/{post}', 'destroy')->name('destroy');
+            });
 
-                Route::put('/{post}/turn-off-comments', 'turnOffComments')->name('turnOffComments');
-                Route::put('/{post}/turn-on-comments', 'turnOnComments')->name('turnOnComments');
+        Route::controller(UserPostController::class)
+            ->name('users.posts.')
+            ->prefix('/users/{user}/posts')
+            ->group(function () {
+                Route::get('/', 'index')->name('index');
             });
 
         Route::controller(PostLikeController::class)
@@ -127,50 +104,21 @@ Route::middleware('auth:sanctum')
                 Route::delete('/', 'destroy')->name('destroy');
             });
 
-        Route::controller(PostController::class)
-            ->name('users.posts.')
-            ->prefix('/users/{user}/posts')
+        Route::controller(PostCommentingController::class)
+            ->name('posts.commenting.')
+            ->prefix('/posts')
             ->group(function () {
-                Route::get('/', 'userPosts')->name('index');
-            });
-
-        Route::name('hidden.')
-            ->prefix('/hidden')
-            ->group(function () {
-                Route::controller(HiddenPostController::class)
-                    ->name('posts.')
-                    ->prefix('/posts')
-                    ->group(function () {
-                        Route::get('/', 'index')->name('index');
-                        Route::post('/', 'store')->name('store');
-                        Route::delete('/{post}', 'destroy')->name('destroy');
-                    });
-            });
-
-        Route::name('saved.')
-            ->prefix('/saved')
-            ->group(function () {
-                Route::controller(SavedPostController::class)
-                    ->name('posts.')
-                    ->prefix('/posts')
-                    ->group(function () {
-                        Route::get('/', 'index')->name('index');
-                        Route::post('/', 'store')->name('store');
-                        Route::delete('/{post}', 'destroy')->name('destroy');
-                    });
+                Route::put('/{post}/commenting', 'update')->name('update');
             });
 
         Route::controller(PostCommentController::class)
-            ->name('posts.')
+            ->name('posts.comments.')
+            ->prefix('/posts/{post}/comments')
             ->group(function () {
-                Route::prefix('/posts/{post}/comments')
-                    ->name('comments.')
-                    ->group(function () {
-                        Route::get('/', 'index')->name('index');
-                        Route::post('/', 'store')->name('store');
-                        Route::put('/{comment}', 'update')->name('update');
-                        Route::delete('/{comment}', 'destroy')->name('destroy');
-                    });
+                Route::get('/', 'index')->name('index');
+                Route::post('/', 'store')->name('store');
+                Route::put('/{comment}', 'update')->name('update');
+                Route::delete('/{comment}', 'destroy')->name('destroy');
             });
 
         Route::controller(CommentLikeController::class)
@@ -182,14 +130,72 @@ Route::middleware('auth:sanctum')
                 Route::delete('/', 'destroy')->name('destroy');
             });
 
-        Broadcast::routes();
-
-        Route::controller(NextController::class)
-            ->withoutMiddleware('auth:sanctum')
-            ->name('next.')
-            ->prefix('/next')
+        Route::controller(HiddenController::class)
+            ->name('hidden.')
+            ->prefix('/hidden')
             ->group(function () {
-                Route::get('/profiles/{user}', 'profile')->name('profile');
-                Route::get('/profiles', 'profiles')->name('profiles');
+                Route::get('/', 'index')->name('index');
+                Route::post('/', 'store')->name('store');
+                Route::delete('/{post}', 'destroy')->name('destroy');
             });
+
+        Route::controller(SavedController::class)
+            ->name('saved.')
+            ->prefix('/saved')
+            ->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::post('/', 'store')->name('store');
+                Route::delete('/{post}', 'destroy')->name('destroy');
+            });
+
+        Route::controller(NotificationController::class)
+            ->name('notifications.')
+            ->prefix('/notifications')
+            ->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::put('/', 'update')->name('update');
+                Route::get('/check-unread', 'checkUnread')->name('checkUnread');
+            });
+
+        Route::controller(MessengerController::class)
+            ->name('messenger.')
+            ->prefix('/messenger')
+            ->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/check-unread', 'checkUnread')->name('checkUnread');
+            });
+
+        Route::controller(MessageController::class)
+            ->name('messages.')
+            ->prefix('/messages')
+            ->group(function () {
+                Route::get('/{user}', 'index')->name('index');
+                Route::put('/{user}', 'update')->name('update');
+                Route::post('/', 'store')->middleware(['throttle:message'])->name('store');
+            });
+
+        Route::controller(ContactController::class)
+            ->name('contacts.')
+            ->prefix('/contacts')
+            ->group(function () {
+                Route::get('/', 'index')->name('index');
+            });
+
+        Route::controller(BirthdayController::class)
+            ->name('birthdays.')
+            ->prefix('/birthdays')
+            ->group(function () {
+                Route::get('/', 'index')->name('index');
+            });
+
+        Route::controller(SSGController::class)
+            ->name('ssg.')
+            ->prefix('/ssg')
+            ->withoutMiddleware('auth:sanctum')
+            ->group(function () {
+                Route::get('/profiles', 'index')->name('index');
+                Route::get('/profiles/{user}', 'show')->name('show');
+            });
+
+        Broadcast::routes();
     });

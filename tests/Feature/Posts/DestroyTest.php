@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Posts;
 
-use App\Models\HiddenPost;
+use App\Models\Hidden;
 use App\Models\Post;
-use App\Models\SavedPost;
+use App\Models\Saved;
 use App\Models\User;
 use Illuminate\Http\Testing\File;
 use Illuminate\Support\Facades\Storage;
@@ -141,7 +141,7 @@ class DestroyTest extends TestCase
 
     public function testDeleteAllHideRelationsAfterDelete(): void
     {
-        HiddenPost::factory(3)->create([
+        Hidden::factory(3)->create([
             'post_id' => $this->post->id,
         ]);
 
@@ -159,7 +159,7 @@ class DestroyTest extends TestCase
 
     public function testDeleteAllSaveRelationsAfterDelete(): void
     {
-        SavedPost::factory(4)->create([
+        Saved::factory(4)->create([
             'post_id' => $this->post->id,
         ]);
 

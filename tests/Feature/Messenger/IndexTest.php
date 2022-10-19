@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Messages;
+namespace Tests\Feature\Messenger;
 
 use App\Enums\FriendshipStatus;
 use App\Models\Friendship;
 use App\Models\User;
 use Tests\TestCase;
 
-class MessengerTest extends TestCase
+class IndexTest extends TestCase
 {
     private User $user;
 
@@ -21,7 +21,7 @@ class MessengerTest extends TestCase
 
         $this->user = User::factory()->createOne();
         $this->friends = User::factory(60)->create();
-        $this->route = route('api.messages.messenger');
+        $this->route = route('api.messenger.index');
     }
 
     public function testCannotUseAsUnauthorized(): void

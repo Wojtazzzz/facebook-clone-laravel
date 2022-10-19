@@ -29,9 +29,19 @@ class Post extends Model
         'commenting' => 'boolean',
     ];
 
+    public function scopeWhichHidden(Builder $query): Builder
+    {
+        return $query->whereRelation('hidden', 'user_id', Auth::user()->id);
+    }
+
     public function scopeWhichNotHidden(Builder $query): Builder
     {
         return $query->whereDoesntHave('hidden', fn (Builder $query) => $query->where('user_id', Auth::user()->id));
+    }
+
+    public function scopeWhichStored(Builder $query): Builder
+    {
+        return $query->whereRelation('stored', 'user_id', Auth::user()->id);
     }
 
     public function scopeWithIsLiked(Builder $query): Builder
@@ -107,14 +117,14 @@ class Post extends Model
 
     public function hidden(): HasMany
     {
-        return $this->hasMany(HiddenPost::class, 'post_id', 'id');
+        return $this->hasMany(Hidden::class, 'post_id', 'id');
     }
 
     // Method 'App\Models\Post::saved()' is not compatible with method 'Illuminate\Database\Eloquent\Model::saved()',
     // so it's called stored
     public function stored(): HasMany
     {
-        return $this->hasMany(SavedPost::class, 'post_id', 'id');
+        return $this->hasMany(Saved::class, 'post_id', 'id');
     }
 
     public function likes(): MorphMany

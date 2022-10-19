@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Posts\Hidden;
 
-use App\Models\HiddenPost;
+use App\Models\Hidden;
 use App\Models\Post;
-use App\Models\SavedPost;
+use App\Models\Saved;
 use App\Models\User;
 use Tests\TestCase;
 
@@ -23,7 +23,7 @@ class StoreTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->route = route('api.hidden.posts.store');
+        $this->route = route('api.hidden.store');
     }
 
     public function testCannotUseAsUnauthorized(): void
@@ -52,7 +52,7 @@ class StoreTest extends TestCase
     {
         $post = Post::factory()->createOne();
 
-        HiddenPost::factory()->createOne([
+        Hidden::factory()->createOne([
             'user_id' => $this->user->id,
             'post_id' => $post->id,
         ]);
@@ -69,7 +69,7 @@ class StoreTest extends TestCase
     {
         $post = Post::factory()->createOne();
 
-        SavedPost::factory()->createOne([
+        Saved::factory()->createOne([
             'user_id' => $this->user->id,
             'post_id' => $post->id,
         ]);
@@ -86,7 +86,7 @@ class StoreTest extends TestCase
     {
         $post = Post::factory()->createOne();
 
-        SavedPost::factory()->createOne([
+        Saved::factory()->createOne([
             'post_id' => $post->id,
         ]);
 

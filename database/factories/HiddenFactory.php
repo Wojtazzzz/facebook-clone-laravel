@@ -8,7 +8,7 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class SavedPostFactory extends Factory
+class HiddenFactory extends Factory
 {
     public function definition(): array
     {

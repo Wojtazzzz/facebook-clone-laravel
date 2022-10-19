@@ -10,7 +10,7 @@ use App\Models\Post;
 use App\Models\User;
 use Tests\TestCase;
 
-class TurnOffCommentsTest extends TestCase
+class ToggleCommentingTest extends TestCase
 {
     private User $user;
 
@@ -21,6 +21,13 @@ class TurnOffCommentsTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->createOne();
+    }
+
+    private function getRoute(Post $post): string
+    {
+        return route('api.posts.commenting.update', [
+            'post' => $post,
+        ]);
     }
 
     public function testCannotUseAsUnauthorized(): void
@@ -46,7 +53,7 @@ class TurnOffCommentsTest extends TestCase
             ]);
     }
 
-    public function testTurnOffCommentsOnPostWhichAlreadyHasThisOptionOffNotThrowError(): void
+    public function testCanTurnOnCommentsOnOwnPost(): void
     {
         $post = Post::factory()->createOne([
             'author_id' => $this->user->id,
@@ -58,7 +65,7 @@ class TurnOffCommentsTest extends TestCase
 
         $this->assertDatabaseCount($this->table, 1)
             ->assertDatabaseHas($this->table, [
-                'commenting' => false,
+                'commenting' => true,
             ]);
     }
 
@@ -82,6 +89,27 @@ class TurnOffCommentsTest extends TestCase
             ]);
     }
 
+    public function testCannotTurnOnCommentsOnFriendsPost(): void
+    {
+        $friendship = Friendship::factory()->createOne([
+            'user_id' => $this->user->id,
+            'status' => FriendshipStatus::CONFIRMED,
+        ]);
+
+        $post = Post::factory()->createOne([
+            'author_id' => $friendship->friend_id,
+            'commenting' => false,
+        ]);
+
+        $response = $this->actingAs($this->user)->putJson($this->getRoute($post));
+        $response->assertForbidden();
+
+        $this->assertDatabaseCount($this->table, 1)
+            ->assertDatabaseHas($this->table, [
+                'commenting' => false,
+            ]);
+    }
+
     public function testCannotTurnOffCommentsOnRandomUserPost(): void
     {
         $post = Post::factory()->createOne();
@@ -95,10 +123,18 @@ class TurnOffCommentsTest extends TestCase
             ]);
     }
 
-    private function getRoute(Post $post): string
+    public function testCannotTurnOnCommentsOnRandomUserPost(): void
     {
-        return route('api.posts.turnOffComments', [
-            'post' => $post,
+        $post = Post::factory()->createOne([
+            'commenting' => false,
         ]);
+
+        $response = $this->actingAs($this->user)->putJson($this->getRoute($post));
+        $response->assertForbidden();
+
+        $this->assertDatabaseCount($this->table, 1)
+            ->assertDatabaseHas($this->table, [
+                'commenting' => false,
+            ]);
     }
 }

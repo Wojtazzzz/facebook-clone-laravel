@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class BirthdayController extends Controller
 {
-    public function __invoke(Request $request)
+    public function index(Request $request)
     {
         $user = $request->user();
 

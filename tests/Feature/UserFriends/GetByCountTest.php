@@ -25,7 +25,7 @@ class GetByCountTest extends TestCase
 
     private function getRoute(int $count, User $user): string
     {
-        return route('api.users.getByCount', [
+        return route('api.users.friends.getByCount', [
             'user' => $user,
             'count' => $count,
         ]);
@@ -125,7 +125,7 @@ class GetByCountTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)
-            ->getJson(route('api.users.getByCount', [
+            ->getJson(route('api.users.friends.getByCount', [
                 'user' => $this->friend,
             ]));
 

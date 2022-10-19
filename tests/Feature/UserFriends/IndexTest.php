@@ -25,7 +25,7 @@ class IndexTest extends TestCase
 
     private function getRoute(User $user): string
     {
-        return route('api.users.index', [
+        return route('api.users.friends.index', [
             'user' => $user,
         ]);
     }

@@ -22,12 +22,7 @@ class PostPolicy
         return $post->author_id === $user->id;
     }
 
-    public function turnOffComments(User $user, Post $post): bool
-    {
-        return $post->author_id === $user->id;
-    }
-
-    public function turnOnComments(User $user, Post $post): bool
+    public function commenting(User $user, Post $post): bool
     {
         return $post->author_id === $user->id;
     }

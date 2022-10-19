@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Relationships;
 
+use App\Http\Controllers\Controller;
 use App\Http\Resources\FriendResource;
 use App\Models\Friendship;
 use App\Models\User;

@@ -10,13 +10,14 @@ use App\Models\User;
 use App\Services\PaginatedResponseFacade;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
         $pagination = User::query()
-            ->whereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%$request->search%"])
+            ->searchByName($request->search)
             ->paginate(10, [
                 'id',
                 'first_name',
@@ -27,8 +28,10 @@ class UserController extends Controller
         return PaginatedResponseFacade::response(UserHitResource::class, $pagination);
     }
 
-    public function user(Request $request): JsonResponse
+    public function show(Request $request): JsonResource
     {
-        return response()->json(new UserResource($request->user()));
+        $user = $request->user();
+
+        return new UserResource($user);
     }
 }

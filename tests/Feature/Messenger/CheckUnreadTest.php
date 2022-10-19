@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Messages;
+namespace Tests\Feature\Messenger;
 
 use App\Models\Message;
 use App\Models\User;
@@ -19,7 +19,7 @@ class CheckUnreadTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->route = route('api.messages.checkUnread');
+        $this->route = route('api.messenger.checkUnread');
     }
 
     public function testCannotUseAsUnathorized(): void

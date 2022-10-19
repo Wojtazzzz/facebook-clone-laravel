@@ -18,7 +18,7 @@ class ShowTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->route = route('api.next.profile', [
+        $this->route = route('api.ssg.show', [
             'user' => $this->user,
         ]);
     }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Posts\Hidden;
 
-use App\Models\HiddenPost;
+use App\Models\Hidden;
 use App\Models\Post;
 use App\Models\User;
 use Tests\TestCase;
@@ -22,9 +22,9 @@ class DestroyTest extends TestCase
         $this->user = User::factory()->createOne();
     }
 
-    private function route(Post $post): string
+    private function getRoute(Post | int $post): string
     {
-        return route('api.hidden.posts.destroy', [
+        return route('api.hidden.destroy', [
             'post' => $post,
         ]);
     }
@@ -33,19 +33,19 @@ class DestroyTest extends TestCase
     {
         $post = Post::factory()->createOne();
 
-        $response = $this->deleteJson($this->route($post));
+        $response = $this->deleteJson($this->getRoute($post));
         $response->assertUnauthorized();
     }
 
     public function testCanUnhidePostWhichIsHideByLoggedUser(): void
     {
-        $hiddenPost = HiddenPost::factory()->createOne([
+        $hiddenPost = Hidden::factory()->createOne([
             'user_id' => $this->user->id,
         ]);
 
         $post = $hiddenPost->post;
 
-        $response = $this->actingAs($this->user)->deleteJson($this->route($post));
+        $response = $this->actingAs($this->user)->deleteJson($this->getRoute($post));
         $response->assertNoContent();
 
         $this->assertDatabaseCount($this->table, 0);
@@ -54,20 +54,16 @@ class DestroyTest extends TestCase
 
     public function testCannotUnhidePostWhichNotExists(): void
     {
-        $response = $this->actingAs($this->user)->deleteJson(route('api.hidden.posts.destroy', [
-            'post' => 99999,
-        ]));
+        $response = $this->actingAs($this->user)->deleteJson($this->getRoute(99999));
 
         $response->assertNotFound();
     }
 
     public function testCannotUnhidePostWhichIsHiddenByAnotherUser(): void
     {
-        $hiddenPost = HiddenPost::factory()->createOne();
+        $hiddenPost = Hidden::factory()->createOne();
 
-        $response = $this->actingAs($this->user)->deleteJson(route('api.hidden.posts.destroy', [
-            'post' => $hiddenPost->post,
-        ]));
+        $response = $this->actingAs($this->user)->deleteJson($this->getRoute($hiddenPost->post));
 
         $response->assertNotFound();
         $this->assertDatabaseCount($this->table, 1);
@@ -77,9 +73,7 @@ class DestroyTest extends TestCase
     {
         $post = Post::factory()->createOne();
 
-        $response = $this->actingAs($this->user)->deleteJson(route('api.hidden.posts.destroy', [
-            'post' => $post,
-        ]));
+        $response = $this->actingAs($this->user)->deleteJson($this->getRoute($post));
 
         $response->assertNotFound();
         $this->assertDatabaseCount($this->table, 0);

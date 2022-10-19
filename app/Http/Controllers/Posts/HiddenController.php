@@ -5,27 +5,25 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Posts;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Saved\Post\StoreRequest;
+use App\Http\Requests\Hidden\Post\StoreRequest;
 use App\Http\Resources\PostResource;
+use App\Models\Hidden;
 use App\Models\Post;
-use App\Models\SavedPost;
 use App\Services\PaginatedResponseFacade;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class SavedPostController extends Controller
+class HiddenController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    public function index(): JsonResponse
     {
-        $user = $request->user();
-
         $pagination = Post::query()
             ->withAuthor()
             ->withStats()
             ->withIsLiked()
-            ->withIsSaved()
-            ->whereRelation('stored', 'user_id', $user->id)
+            ->withIsHidden()
+            ->whichHidden()
             ->latest()
             ->paginate(10, [
                 'id',
@@ -39,22 +37,20 @@ class SavedPostController extends Controller
         return PaginatedResponseFacade::response(PostResource::class, $pagination);
     }
 
-    public function store(StoreRequest $request): JsonResponse
+    public function store(StoreRequest $request): Response
     {
-        SavedPost::create($request->validated() + [
+        Hidden::create($request->validated() + [
             'user_id' => $request->user()->id,
         ]);
 
-        return response()->json([
-            'message' => 'Post saved successfully',
-        ], 201);
+        return response(status: 201);
     }
 
     public function destroy(Request $request, Post $post): Response
     {
         $user = $request->user();
 
-        SavedPost::query()
+        Hidden::query()
             ->where('user_id', $user->id)
             ->where('post_id', $post->id)
             ->firstOrFail()

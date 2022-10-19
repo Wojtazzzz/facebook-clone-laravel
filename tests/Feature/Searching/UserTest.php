@@ -23,7 +23,7 @@ class UserTest extends TestCase
 
     private function getRoute(array $params): string
     {
-        return route('api.search', $params);
+        return route('api.users.index', $params);
     }
 
     public function testReturnEmptyResponseWhenNoQueryProvided(): void

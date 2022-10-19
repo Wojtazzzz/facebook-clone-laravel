@@ -19,7 +19,7 @@ class UserTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->route = route('api.user');
+        $this->route = route('api.users.show');
     }
 
     public function testCanNotUserGetOwnDataAsUnauthorized(): void

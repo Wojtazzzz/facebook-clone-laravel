@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Posts\Saved;
 
 use App\Models\Post;
-use App\Models\SavedPost;
+use App\Models\Saved;
 use App\Models\User;
 use Tests\TestCase;
 
@@ -22,9 +22,9 @@ class DestroyTest extends TestCase
         $this->user = User::factory()->createOne();
     }
 
-    private function route(Post $post): string
+    private function getRoute(Post | int $post): string
     {
-        return route('api.saved.posts.destroy', [
+        return route('api.saved.destroy', [
             'post' => $post,
         ]);
     }
@@ -33,19 +33,17 @@ class DestroyTest extends TestCase
     {
         $post = Post::factory()->createOne();
 
-        $response = $this->deleteJson($this->route($post));
+        $response = $this->deleteJson($this->getRoute($post));
         $response->assertUnauthorized();
     }
 
     public function testCanUnsavePostWhichIsSaveByLoggedUser(): void
     {
-        $savedPost = SavedPost::factory()->createOne([
+        $savedPost = Saved::factory()->createOne([
             'user_id' => $this->user->id,
         ]);
 
-        $post = $savedPost->post;
-
-        $response = $this->actingAs($this->user)->deleteJson($this->route($post));
+        $response = $this->actingAs($this->user)->deleteJson($this->getRoute($savedPost->post));
         $response->assertNoContent();
 
         $this->assertDatabaseCount($this->table, 0);
@@ -54,22 +52,17 @@ class DestroyTest extends TestCase
 
     public function testCannotUnsavePostWhichNotExists(): void
     {
-        $response = $this->actingAs($this->user)->deleteJson(route('api.saved.posts.destroy', [
-            'post' => 99999,
-        ]));
-
+        $response = $this->actingAs($this->user)->deleteJson($this->getRoute(99999));
         $response->assertNotFound();
     }
 
     public function testCannotUnsavePostWhichIsSavedByAnotherUser(): void
     {
-        $savedPost = SavedPost::factory()->createOne();
+        $savedPost = Saved::factory()->createOne();
 
-        $response = $this->actingAs($this->user)->deleteJson(route('api.saved.posts.destroy', [
-            'post' => $savedPost->post,
-        ]));
-
+        $response = $this->actingAs($this->user)->deleteJson($this->getRoute($savedPost->post));
         $response->assertNotFound();
+
         $this->assertDatabaseCount($this->table, 1);
     }
 
@@ -77,11 +70,9 @@ class DestroyTest extends TestCase
     {
         $post = Post::factory()->createOne();
 
-        $response = $this->actingAs($this->user)->deleteJson(route('api.saved.posts.destroy', [
-            'post' => $post,
-        ]));
-
+        $response = $this->actingAs($this->user)->deleteJson($this->getRoute($post));
         $response->assertNotFound();
+
         $this->assertDatabaseCount($this->table, 0);
     }
 }

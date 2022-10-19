@@ -7,7 +7,7 @@ namespace Tests\Feature\Posts;
 use App\Enums\FriendshipStatus;
 use App\Models\Comment;
 use App\Models\Friendship;
-use App\Models\HiddenPost;
+use App\Models\Hidden;
 use App\Models\Like;
 use App\Models\Post;
 use App\Models\User;
@@ -184,7 +184,7 @@ class IndexTest extends TestCase
             ->friendsAuthors($this->user->id)
             ->create();
 
-        HiddenPost::factory()->createOne([
+        Hidden::factory()->createOne([
             'user_id' => $this->user->id,
             'post_id' => $posts[0]->id,
         ]);
@@ -211,7 +211,7 @@ class IndexTest extends TestCase
             'author_id' => $this->user->id,
         ]);
 
-        HiddenPost::factory()->createOne([
+        Hidden::factory()->createOne([
             'user_id' => $friendship->friend_id,
             'post_id' => $post->id,
         ]);

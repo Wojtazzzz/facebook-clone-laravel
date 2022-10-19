@@ -44,26 +44,6 @@ class PostController extends Controller
         return PaginatedResponseFacade::response(PostResource::class, $pagination);
     }
 
-    public function userPosts(User $user): JsonResponse
-    {
-        $pagination = $user->posts()
-            ->withStats()
-            ->withIsLiked()
-            ->withIsSaved()
-            ->whichNotHidden()
-            ->latest()
-            ->paginate(10, [
-                'id',
-                'content',
-                'images',
-                'author_id',
-                'created_at',
-                'updated_at',
-            ]);
-
-        return PaginatedResponseFacade::response(PostResource::class, $pagination);
-    }
-
     public function store(StoreRequest $request): JsonResponse
     {
         $paths = [];
@@ -122,27 +102,5 @@ class PostController extends Controller
         $post->delete();
 
         return response()->noContent();
-    }
-
-    public function turnOffComments(Post $post): Response
-    {
-        $this->authorize('turnOffComments', [Post::class, $post]);
-
-        $post->update([
-            'commenting' => false,
-        ]);
-
-        return response(status: 200);
-    }
-
-    public function turnOnComments(Post $post): Response
-    {
-        $this->authorize('turnOnComments', [Post::class, $post]);
-
-        $post->update([
-            'commenting' => true,
-        ]);
-
-        return response(status: 200);
     }
 }

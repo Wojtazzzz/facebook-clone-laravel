@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class ContactController extends Controller
 {
-    public function __invoke(Request $request): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $user = $request->user();
 

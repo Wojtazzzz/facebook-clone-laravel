@@ -15,7 +15,7 @@ class IndexTest extends TestCase
     {
         parent::setUp();
 
-        $this->route = route('api.next.profiles');
+        $this->route = route('api.ssg.index');
     }
 
     public function testResponseReturnProperlyUsersData(): void

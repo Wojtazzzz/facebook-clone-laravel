@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Posts\Hidden;
 
 use App\Models\Comment;
-use App\Models\HiddenPost;
+use App\Models\Hidden;
 use App\Models\Like;
 use App\Models\Post;
 use App\Models\User;
@@ -22,7 +22,7 @@ class IndexTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->route = route('api.hidden.posts.index');
+        $this->route = route('api.hidden.index');
     }
 
     public function testCannotUseAsUnauthorized(): void
@@ -64,7 +64,7 @@ class IndexTest extends TestCase
 
     public function testReturnProperlyCountOfOwnHiddenPosts(): void
     {
-        HiddenPost::factory(5)->create([
+        Hidden::factory(5)->create([
             'user_id' => $this->user->id,
         ]);
 
@@ -75,7 +75,7 @@ class IndexTest extends TestCase
 
     public function testReturnMaxTenPosts(): void
     {
-        HiddenPost::factory(12)->create([
+        Hidden::factory(12)->create([
             'user_id' => $this->user->id,
         ]);
 
@@ -86,7 +86,7 @@ class IndexTest extends TestCase
 
     public function testCanFetchMorePostsFromSecondPage(): void
     {
-        HiddenPost::factory(12)->create([
+        Hidden::factory(12)->create([
             'user_id' => $this->user->id,
         ]);
 
@@ -102,7 +102,7 @@ class IndexTest extends TestCase
                 'author_id' => $this->user->id,
             ]);
 
-        HiddenPost::factory()->createOne([
+        Hidden::factory()->createOne([
             'post_id' => $post->id,
         ]);
 
@@ -113,7 +113,7 @@ class IndexTest extends TestCase
 
     public function testCannotReturnHiddenForeingUsersPosts(): void
     {
-        HiddenPost::factory()->createOne();
+        Hidden::factory()->createOne();
 
         $response = $this->actingAs($this->user)->getJson($this->route);
         $response->assertOk()
@@ -122,7 +122,7 @@ class IndexTest extends TestCase
 
     public function testPostsInResponseContainsProperlyPostAuthor(): void
     {
-        $hiddenPost = HiddenPost::factory()->createOne([
+        $hiddenPost = Hidden::factory()->createOne([
             'user_id' => $this->user->id,
         ]);
 
@@ -145,7 +145,7 @@ class IndexTest extends TestCase
 
     public function testHiddenPostHasIsHiddenPropertyToTrue(): void
     {
-        HiddenPost::factory()->createOne([
+        Hidden::factory()->createOne([
             'user_id' => $this->user->id,
         ]);
 
@@ -159,7 +159,7 @@ class IndexTest extends TestCase
 
     public function testPostsInResponseContainsProperlyLikesCountAndZeroCommentsCount(): void
     {
-        $hiddenPost = HiddenPost::factory()->createOne([
+        $hiddenPost = Hidden::factory()->createOne([
             'user_id' => $this->user->id,
         ]);
 
@@ -178,7 +178,7 @@ class IndexTest extends TestCase
 
     public function testPostsInResponseContainsProperlyCommentsCountAndZeroLikesCount(): void
     {
-        $hiddenPost = HiddenPost::factory()->createOne([
+        $hiddenPost = Hidden::factory()->createOne([
             'user_id' => $this->user->id,
         ]);
 
@@ -197,7 +197,7 @@ class IndexTest extends TestCase
 
     public function testPostsInResponseContainsProperlyIsLikedValue(): void
     {
-        $hiddenPost = HiddenPost::factory()->createOne([
+        $hiddenPost = Hidden::factory()->createOne([
             'user_id' => $this->user->id,
         ]);
 
@@ -216,7 +216,7 @@ class IndexTest extends TestCase
 
     public function testFirstPageReturnProperlyPaginationDataWhenResourceHasOnlyFirstPage(): void
     {
-        HiddenPost::factory(2)->create([
+        Hidden::factory(2)->create([
             'user_id' => $this->user->id,
         ]);
 
@@ -233,7 +233,7 @@ class IndexTest extends TestCase
 
     public function testFirstPageReturnProperlyPaginationDataWhenResourceHasSecondPage(): void
     {
-        HiddenPost::factory(12)->create([
+        Hidden::factory(12)->create([
             'user_id' => $this->user->id,
         ]);
 
@@ -250,7 +250,7 @@ class IndexTest extends TestCase
 
     public function testSecondPageReturnProperlyPaginationData(): void
     {
-        HiddenPost::factory(12)->create([
+        Hidden::factory(12)->create([
             'user_id' => $this->user->id,
         ]);
 

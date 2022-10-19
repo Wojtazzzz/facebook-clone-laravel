@@ -9,7 +9,7 @@ use App\Models\Comment;
 use App\Models\Friendship;
 use App\Models\Like;
 use App\Models\Post;
-use App\Models\SavedPost;
+use App\Models\Saved;
 use App\Models\User;
 use Tests\TestCase;
 
@@ -24,7 +24,7 @@ class IndexTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->createOne();
-        $this->route = route('api.saved.posts.index');
+        $this->route = route('api.saved.index');
     }
 
     public function testCannotUseAsUnauthorized(): void
@@ -36,12 +36,12 @@ class IndexTest extends TestCase
     public function testReturnOnlyOwnSavedPost(): void
     {
         // Own saved posts
-        SavedPost::factory(2)->create([
+        Saved::factory(2)->create([
             'user_id' => $this->user->id,
         ]);
 
         // Foreing users saved posts
-        SavedPost::factory(3)->create();
+        Saved::factory(3)->create();
 
         // Friends saved posts
         $friendship = Friendship::factory()->createOne([
@@ -49,7 +49,7 @@ class IndexTest extends TestCase
             'status' => FriendshipStatus::CONFIRMED,
         ]);
 
-        SavedPost::factory()->createOne([
+        Saved::factory()->createOne([
             'user_id' => $friendship->friend_id,
         ]);
 
@@ -60,7 +60,7 @@ class IndexTest extends TestCase
 
     public function testReturnMaxTenPosts(): void
     {
-        SavedPost::factory(12)->create([
+        Saved::factory(12)->create([
             'user_id' => $this->user->id,
         ]);
 
@@ -71,7 +71,7 @@ class IndexTest extends TestCase
 
     public function testCanFetchMorePostsFromSecondPage(): void
     {
-        SavedPost::factory(12)->create([
+        Saved::factory(12)->create([
             'user_id' => $this->user->id,
         ]);
 
@@ -82,7 +82,7 @@ class IndexTest extends TestCase
 
     public function testPostsInResponseContainsProperlyPostAuthor(): void
     {
-        $savedPost = SavedPost::factory()->createOne([
+        $savedPost = Saved::factory()->createOne([
             'user_id' => $this->user->id,
         ]);
 
@@ -105,7 +105,7 @@ class IndexTest extends TestCase
 
     public function testPostsInResponseContainsProperlyPostType(): void
     {
-        SavedPost::factory()->createOne([
+        Saved::factory()->createOne([
             'user_id' => $this->user->id,
         ]);
 
@@ -119,7 +119,7 @@ class IndexTest extends TestCase
 
     public function testPostsInResponseContainsProperlyLikesCountAndZeroCommentsCount(): void
     {
-        $savedPost = SavedPost::factory()->createOne([
+        $savedPost = Saved::factory()->createOne([
             'user_id' => $this->user->id,
         ]);
 
@@ -138,7 +138,7 @@ class IndexTest extends TestCase
 
     public function testPostsInResponseContainsProperlyCommentsCountAndZeroLikesCount(): void
     {
-        $savedPost = SavedPost::factory()->createOne([
+        $savedPost = Saved::factory()->createOne([
             'user_id' => $this->user->id,
         ]);
 
@@ -157,7 +157,7 @@ class IndexTest extends TestCase
 
     public function testPostsInResponseContainsProperlyIsLikedValue(): void
     {
-        $savedPost = SavedPost::factory()->createOne([
+        $savedPost = Saved::factory()->createOne([
             'user_id' => $this->user->id,
         ]);
 
@@ -176,7 +176,7 @@ class IndexTest extends TestCase
 
     public function testFirstPageReturnProperlyPaginationDataWhenResourceHasOnlyFirstPage(): void
     {
-        SavedPost::factory(2)->create([
+        Saved::factory(2)->create([
             'user_id' => $this->user->id,
         ]);
 
@@ -193,8 +193,8 @@ class IndexTest extends TestCase
 
     public function testFirstPageReturnProperlyPaginationDataWhenResourceHasSecondPage(): void
     {
-        SavedPost::factory(12)->create([
-            'user_id' => $this->user->id,
+        Saved::factory(12)->create([
+        'user_id' => $this->user->id,
         ]);
 
         $response = $this->actingAs($this->user)->getJson($this->route);
@@ -210,7 +210,7 @@ class IndexTest extends TestCase
 
     public function testSecondPageReturnProperlyPaginationData(): void
     {
-        SavedPost::factory(12)->create([
+        Saved::factory(12)->create([
             'user_id' => $this->user->id,
         ]);
 
