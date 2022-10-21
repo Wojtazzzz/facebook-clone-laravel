@@ -22,6 +22,7 @@ use App\Http\Controllers\Relationships\SuggestController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Relationships\UserFriendController;
 use App\Http\Controllers\SSGController;
+use App\Http\Controllers\UserEmailController;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
@@ -30,11 +31,11 @@ require __DIR__.'/auth.php';
 Route::middleware('auth:sanctum')
     ->name('api.')
     ->group(function () {
-        Route::controller(UserController::class)
-            ->name('users.')
+        Route::name('users.')
             ->group(function () {
-                Route::get('/users', 'index')->name('index');
-                Route::get('/user', 'show')->name('show');
+                Route::get('/users', [UserController::class, 'index'])->name('index');
+                Route::get('/user', [UserController::class, 'show'])->name('show');
+                Route::get('/user/email', [UserEmailController::class, 'index'])->name('email.index');
             });
 
         Route::controller(FriendController::class)
