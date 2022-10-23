@@ -26,10 +26,45 @@
 
 ## Run Locally - backend
 
-Clone the project
+- Clone github repository
 
 ```bash
-  php artisan serve
+gh repo clone Wojtazzzz/facebook-clone-laravel
+```
+
+- Install dependencies
+
+```bash
+cd facebook-clone-laravel
+```
+
+```bash
+composer install
+```
+
+- Duplicate **.env.example** as **.env**, fill it by your own variables. You can also create **.env.testing** for tests environment
+- Generate app key
+
+```bash
+php artisan key:generate
+```
+
+- Create storage link
+
+```bash
+php artisan storage:link
+```
+
+- Run migrations
+
+```bash
+php artisan migrate
+```
+
+- Run local server
+
+```bash
+php artisan serve
 ```
 
 ## Todo
