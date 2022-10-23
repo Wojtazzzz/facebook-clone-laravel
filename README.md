@@ -16,6 +16,7 @@
 | ------------------------------- | ------- |
 | [PHP](https://www.php.net/)     | ^8.0    |
 | [MySQL](https://www.mysql.com/) | ^8.0    |
+| [Composer](https://getcomposer.org/) | ^2.4    |
 
 ## Built with - backend
 
