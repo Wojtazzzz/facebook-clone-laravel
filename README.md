@@ -10,6 +10,8 @@
 -   pokes
 -   own profiles
 
+[Live Demo](https://surface-app.site/)
+
 ## Requirements - backend
 
 | Name                            | Version |
